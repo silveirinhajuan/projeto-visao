@@ -105,6 +105,69 @@
       "deps": ["1.6"],
       "files": ["README.md"],
       "notes": "Sem números medidos, a Fase 2 não abre. Regra do projeto."
+    },
+    {
+      "id": "1.8",
+      "phase": 1,
+      "title": "Estabilidade do reservatório: espectro e borda do caos",
+      "status": "pending",
+      "deps": ["1.3b"],
+      "files": ["visao/analysis/stability.py", "visao/tests/test_stability.py"],
+      "notes": "Medir raio espectral efetivo de W_rec e o maior expoente de Lyapunov empírico sob perturbação. Testar que o reservatório NÃO é caótico (Lyapunov < 0) nem morto (estados não colapsam a zero). Barato de rodar: 96 neurônios, poucos segundos. Este é o diagnóstico que explica QUANDO a arquitetura líquida falha."
+    },
+    {
+      "id": "1.9",
+      "phase": 1,
+      "title": "Ablação: qual componente carrega os 97,2%?",
+      "status": "pending",
+      "deps": ["1.3b"],
+      "files": ["visao/analysis/ablation.py"],
+      "notes": "Grade 2x2x2 sobre o experimento da Fase 0: consolidação on/off, gate de surpresa on/off, Oja on/off. 5 seeds cada. Reportar contribuição isolada de cada mecanismo. Sem isto não sabemos o que estamos defendendo — só que o conjunto funciona. Roda em numpy, ~2min por célula da grade."
+    },
+    {
+      "id": "1.10",
+      "phase": 1,
+      "title": "Sensibilidade a tau: heterogeneidade importa?",
+      "status": "pending",
+      "deps": ["1.8"],
+      "files": ["visao/analysis/tau_sweep.py"],
+      "notes": "Varrer faixas de tau (estreita vs larga) e medir esquecimento. Hipótese: heterogeneidade de constantes de tempo é o que dá memória multiescala. Se tau uniforme desempenhar igual, a heterogeneidade é decoração e devemos dizer isso."
+    },
+    {
+      "id": "1.11",
+      "phase": 1,
+      "title": "Robustez: ruído de entrada e perda de neurônios",
+      "status": "pending",
+      "deps": ["1.9"],
+      "files": ["visao/analysis/robustness.py"],
+      "notes": "Injetar ruído gaussiano crescente e matar k% dos neurônios em tempo de inferência. Medir degradação. Relevante para a Fase 2: num enxame descentralizado, nós CAEM. Se o organismo não tolera perda de unidades, a Fase 2 é inviável e precisamos saber agora."
+    },
+    {
+      "id": "1.12",
+      "phase": 1,
+      "title": "Contagem de parâmetros vs baselines",
+      "status": "pending",
+      "deps": ["1.5"],
+      "files": ["visao/bench/param_count.py"],
+      "notes": "Tabela honesta: parâmetros treináveis do CfC vs LSTM/GRU nas tarefas do 1.5. A alegação do projeto é '10x menos parâmetros'. Ou o número aparece, ou a alegação sai do README."
+    },
+    {
+      "id": "OPS.1",
+      "phase": 4,
+      "title": "Teste do próprio sentinela",
+      "status": "pending",
+      "deps": [],
+      "files": ["ops/tests/test_sentinel.py"],
+      "notes": "O sentinela decide se o agente autônomo pode agir. Ele não é testado — o que é uma ironia constrangedora. Testar: detecta suíte vermelha, detecta governança violada, detecta RAM baixa, escolhe corretamente a próxima tarefa desbloqueada num backlog sintético. Use tmp_path e backlogs falsos."
+    },
+    {
+      "id": "OPS.2",
+      "phase": 4,
+      "title": "Rotação de logs do sentinela",
+      "status": "pending",
+      "deps": ["OPS.1"],
+      "files": ["ops/sentinel.py"],
+      "notes": "Seis ciclos por dia geram ~2200 arquivos JSON por ano em ops/logs/. Manter os 50 mais recentes e apagar o resto. Disco livre: 6,6GB — não é urgente, mas é higiene."
     }
   ]
 }
