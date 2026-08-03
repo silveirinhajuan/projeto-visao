@@ -68,7 +68,10 @@ Arquivos: `prototype/liquid.py`, `prototype/plasticity.py`, `prototype/experimen
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│  L4  GOVERNANÇA — replicação sob quórum humano           │
+│  L5  REDE HUMANA — voluntários que sustentam o enxame    │
+│      N* = entrada/churn. Sem gente, L2 é um diagrama.    │
+├──────────────────────────────────────────────────────────┤
+│  L4  GOVERNANÇA — replicação sob quórum humano  ✅ FEITO │
 │      Sem isto, o senhor construiu o Ultron.              │
 ├──────────────────────────────────────────────────────────┤
 │  L3  EVOLUÇÃO — arquivo darwiniano, fitness empírica     │
@@ -81,6 +84,8 @@ Arquivos: `prototype/liquid.py`, `prototype/plasticity.py`, `prototype/experimen
 │      97,2% menos esquecimento (medido)                   │
 └──────────────────────────────────────────────────────────┘
 ```
+
+**A Fase 5 tem documento próprio: `FASE5_REDE_HUMANA.md`.** Resumo em uma linha: viral sem retenção estabiliza em **zero** nós; nicho fiel estabiliza em **1.250** (US$ 4,94M/ano em nuvem). O Folding@home perdeu **98,6%** da capacidade em cinco anos. Uma crise recruta; só estrutura retém.
 
 ---
 

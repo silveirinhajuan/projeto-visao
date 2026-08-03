@@ -168,6 +168,51 @@
       "deps": ["OPS.1"],
       "files": ["ops/sentinel.py"],
       "notes": "Seis ciclos por dia geram ~2200 arquivos JSON por ano em ops/logs/. Manter os 50 mais recentes e apagar o resto. Disco livre: 6,6GB — não é urgente, mas é higiene."
+    },
+    {
+      "id": "5.0",
+      "phase": 5,
+      "title": "Modelo quantitativo de recrutamento + Fase 5 documentada",
+      "status": "done",
+      "evidence": "network/recruitment_model.py — viral estabiliza em 0 nós, nicho em 1250 (117,5 TFLOPS = US$4,94M/ano em nuvem), institucional em 666. Calibrado com Folding@home: queda de 98,6% do pico. 16 testes passam.",
+      "deps": []
+    },
+    {
+      "id": "5.1",
+      "phase": 5,
+      "title": "Dashboard de churn (a métrica que mata projetos)",
+      "status": "pending",
+      "deps": ["5.0"],
+      "files": ["network/churn_dashboard.py", "network/tests/test_churn.py"],
+      "notes": "Rastrear nós ativos em 7d, churn mensal e N* observado vs previsto. Sem dados reais ainda: construir com esquema SQLite e alimentar com série sintética para validar a matemática. O Folding@home perdeu 98,6% justamente por descobrir o churn tarde. Medir desde o nó zero."
+    },
+    {
+      "id": "5.2",
+      "phase": 5,
+      "title": "Escolha do primeiro problema real (decisão do Juan)",
+      "status": "blocked",
+      "deps": ["5.0"],
+      "blocked_reason": "Requer decisão humana — o agente autônomo NÃO escolhe o problema do projeto. Candidatos levantados: previsão de cheia em bacia urbana de Fortaleza (dados FUNCEME), anomalia de ECG na borda (TinyML), irrigação no semiárido. Critério: local, mensurável, dados disponíveis, e onde LTC/CfC bata a alternativa.",
+      "files": ["network/PROBLEMA_ZERO.md"],
+      "notes": "Antes de recrutar qualquer pessoa é preciso saber para QUE se recruta. Aguardando o Juan."
+    },
+    {
+      "id": "5.3",
+      "phase": 5,
+      "title": "Documento de risco honesto para voluntários",
+      "status": "pending",
+      "deps": ["5.0"],
+      "files": ["network/RISCOS_PARA_VOLUNTARIOS.md"],
+      "notes": "O que pode dar errado, em português claro, para alguém que vai rodar isto na própria máquina: consumo de CPU/RAM/energia, o que o nó envia pela rede, o que ele NUNCA envia, como desinstalar em um clique, e por que uma IA auto-replicante é aceitável aqui (R1-R5 auditáveis). Sem marketing. Se o documento não assusta um pouco, está desonesto."
+    },
+    {
+      "id": "5.4",
+      "phase": 5,
+      "title": "Checklist F5.0 automatizado (bloqueia recrutamento prematuro)",
+      "status": "pending",
+      "deps": ["5.1", "5.3"],
+      "files": ["network/readiness_check.py"],
+      "notes": "Script que verifica os pré-requisitos antes de convidar UMA pessoa: Fase 4 verde, Fase 1 fechada com benchmarks, cliente instalável em <5min, problema escolhido, doc de risco publicado. Enquanto qualquer item falhar, imprime PROIBIDO RECRUTAR. Recrutar cedo queima a única primeira impressão."
     }
   ]
 }

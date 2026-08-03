@@ -1,0 +1,60 @@
+{
+  "folding_at_home": {
+    "caso": "Folding@home",
+    "voluntarios_fev_2020": 30000,
+    "voluntarios_mar_2020": 400000,
+    "pico_pflops_mar_2020": 1220.0,
+    "pflops_2025": 17.0,
+    "queda_pct": 98.6,
+    "licao": "Uma crise recruta. Só estrutura retém."
+  },
+  "cenarios": [
+    {
+      "cenario": "A) Viral sem retenção",
+      "alcancados": 1000000,
+      "instalaram": 10000,
+      "churn_mensal": 0.3,
+      "entrada_mensal": 0,
+      "ativos_mes_6": 1176,
+      "ativos_mes_24": 1,
+      "equilibrio": 0,
+      "tflops_pico": 940.0,
+      "tflops_equilibrio": 0.0,
+      "custo_nuvem_equivalente_usd_ano": 0
+    },
+    {
+      "cenario": "B) Nicho fiel + fluxo contínuo",
+      "alcancados": 50000,
+      "instalaram": 1200,
+      "churn_mensal": 0.12,
+      "entrada_mensal": 150,
+      "ativos_mes_6": 1226,
+      "ativos_mes_24": 1247,
+      "equilibrio": 1250,
+      "tflops_pico": 112.8,
+      "tflops_equilibrio": 117.5,
+      "custo_nuvem_equivalente_usd_ano": 4940640
+    },
+    {
+      "cenario": "C) Âncoras institucionais",
+      "alcancados": 5000,
+      "instalaram": 500,
+      "churn_mensal": 0.03,
+      "entrada_mensal": 20,
+      "ativos_mes_6": 527,
+      "ativos_mes_24": 586,
+      "equilibrio": 666,
+      "tflops_pico": 47.0,
+      "tflops_equilibrio": 62.6,
+      "custo_nuvem_equivalente_usd_ano": 2632373
+    }
+  ],
+  "device_mix": {
+    "frac_desktop": 0.75,
+    "frac_mobile": 0.25,
+    "desktop_availability": 0.6,
+    "mobile_availability": 0.4,
+    "desktop_gflops": 200.0,
+    "mobile_gflops": 40.0
+  }
+}
