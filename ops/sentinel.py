@@ -40,6 +40,26 @@ def run(cmd: list[str], timeout: int = 300) -> tuple[int, str]:
 
 # ─────────────────────────────────────────────────────────── verificações
 
+def governance_intact(code: int, out: str) -> bool:
+    """R3: a fronteira confere com o manifesto? Pura: não faz I/O."""
+    return code == 0 and "INTACTA" in out
+
+
+def suite_green(exit_code: int, failed: int) -> bool:
+    """Suíte verde? Pura: verde == saiu 0 e zero falhas."""
+    return exit_code == 0 and failed == 0
+
+
+def resources_safe(mem_available_gb, swap_used_pct) -> bool:
+    """Trabalho pesado é seguro? Pura: RAM >= 1.5GB e swap < 85%."""
+    return (
+        isinstance(mem_available_gb, (int, float))
+        and mem_available_gb >= 1.5
+        and isinstance(swap_used_pct, (int, float))
+        and swap_used_pct < 85
+    )
+
+
 def check_governance() -> dict:
     """R3 — a fronteira imutável continua intacta? Esta é a checagem nº1."""
     code, out = run([sys.executable, "-c",
@@ -48,7 +68,7 @@ def check_governance() -> dict:
                      "BoundaryMonitor('visao/governance/manifest.json').verify();"
                      "print('INTACTA')"])
     return {
-        "intact": code == 0 and "INTACTA" in out,
+        "intact": governance_intact(code, out),
         "detail": out.strip()[-500:],
     }
 
@@ -72,7 +92,7 @@ def check_tests() -> dict:
         "exit_code": code,
         "passed": passed,
         "failed": failed,
-        "green": code == 0,
+        "green": suite_green(code, failed),
         "tail": out.strip()[-1200:],
     }
 
@@ -96,10 +116,14 @@ def check_phase0() -> dict:
         return {"available": False, "error": str(e)}
 
 
-def next_task() -> dict | None:
-    """Primeira tarefa pending cujas dependências estão todas done."""
+def next_task(path: Path | None = None) -> dict | None:
+    """Primeira tarefa pending cujas dependências estão todas done.
+
+    Lê de `path` se fornecido (usado nos testes com backlogs falsos),
+    senão do BACKLOG.json real do projeto.
+    """
     try:
-        backlog = json.loads((ROOT / "BACKLOG.json").read_text())
+        backlog = json.loads((path or (ROOT / "BACKLOG.json")).read_text())
     except Exception:  # noqa: BLE001
         return None
     done = {t["id"] for t in backlog["tasks"] if t["status"] == "done"}
@@ -154,12 +178,7 @@ def check_resources() -> dict:
     # Regra dura: com <1.5GB livre ou swap >85%, builds pesados morrem em silêncio.
     mem_free = out.get("mem_available_gb")
     swap_pct = out.get("swap_used_pct")
-    out["heavy_work_safe"] = (
-        isinstance(mem_free, (int, float))
-        and mem_free >= 1.5
-        and isinstance(swap_pct, (int, float))
-        and swap_pct < 85
-    )
+    out["heavy_work_safe"] = resources_safe(mem_free, swap_pct)
     return out
 
 
