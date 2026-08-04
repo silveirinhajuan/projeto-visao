@@ -4,8 +4,8 @@
   "gates": {
     "phase0": "done",
     "phase4_governance": "done",
-    "phase1_substrate": "in_progress",
-    "phase2_swarm": "blocked_by:phase1_substrate",
+    "phase1_substrate": "done",
+    "phase2_swarm": "blocked_by:human_approval",
     "phase3_evolution": "blocked_by:phase2_swarm,phase4_governance"
   },
   "tasks": [
@@ -138,7 +138,8 @@
       "id": "1.7",
       "phase": 1,
       "title": "PORTÃO DA FASE 1: README com números reproduzíveis",
-      "status": "pending",
+      "status": "done",
+      "evidence": "README.md criado com números medidos de prototype/results_continual.json (redução de esquecimento 97.2%) e visao/bench/results_param_count.json (LSTM/CfC=13.56x, GRU/CfC=10.16x). Teste-gate visao/tests/test_readme_gate.py (2 testes) PASSA; suíte completa 105 passed/0 failed em 97.6s. Commit 54b08c2. Portão da Fase 1 FECHADO.",
       "deps": [
         "1.6"
       ],
