@@ -101,3 +101,40 @@ def test_next_task_retorna_none_quando_nenhuma_desbloqueada(tmp_path):
 def test_next_task_retorna_none_com_backlog_vazio(tmp_path):
     bl = _write_backlog(tmp_path, [])
     assert sentinel.next_task(bl) is None
+
+
+# ──────────────────────────────────────────────── rotação de logs (OPS.2)
+
+def _write_logs(tmp_path: Path, n: int) -> list[Path]:
+    """Cria n logs sentinel_*.json com nomes cronologicamente ordenáveis."""
+    paths = []
+    for i in range(n):
+        p = tmp_path / f"sentinel_2026{str(i).zfill(6)}_000000.json"
+        p.write_text("{}")
+        paths.append(p)
+    return paths
+
+
+def test_select_logs_nao_prune_quando_dentro_do_limite(tmp_path):
+    _write_logs(tmp_path, 6)
+    assert sentinel.select_logs_to_prune(tmp_path, keep=50) == []
+
+
+def test_select_logs_mantem_50_mais_recentes_e_marca_antigos(tmp_path):
+    paths = _write_logs(tmp_path, 53)
+    oldest = {paths[0], paths[1], paths[2]}
+    to_prune = sentinel.select_logs_to_prune(tmp_path, keep=50)
+    assert set(to_prune) == oldest
+    assert len(to_prune) == 3
+
+
+def test_rotate_logs_apaga_excesso_e_mantem_50(tmp_path):
+    _write_logs(tmp_path, 55)
+    deleted = sentinel.rotate_logs(tmp_path, keep=50)
+    assert deleted == 5
+    remaining = sorted(tmp_path.glob("sentinel_*.json"))
+    assert len(remaining) == 50
+    for i in range(5):  # 5 mais antigos somem
+        assert not (tmp_path / f"sentinel_2026{str(i).zfill(6)}_000000.json").exists()
+    for i in range(5, 55):  # demais continuam
+        assert (tmp_path / f"sentinel_2026{str(i).zfill(6)}_000000.json").exists()

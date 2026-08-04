@@ -25,6 +25,12 @@ ROOT = Path(__file__).resolve().parents[1]
 ENV = {**os.environ}
 ENV.pop("PYTHONPATH", None)  # vazamento conhecido do Hermes quebra subprocessos
 
+# OPS.2 — higiene dos próprios logs. Só poda o diretório de saída do sentinela;
+# jamais toca código-fonte, pesquisa ou fronteira de governança.
+LOG_DIR = ROOT / "ops" / "logs"
+LOG_GLOB = "sentinel_*.json"
+DEFAULT_KEEP = 50
+
 
 def run(cmd: list[str], timeout: int = 300) -> tuple[int, str]:
     try:
@@ -58,6 +64,28 @@ def resources_safe(mem_available_gb, swap_used_pct) -> bool:
         and isinstance(swap_used_pct, (int, float))
         and swap_used_pct < 85
     )
+
+
+# ──────────────────────────────────────────────── rotação de logs (OPS.2)
+
+def select_logs_to_prune(logs_dir: Path, keep: int = DEFAULT_KEEP) -> list[Path]:
+    """Caminhos dos logs MAIS ANTIGOS a apagar, mantendo os `keep` recentes.
+
+    Ordena por nome (timestamp embutido em sentinel_YYYYMMDD_HHMMSS.json)
+    e desempata por mtime. Pura: só lê o diretório, não apaga.
+    """
+    files = [p for p in Path(logs_dir).glob(LOG_GLOB) if p.is_file()]
+    files.sort(key=lambda p: (p.name, p.stat().st_mtime))
+    excess = len(files) - keep
+    return files[:excess] if excess > 0 else []
+
+
+def rotate_logs(logs_dir: Path, keep: int = DEFAULT_KEEP) -> int:
+    """Mantém os `keep` logs mais recentes e apaga o resto. Retorna nº apagado."""
+    to_prune = select_logs_to_prune(logs_dir, keep)
+    for p in to_prune:
+        p.unlink()
+    return len(to_prune)
 
 
 def check_governance() -> dict:
@@ -201,6 +229,10 @@ def main() -> int:
     )
     report["elapsed_s"] = round(time.time() - t0, 1)
 
+    # OPS.2 — poda higiênica dos PRÓPRIOS logs (mantém 50 mais recentes).
+    # Não é parada dura: só limpa a saída do sentinela, nunca o projeto.
+    report["log_rotation"] = {"deleted": rotate_logs(LOG_DIR)}
+
     print(json.dumps(report, indent=2, ensure_ascii=False))
 
     g, t, r = report["governance"], report["tests"], report["resources"]
@@ -210,7 +242,8 @@ def main() -> int:
         f"testes={t['passed']}p/{t['failed']}f "
         f"ram={r.get('mem_available_gb')}GB swap={r.get('swap_used_pct')}% "
         f"proxima={nt['id'] if nt else 'nenhuma'} "
-        f"prosseguir={report['safe_to_proceed']}",
+        f"prosseguir={report['safe_to_proceed']} "
+        f"rot={report['log_rotation']['deleted']}",
         file=sys.stderr,
     )
     return 0
