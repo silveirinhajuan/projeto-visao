@@ -1,0 +1,19 @@
+{
+  "dimensoes": {
+    "n_in": 1,
+    "cfc_hidden": 64,
+    "lstm_hidden": 128,
+    "gru_hidden": 128,
+    "tarefa": "psMNIST (permutado) \u2014 entrada 1 pixel/passo, T=784"
+  },
+  "parametros_treinaveis": {
+    "CfC": 5002,
+    "LSTM": 67850,
+    "GRU": 50816
+  },
+  "razao_LSTM_sobre_CfC": 13.56,
+  "razao_GRU_sobre_CfC": 10.16,
+  "alegacao_projeto_10x_menos": true,
+  "alegacao_sustentada_CfC_vs_LSTM": true,
+  "note": "Contagem independente do treino (1.5). A validacao de ACURACIA da 1.5 roda no Colab; aqui so contamos parametros, que e determin\u00edstico."
+}

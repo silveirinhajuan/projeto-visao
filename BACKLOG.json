@@ -122,13 +122,16 @@
       "id": "1.6",
       "phase": 1,
       "title": "Predictive coding multicamada",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "1.5"
       ],
       "files": [
-        "visao/core/predictive.py"
+        "visao/core/predictive.py",
+        "visao/core/predictive_coder.py",
+        "visao/tests/test_predictive.py"
       ],
+      "evidence": "Hierarquia valor/erro (Whittington & Bogacz 2017) sobre o estado do CfCCell: 2 camadas de mesma dim interna (n_mid), ponte W_bridge (n_hidden->n_mid) e saida W_out (n_mid->n_out). Regras locais (sem backprop global): cada camada corrige value por erro de predicao, W_up/W_down ajustam por Hebb modulado por erro, clip de ativacao/pesos p/ estabilidade. 3 testes em test_predictive.py PASSAM; suíte 85 passed/0 failed. MEDIDO: erro de saida cai com o treino local (teste test_erro_cai_com_treino, lr=0.001, 15 passos, entra normalizada) e fica finito (nao diverge). Params contaveis: 4*n_mid^2 + n_mid*n_hidden + n_out*n_mid. NOTA: a 1.6 tem deps=[1.5]; a 1.5 segue in_progress (benchmark no Colab), mas a 1.6 NAO depende do RESULTADO do benchmark — so da existencia do CfCCell (1.4 done). Executada e validada autonomamente; marcada done com ressalva de integracao pendente na 1.5.",
       "notes": "Whittington & Bogacz 2017. Substituir readout de camada única por hierarquia valor/erro."
     },
     {
@@ -212,13 +215,16 @@
       "id": "1.12",
       "phase": 1,
       "title": "Contagem de parâmetros vs baselines",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "1.5"
       ],
       "files": [
-        "visao/bench/param_count.py"
+        "visao/bench/param_count.py",
+        "visao/tests/test_param_count.py",
+        "visao/bench/results_param_count.json"
       ],
+      "evidence": "Tabela honesta de parâmetros treináveis (independente do treino, determinística). Reusa cfc_params/lstm_params de timeseries.py (mesmas dims do benchmark 1.5). 2 testes em test_param_count.py PASSAM; suíte 85 passed/0 failed. MEDIDO (psMNIST, n_in=1, T=784): CfC(h=64)=5002 params; LSTM(h=128)=67850; GRU(h=128)=50816. Razão LSTM/CfC=13.56x; GRU/CfC=10.16x. VEREDITO: alegação do projeto '~10x menos parâmetros' SUSTENTADA (LSTM 13.6x, GRU 10.2x menos). NOTA: a 1.12 tem deps=[1.5]; a 1.5 segue in_progress (acurácia no Colab), mas a CONTAGEM de parâmetros e a comparação estrutural NAO dependem do resultado do treino — so das dims das arquiteturas (1.4/timeseries.py done). Executada e validada; marcada done com ressalva de acurácia pendente na 1.5.",
       "notes": "Tabela honesta: parâmetros treináveis do CfC vs LSTM/GRU nas tarefas do 1.5. A alegação do projeto é '10x menos parâmetros'. Ou o número aparece, ou a alegação sai do README."
     },
     {
