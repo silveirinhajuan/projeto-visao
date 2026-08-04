@@ -232,11 +232,13 @@
       "id": "OPS.1",
       "phase": 4,
       "title": "Teste do próprio sentinela",
-      "status": "pending",
+      "status": "done",
       "deps": [],
       "files": [
-        "ops/tests/test_sentinel.py"
+        "ops/tests/test_sentinel.py",
+        "ops/sentinel.py"
       ],
+      "evidence": "8 testes em ops/tests/test_sentinel.py PASSAM em 0.04s (funções puras, sem subprocess). Cobertura: suite_green(0,3)->False, suite_green(1,0)->False, suite_green(0,0)->True; governance_intact(1,'BREACH')->False, governance_intact(124,'TIMEOUT')->False, governance_intact(0,'INTACTA')->True; resources_safe(1.0,50)->False, resources_safe(1.5,50)->True (limite), resources_safe(5.0,90)->False, resources_safe(None,None)->False; next_task() com backlogs falsos (tmp_path) escolhe a 1ª desbloqueada, pula dependência pendente, ignora done/blocked, retorna None sem pendentes/vazio. Suíte completa 113 passed/0 failed. Refatoração mínima em sentinel.py: extraídos governance_intact/suite_green/resources_safe (puros) e next_task(path=None) aceita backlog falso; main() inalterado em comportamento. Commit fc521b4.",
       "notes": "O sentinela decide se o agente autônomo pode agir. Ele não é testado — o que é uma ironia constrangedora. Testar: detecta suíte vermelha, detecta governança violada, detecta RAM baixa, escolhe corretamente a próxima tarefa desbloqueada num backlog sintético. Use tmp_path e backlogs falsos."
     },
     {
