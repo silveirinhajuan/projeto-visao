@@ -1,0 +1,61 @@
+{
+  "timestamp": "2026-08-04 11:00:08",
+  "governance": {
+    "intact": true,
+    "detail": "INTACTA"
+  },
+  "tests": {
+    "exit_code": 0,
+    "passed": 103,
+    "failed": 0,
+    "green": true,
+    "tail": "........................................................................ [ 69%]\n...............................                                          [100%]\n103 passed in 109.57s (0:01:49)"
+  },
+  "phase0": {
+    "available": true,
+    "plastic_forgetting": 0.008297116110643415,
+    "naive_forgetting": 0.29238043000457414,
+    "reduction_pct": 97.1622190614763,
+    "hypothesis_holds": true
+  },
+  "next_task": {
+    "id": "1.7",
+    "phase": 1,
+    "title": "PORT\u00c3O DA FASE 1: README com n\u00fameros reproduz\u00edveis",
+    "status": "pending",
+    "deps": [
+      "1.6"
+    ],
+    "files": [
+      "README.md"
+    ],
+    "notes": "Sem n\u00fameros medidos, a Fase 2 n\u00e3o abre. Regra do projeto."
+  },
+  "backlog": {
+    "total": 38,
+    "done": 15,
+    "in_progress": 1,
+    "pending": 21,
+    "blocked": 1
+  },
+  "git": {
+    "recent": [
+      "ef2964b Tarefas 1.6 e 1.12: predictive coding + contagem de par\u00e2metros",
+      "a50b222 Tarefa 1.5: notebook Colab para benchmark psMNIST completo (valida no T4)",
+      "7f2be4a Tarefa 1.11: robustez a ru\u00eddo e perda de neur\u00f4nios (viabilidade Fase 2)",
+      "cafe774 Tarefa 1.10: sweep de tau \u2014 heterogeneidade \u00e9 decora\u00e7\u00e3o",
+      "ffdab93 Tarefa 1.9: abla\u00e7\u00e3o 2x2x2 \u2014 qual componente carrega a mem\u00f3ria cont\u00ednua"
+    ],
+    "uncommitted": 1
+  },
+  "resources": {
+    "cores": 4,
+    "mem_available_gb": 5.64,
+    "mem_total_gb": 7.64,
+    "swap_used_pct": 65.6,
+    "disk_free_gb": 5.82,
+    "heavy_work_safe": true
+  },
+  "safe_to_proceed": true,
+  "elapsed_s": 110.7
+}
