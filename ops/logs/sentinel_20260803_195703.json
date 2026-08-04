@@ -1,0 +1,55 @@
+{
+  "timestamp": "2026-08-03 19:57:03",
+  "governance": {
+    "intact": true,
+    "detail": "INTACTA"
+  },
+  "tests": {
+    "exit_code": 0,
+    "passed": 39,
+    "failed": 0,
+    "green": true,
+    "tail": ".......................................                                  [100%]\n39 passed in 0.11s"
+  },
+  "phase0": {
+    "available": true,
+    "plastic_forgetting": 0.008297116110643415,
+    "naive_forgetting": 0.29238043000457414,
+    "reduction_pct": 97.1622190614763,
+    "hypothesis_holds": true
+  },
+  "next_task": {
+    "id": "1.1",
+    "phase": 1,
+    "title": "Ambiente JAX + requirements",
+    "status": "pending",
+    "deps": [],
+    "files": [
+      "visao/env/requirements.txt"
+    ],
+    "verify": "python3 -c 'import jax; print(jax.devices())'",
+    "notes": "jax[cpu] apenas \u2014 a m\u00e1quina tem 4 cores e 7GB. Prefixar comandos com 'env -u PYTHONPATH'. Se jax n\u00e3o instalar em <300s ou estourar RAM, marcar blocked e registrar o motivo; N\u00c3O insistir."
+  },
+  "backlog": {
+    "total": 10,
+    "done": 2,
+    "pending": 8
+  },
+  "git": {
+    "recent": [
+      "1e7ffef chore(wip): checkpoint autom\u00e1tico 20260803_195603",
+      "6b07a02 feat: Fase 0 (substrato liquido validado) + Fase 4 (contencao R1-R5)"
+    ],
+    "uncommitted": 0
+  },
+  "resources": {
+    "cores": 4,
+    "mem_available_gb": 4.8,
+    "mem_total_gb": 7.64,
+    "swap_used_pct": 78.5,
+    "disk_free_gb": 6.63,
+    "heavy_work_safe": true
+  },
+  "safe_to_proceed": true,
+  "elapsed_s": 0.6
+}
