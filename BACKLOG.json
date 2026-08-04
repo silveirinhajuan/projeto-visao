@@ -89,7 +89,7 @@
       "id": "1.4",
       "phase": 1,
       "title": "Topologia NCP (sensory/inter/command/motor)",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "1.3b"
       ],
@@ -97,6 +97,7 @@
         "visao/core/wiring.py",
         "visao/tests/test_wiring.py"
       ],
+      "evidence": "NCPWiring em visao/core/wiring.py: máscara (n_total,n_total) direcionada strict (sensory→inter/command, inter→inter/command/motor, command→motor; sem saída de motor, sem recorrência em sensory, diagonal 0). Teste test_mascara_respeitada_apos_plasticidade confirma que após update de plasticidade tocando TODOS os pesos, enforce() zera posições proibidas e preserva as permitidas. 5 testes novos em test_wiring.py; suíte completa 78 passed/0 failed em 4.87s. Commit c00e11a.",
       "notes": "Lechner et al., Nature MI 2020. Esparsidade é feature. Testar que a máscara é respeitada após updates de plasticidade."
     },
     {
