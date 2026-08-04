@@ -196,13 +196,16 @@
       "id": "1.11",
       "phase": 1,
       "title": "Robustez: ruído de entrada e perda de neurônios",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "1.9"
       ],
       "files": [
-        "visao/analysis/robustness.py"
+        "visao/analysis/robustness.py",
+        "visao/tests/test_robustness.py",
+        "visao/analysis/results_robustness.json"
       ],
+      "evidence": "Reservatório plástico (LocalLearner C+S+O) treinado A->B->C; ESTRESSE SÓ NA INFERÊNCIA (não re-treina). 4 testes em test_robustness.py PASSAM; suíte 82 passed/0 failed. RESULTADO (5 seeds, 96 neurônios): erro limpo=0.2885. RUÍDO (sigma): 0.2->1.000x, 0.5->1.000x, 1.0->1.001x (IMUNE — desvio igual à amplitude do sinal não degrada). MORTE de neurônios: 10%->1.047x, 20%->1.041x, 40%->1.023x (quase plano — contra-intuitivo, mas correto: zera-se o estado dos mortos e o readout ignora-os; robustez vem da esparsidade+redundância do reservatório). VEREDITO: FASE 2 VIÁVEL (pior degradação 1.047x, tol 2.0x). Implicação: o organismo tolera nós caindo — premissa da Fase 2 (enxame com churn) é sustentada empiricamente. Evidência em results_robustness.json.",
       "notes": "Injetar ruído gaussiano crescente e matar k% dos neurônios em tempo de inferência. Medir degradação. Relevante para a Fase 2: num enxame descentralizado, nós CAEM. Se o organismo não tolera perda de unidades, a Fase 2 é inviável e precisamos saber agora."
     },
     {
