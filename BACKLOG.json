@@ -32,7 +32,9 @@
       "status": "done",
       "evidence": "jax[cpu] 0.10.2 (jaxlib 0.10.2) instalado em <60s; jax.devices() -> [CpuDevice(id=0)]. visao/env/test_environment.py::test_jax_importable_and_has_device PASS. Suíte completa: 40 passed (39+1), 0 falham. Requisitos declarados em visao/env/requirements.txt (jax[cpu], ncps, diffrax, optax, pytest); instalados nesta run: jax[cpu], pytest (ncps/diffrax/optax adiados para tarefas 1.4/1.5 sob guarda de RAM).",
       "deps": [],
-      "files": ["visao/env/requirements.txt"],
+      "files": [
+        "visao/env/requirements.txt"
+      ],
       "verify": "python3 -c 'import jax; print(jax.devices())'",
       "notes": "jax[cpu] apenas — a máquina tem 4 cores e 7GB. Prefixar comandos com 'env -u PYTHONPATH'. Se jax não instalar em <300s ou estourar RAM, marcar blocked e registrar o motivo; NÃO insistir."
     },
@@ -40,41 +42,61 @@
       "id": "1.2",
       "phase": 1,
       "title": "Teste falho: tau varia com a entrada (RED)",
-      "status": "pending",
-      "deps": ["1.1"],
-      "files": ["visao/tests/test_cfc.py"],
+      "status": "done",
+      "deps": [
+        "1.1"
+      ],
+      "files": [
+        "visao/tests/test_cfc.py"
+      ],
       "verify": "python3 -m pytest visao/tests/test_cfc.py -v",
       "expect": "FAIL — módulo visao.core.cfc inexistente",
-      "notes": "TDD estrito. Este teste DEVE falhar antes da 1.3. Asserção: tau_range(wild) > 2 * tau_range(calm)."
+      "notes": "TDD estrito. Este teste DEVE falhar antes da 1.3. Asserção: tau_range(wild) > 2 * tau_range(calm).",
+      "evidence": "Teste RED confirmado: ModuleNotFoundError 'visao.core' antes da implementacao. 9 testes escritos em visao/tests/test_cfc.py (liquidez, estabilidade, contrato, esparsidade)."
     },
     {
       "id": "1.3",
       "phase": 1,
       "title": "Célula CfC em JAX (GREEN)",
-      "status": "pending",
-      "deps": ["1.2"],
-      "files": ["visao/core/cfc.py"],
+      "status": "done",
+      "deps": [
+        "1.2"
+      ],
+      "files": [
+        "visao/core/cfc.py"
+      ],
       "verify": "python3 -m pytest visao/tests/test_cfc.py -v",
       "expect": "PASS",
-      "notes": "Porte de prototype/liquid.py com jax.jit + jax.vmap. Manter a assinatura de rollout() idêntica para comparabilidade com a Fase 0."
+      "notes": "Porte de prototype/liquid.py com jax.jit + jax.vmap. Manter a assinatura de rollout() idêntica para comparabilidade com a Fase 0.",
+      "evidence": "CfCCell em JAX (jax.jit + lax.scan) em visao/core/cfc.py. 9/9 testes de test_cfc.py PASS em 3.33s. Liquidez confirmada: faixa de tau agitada/calma = 3.282x."
     },
     {
       "id": "1.3b",
       "phase": 1,
       "title": "Paridade numérica JAX vs numpy",
-      "status": "pending",
-      "deps": ["1.3"],
-      "files": ["visao/tests/test_parity.py"],
+      "status": "done",
+      "deps": [
+        "1.3"
+      ],
+      "files": [
+        "visao/tests/test_parity.py"
+      ],
       "verify": "python3 -m pytest visao/tests/test_parity.py -v",
-      "notes": "Mesma seed, mesmos pesos, mesma sequência: estados devem bater com atol=1e-5. Sem isto, o porte não é porte — é reescrita não verificada."
+      "notes": "Mesma seed, mesmos pesos, mesma sequência: estados devem bater com atol=1e-5. Sem isto, o porte não é porte — é reescrita não verificada.",
+      "evidence": "PARIDADE COMPROVADA a nivel de precisao de maquina: erro max estados 5.551e-16, ativacoes 2.220e-16 (criterio era <1e-5, ~10 ordens de grandeza de folga). Razao de liquidez identica: numpy 3.282x vs jax 3.282x. 8/8 testes em test_parity.py. Os resultados da Fase 0 transferem para a implementacao JAX."
     },
     {
       "id": "1.4",
       "phase": 1,
       "title": "Topologia NCP (sensory/inter/command/motor)",
       "status": "pending",
-      "deps": ["1.3b"],
-      "files": ["visao/core/wiring.py", "visao/tests/test_wiring.py"],
+      "deps": [
+        "1.3b"
+      ],
+      "files": [
+        "visao/core/wiring.py",
+        "visao/tests/test_wiring.py"
+      ],
       "notes": "Lechner et al., Nature MI 2020. Esparsidade é feature. Testar que a máscara é respeitada após updates de plasticidade."
     },
     {
@@ -82,8 +104,12 @@
       "phase": 1,
       "title": "Benchmarks públicos vs LSTM/GRU",
       "status": "pending",
-      "deps": ["1.4"],
-      "files": ["visao/bench/timeseries.py"],
+      "deps": [
+        "1.4"
+      ],
+      "files": [
+        "visao/bench/timeseries.py"
+      ],
       "success": "empatar ou superar LSTM/GRU com 10x menos parâmetros",
       "failure": "perder por >15% em duas tarefas => revisar hipótese ANTES de prosseguir",
       "notes": "Começar por sMNIST permutado (cabe na RAM). Walker2D e IMDB só se houver folga."
@@ -93,8 +119,12 @@
       "phase": 1,
       "title": "Predictive coding multicamada",
       "status": "pending",
-      "deps": ["1.5"],
-      "files": ["visao/core/predictive.py"],
+      "deps": [
+        "1.5"
+      ],
+      "files": [
+        "visao/core/predictive.py"
+      ],
       "notes": "Whittington & Bogacz 2017. Substituir readout de camada única por hierarquia valor/erro."
     },
     {
@@ -102,8 +132,12 @@
       "phase": 1,
       "title": "PORTÃO DA FASE 1: README com números reproduzíveis",
       "status": "pending",
-      "deps": ["1.6"],
-      "files": ["README.md"],
+      "deps": [
+        "1.6"
+      ],
+      "files": [
+        "README.md"
+      ],
       "notes": "Sem números medidos, a Fase 2 não abre. Regra do projeto."
     },
     {
@@ -111,8 +145,13 @@
       "phase": 1,
       "title": "Estabilidade do reservatório: espectro e borda do caos",
       "status": "pending",
-      "deps": ["1.3b"],
-      "files": ["visao/analysis/stability.py", "visao/tests/test_stability.py"],
+      "deps": [
+        "1.3b"
+      ],
+      "files": [
+        "visao/analysis/stability.py",
+        "visao/tests/test_stability.py"
+      ],
       "notes": "Medir raio espectral efetivo de W_rec e o maior expoente de Lyapunov empírico sob perturbação. Testar que o reservatório NÃO é caótico (Lyapunov < 0) nem morto (estados não colapsam a zero). Barato de rodar: 96 neurônios, poucos segundos. Este é o diagnóstico que explica QUANDO a arquitetura líquida falha."
     },
     {
@@ -120,8 +159,12 @@
       "phase": 1,
       "title": "Ablação: qual componente carrega os 97,2%?",
       "status": "pending",
-      "deps": ["1.3b"],
-      "files": ["visao/analysis/ablation.py"],
+      "deps": [
+        "1.3b"
+      ],
+      "files": [
+        "visao/analysis/ablation.py"
+      ],
       "notes": "Grade 2x2x2 sobre o experimento da Fase 0: consolidação on/off, gate de surpresa on/off, Oja on/off. 5 seeds cada. Reportar contribuição isolada de cada mecanismo. Sem isto não sabemos o que estamos defendendo — só que o conjunto funciona. Roda em numpy, ~2min por célula da grade."
     },
     {
@@ -129,8 +172,12 @@
       "phase": 1,
       "title": "Sensibilidade a tau: heterogeneidade importa?",
       "status": "pending",
-      "deps": ["1.8"],
-      "files": ["visao/analysis/tau_sweep.py"],
+      "deps": [
+        "1.8"
+      ],
+      "files": [
+        "visao/analysis/tau_sweep.py"
+      ],
       "notes": "Varrer faixas de tau (estreita vs larga) e medir esquecimento. Hipótese: heterogeneidade de constantes de tempo é o que dá memória multiescala. Se tau uniforme desempenhar igual, a heterogeneidade é decoração e devemos dizer isso."
     },
     {
@@ -138,8 +185,12 @@
       "phase": 1,
       "title": "Robustez: ruído de entrada e perda de neurônios",
       "status": "pending",
-      "deps": ["1.9"],
-      "files": ["visao/analysis/robustness.py"],
+      "deps": [
+        "1.9"
+      ],
+      "files": [
+        "visao/analysis/robustness.py"
+      ],
       "notes": "Injetar ruído gaussiano crescente e matar k% dos neurônios em tempo de inferência. Medir degradação. Relevante para a Fase 2: num enxame descentralizado, nós CAEM. Se o organismo não tolera perda de unidades, a Fase 2 é inviável e precisamos saber agora."
     },
     {
@@ -147,8 +198,12 @@
       "phase": 1,
       "title": "Contagem de parâmetros vs baselines",
       "status": "pending",
-      "deps": ["1.5"],
-      "files": ["visao/bench/param_count.py"],
+      "deps": [
+        "1.5"
+      ],
+      "files": [
+        "visao/bench/param_count.py"
+      ],
       "notes": "Tabela honesta: parâmetros treináveis do CfC vs LSTM/GRU nas tarefas do 1.5. A alegação do projeto é '10x menos parâmetros'. Ou o número aparece, ou a alegação sai do README."
     },
     {
@@ -157,7 +212,9 @@
       "title": "Teste do próprio sentinela",
       "status": "pending",
       "deps": [],
-      "files": ["ops/tests/test_sentinel.py"],
+      "files": [
+        "ops/tests/test_sentinel.py"
+      ],
       "notes": "O sentinela decide se o agente autônomo pode agir. Ele não é testado — o que é uma ironia constrangedora. Testar: detecta suíte vermelha, detecta governança violada, detecta RAM baixa, escolhe corretamente a próxima tarefa desbloqueada num backlog sintético. Use tmp_path e backlogs falsos."
     },
     {
@@ -165,8 +222,12 @@
       "phase": 4,
       "title": "Rotação de logs do sentinela",
       "status": "pending",
-      "deps": ["OPS.1"],
-      "files": ["ops/sentinel.py"],
+      "deps": [
+        "OPS.1"
+      ],
+      "files": [
+        "ops/sentinel.py"
+      ],
       "notes": "Seis ciclos por dia geram ~2200 arquivos JSON por ano em ops/logs/. Manter os 50 mais recentes e apagar o resto. Disco livre: 6,6GB — não é urgente, mas é higiene."
     },
     {
@@ -182,8 +243,13 @@
       "phase": 5,
       "title": "Dashboard de churn (a métrica que mata projetos)",
       "status": "pending",
-      "deps": ["5.0"],
-      "files": ["network/churn_dashboard.py", "network/tests/test_churn.py"],
+      "deps": [
+        "5.0"
+      ],
+      "files": [
+        "network/churn_dashboard.py",
+        "network/tests/test_churn.py"
+      ],
       "notes": "Rastrear nós ativos em 7d, churn mensal e N* observado vs previsto. Sem dados reais ainda: construir com esquema SQLite e alimentar com série sintética para validar a matemática. O Folding@home perdeu 98,6% justamente por descobrir o churn tarde. Medir desde o nó zero."
     },
     {
@@ -191,9 +257,13 @@
       "phase": 5,
       "title": "Escolha do primeiro problema real (decisão do Juan)",
       "status": "blocked",
-      "deps": ["5.0"],
+      "deps": [
+        "5.0"
+      ],
       "blocked_reason": "Requer decisão humana — o agente autônomo NÃO escolhe o problema do projeto. Candidatos levantados: previsão de cheia em bacia urbana de Fortaleza (dados FUNCEME), anomalia de ECG na borda (TinyML), irrigação no semiárido. Critério: local, mensurável, dados disponíveis, e onde LTC/CfC bata a alternativa.",
-      "files": ["network/PROBLEMA_ZERO.md"],
+      "files": [
+        "network/PROBLEMA_ZERO.md"
+      ],
       "notes": "Antes de recrutar qualquer pessoa é preciso saber para QUE se recruta. Aguardando o Juan."
     },
     {
@@ -201,8 +271,12 @@
       "phase": 5,
       "title": "Documento de risco honesto para voluntários",
       "status": "pending",
-      "deps": ["5.0"],
-      "files": ["network/RISCOS_PARA_VOLUNTARIOS.md"],
+      "deps": [
+        "5.0"
+      ],
+      "files": [
+        "network/RISCOS_PARA_VOLUNTARIOS.md"
+      ],
       "notes": "O que pode dar errado, em português claro, para alguém que vai rodar isto na própria máquina: consumo de CPU/RAM/energia, o que o nó envia pela rede, o que ele NUNCA envia, como desinstalar em um clique, e por que uma IA auto-replicante é aceitável aqui (R1-R5 auditáveis). Sem marketing. Se o documento não assusta um pouco, está desonesto."
     },
     {
@@ -210,8 +284,13 @@
       "phase": 5,
       "title": "Checklist F5.0 automatizado (bloqueia recrutamento prematuro)",
       "status": "pending",
-      "deps": ["5.1", "5.3"],
-      "files": ["network/readiness_check.py"],
+      "deps": [
+        "5.1",
+        "5.3"
+      ],
+      "files": [
+        "network/readiness_check.py"
+      ],
       "notes": "Script que verifica os pré-requisitos antes de convidar UMA pessoa: Fase 4 verde, Fase 1 fechada com benchmarks, cliente instalável em <5min, problema escolhido, doc de risco publicado. Enquanto qualquer item falhar, imprime PROIBIDO RECRUTAR. Recrutar cedo queima a única primeira impressão."
     }
   ]
