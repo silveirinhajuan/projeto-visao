@@ -1,0 +1,61 @@
+{
+  "timestamp": "2026-08-04 19:00:16",
+  "governance": {
+    "intact": true,
+    "detail": "INTACTA"
+  },
+  "tests": {
+    "exit_code": 0,
+    "passed": 113,
+    "failed": 0,
+    "green": true,
+    "tail": "........................................................................ [ 63%]\n.........................................                                [100%]\n113 passed in 96.66s (0:01:36)"
+  },
+  "phase0": {
+    "available": true,
+    "plastic_forgetting": 0.008297116110643415,
+    "naive_forgetting": 0.29238043000457414,
+    "reduction_pct": 97.1622190614763,
+    "hypothesis_holds": true
+  },
+  "next_task": {
+    "id": "OPS.2",
+    "phase": 4,
+    "title": "Rota\u00e7\u00e3o de logs do sentinela",
+    "status": "pending",
+    "deps": [
+      "OPS.1"
+    ],
+    "files": [
+      "ops/sentinel.py"
+    ],
+    "notes": "Seis ciclos por dia geram ~2200 arquivos JSON por ano em ops/logs/. Manter os 50 mais recentes e apagar o resto. Disco livre: 6,6GB \u2014 n\u00e3o \u00e9 urgente, mas \u00e9 higiene."
+  },
+  "backlog": {
+    "total": 38,
+    "done": 17,
+    "in_progress": 1,
+    "pending": 19,
+    "blocked": 1
+  },
+  "git": {
+    "recent": [
+      "949533a docs(ops.1): BACKLOG \u2014 OPS.1 done, sentinela coberto por testes",
+      "fc521b4 test(ops.1): cobre o pr\u00f3prio sentinela \u2014 detec\u00e7\u00e3o de su\u00edte vermelha, governan\u00e7a violada, RAM baixa e escolha de pr\u00f3xima tarefa com backlog sint\u00e9tico",
+      "1e1180a docs(1.7): BACKLOG \u2014 1.7 done, port\u00e3o Fase 1 fechado, Fase 2 aguarda aprova\u00e7\u00e3o",
+      "54b08c2 feat(1.7): port\u00e3o da Fase 1 \u2014 README com n\u00fameros reprodut\u00edveis + teste-gate",
+      "c581bdd chore(wip): checkpoint autom\u00e1tico 20260804_110008"
+    ],
+    "uncommitted": 1
+  },
+  "resources": {
+    "cores": 4,
+    "mem_available_gb": 5.65,
+    "mem_total_gb": 7.64,
+    "swap_used_pct": 65.4,
+    "disk_free_gb": 5.56,
+    "heavy_work_safe": true
+  },
+  "safe_to_proceed": true,
+  "elapsed_s": 97.7
+}
