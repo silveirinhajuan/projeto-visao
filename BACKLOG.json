@@ -164,12 +164,15 @@
       "id": "1.9",
       "phase": 1,
       "title": "Ablação: qual componente carrega os 97,2%?",
-      "status": "pending",
+      "status": "done",
+      "evidence": "Grade 2x2x2 (consolidação/surpresa/oja) x 5 seeds, protocolo idêntico à Fase 0 (n_steps=2500, 96 neurônios). 3 testes em test_ablation.py PASSAM; suíte completa 74 passed/0 failed. MEUS NÚMEROS (re-executados e validados nesta sessão): baseline(---)=+0.176 esquecimento; completo(CSO)=+0.013 (redução 92,6%). Contribuição isolada (delta de forgetting vs baseline, células estáveis): surpresa=-0.262 (REDUZ mais, é o componente principal), oja=-0.092 (reduz), consolidação=+0.178 (SOZINHA aumenta o esquecimento — só ajuda em combinação, como freio anti-divergência). DESCOBERTA: surpresa ON sem consolidação (-S-, -SO) DIVERGE numericamente (W_out explode, overflow) — reportada como diverged, NÃO contada como 'redução'. NOTA DE TRANSPARÊNCIA: um checkpoint noturno anterior havia marcado 1.9 done com números diferentes (baseline +0.2924, completo +0.0083, redução 97,2%, consolidação isolada eliminando 99,5%) — proveniente de execução com n_steps/seed distintos e NÃO comitado. Mantive a execução desta sessão (reproduzível e testada) como fonte da verdade; a discrepância de magnitude vem do comprimento da sequência de treino. Evidência em visao/analysis/results_ablation.json.",
       "deps": [
         "1.3b"
       ],
       "files": [
-        "visao/analysis/ablation.py"
+        "visao/analysis/ablation.py",
+        "visao/tests/test_ablation.py",
+        "visao/analysis/results_ablation.json"
       ],
       "notes": "Grade 2x2x2 sobre o experimento da Fase 0: consolidação on/off, gate de surpresa on/off, Oja on/off. 5 seeds cada. Reportar contribuição isolada de cada mecanismo. Sem isto não sabemos o que estamos defendendo — só que o conjunto funciona. Roda em numpy, ~2min por célula da grade."
     },
