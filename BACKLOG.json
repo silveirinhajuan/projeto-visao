@@ -104,16 +104,19 @@
       "id": "1.5",
       "phase": 1,
       "title": "Benchmarks públicos vs LSTM/GRU",
-      "status": "pending",
+      "status": "in_progress",
       "deps": [
         "1.4"
       ],
       "files": [
-        "visao/bench/timeseries.py"
+        "visao/bench/timeseries.py",
+        "visao/tests/test_bench_timeseries.py",
+        "visao/bench/results_cfc_run.json"
       ],
       "success": "empatar ou superar LSTM/GRU com 10x menos parâmetros",
       "failure": "perder por >15% em duas tarefas => revisar hipótese ANTES de prosseguir",
-      "notes": "Começar por sMNIST permutado (cabe na RAM). Walker2D e IMDB só se houver folga."
+      "evidence": "HARNESS PRONTO (TDD: 4 testes em test_bench_timeseries.py PASSAM; suíte 82/0). Loader psMNIST + Adam em JAX puro (sem optax) + CfC e LSTM treináveis. MEDIDO em subamostra (n_train=2000, n_test=500, cap 600s/run): LSTM(h128,15ep,lr=1e-3)=0.242 acc / 67850 params; CfC(h96,12ep,lr=1e-2,dt=0.1)=0.170 acc (curva 0.098->0.170) / ~10670 params. Razão de parâmetros ~6.3x (não 10x neste config). DIAGNÓSTICO: com dt=1 o CfC colapsava (estado final independe da entrada, std 0.0007) — corrigido p/ dt=0.1 + média temporal sobre a sequência, mas segue sub-treinado. Conclusão: comparação de acurácia é INJUSTA em 2000 amostras/12-15 épocas; validação cabal exige ~50-200 épocas em psMNIST completo (60k), fora do orçamento de 1 ciclo em CPU. Critério de falha (>15% em DUAS tarefas) NÃO dispara: só sMNIST medido, e CfC está sub-treinado (não é julgamento da hipótese).",
+      "notes": "Começar por sMNIST permutado (cabe na RAM). Walker2D e IMDB só se houver folga. Status in_progress: harness feito e commitado; comparação de acurácia vs LSTM não validada por limite de compute deste ciclo. Próximo ciclo: mais épocas/orçamento ou afinar hiperparams do CfC."
     },
     {
       "id": "1.6",

@@ -1,8 +1,6 @@
+# dados de benchmark (baixados sob demanda, não versionados)
+visao/bench/data/
+
+# python
 __pycache__/
 *.pyc
-.pytest_cache/
-ops/logs/*.json
-ops/logs/*.log
-!ops/logs/.gitkeep
-.venv/
-*.egg-info/
