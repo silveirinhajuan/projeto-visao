@@ -292,6 +292,74 @@
         "network/readiness_check.py"
       ],
       "notes": "Script que verifica os pré-requisitos antes de convidar UMA pessoa: Fase 4 verde, Fase 1 fechada com benchmarks, cliente instalável em <5min, problema escolhido, doc de risco publicado. Enquanto qualquer item falhar, imprime PROIBIDO RECRUTAR. Recrutar cedo queima a única primeira impressão."
+    },
+    {
+      "id": "6.1",
+      "phase": 6,
+      "title": "save_brain()/load_brain() round-trip",
+      "status": "pending",
+      "deps": [
+        "1.6"
+      ],
+      "files": [
+        "visao/core/cfc.py",
+        "visao/tests/test_cfc.py"
+      ],
+      "notes": "jax.save/load dos pesos + teste de round-trip numerico (erro < 1e-6)."
+    },
+    {
+      "id": "6.2",
+      "phase": 6,
+      "title": "Empacotar arquivo unico autocontido",
+      "status": "pending",
+      "deps": [
+        "6.1"
+      ],
+      "files": [
+        "AGENTE_AUTOCONTIDO.md"
+      ],
+      "notes": ".py com pesos em base64 OU .tar assinado (modulos + weights.msgpack + manifest.json)."
+    },
+    {
+      "id": "6.3",
+      "phase": 6,
+      "title": "Self-verify no load (R3)",
+      "status": "pending",
+      "deps": [
+        "6.2"
+      ],
+      "files": [
+        "visao/governance/seal.py"
+      ],
+      "notes": "hash de containment.py bate com manifesto; diverge -> aborta (BoundaryBreached)."
+    },
+    {
+      "id": "6.4",
+      "phase": 6,
+      "title": "Assinar manifesto (R1) + PoW (R4) no bundle",
+      "status": "pending",
+      "deps": [
+        "6.2",
+        "6.3"
+      ],
+      "files": [
+        "visao/governance/containment.py"
+      ],
+      "notes": "quorum humano + dificuldade crescente embutidos no spawn do filho."
+    },
+    {
+      "id": "6.5",
+      "phase": 6,
+      "title": "Teste de adulteracao (39+ testes estendidos)",
+      "status": "pending",
+      "deps": [
+        "6.3",
+        "6.4"
+      ],
+      "files": [
+        "visao/governance/tests/test_containment.py"
+      ],
+      "notes": "arquivo violado e rejeitado no load; sem bypass."
     }
   ]
 }
