@@ -459,6 +459,61 @@
         "visao/core/cfc.py"
       ],
       "notes": "fragmentar CfCCell; nao feito (Fase1 nem chegou a 10^5)."
+    },
+    {
+      "id": "3.1",
+      "phase": 3,
+      "title": "Arquivo de variantes (grafo de linhagem)",
+      "status": "pending",
+      "deps": [
+        "6.1"
+      ],
+      "files": [
+        "FASE3_EVOLUCAO.md",
+        "visao/evolve/archive.py"
+      ],
+      "notes": "no (codigo, pesos, fitness, pai); nunca podar por fitness baixa."
+    },
+    {
+      "id": "3.2",
+      "phase": 3,
+      "title": "Loop de mutacao (permitidas/proibidas)",
+      "status": "pending",
+      "deps": [
+        "3.1"
+      ],
+      "files": [
+        "visao/evolve/mutate.py",
+        "visao/governance/containment.py"
+      ],
+      "notes": "proibidas: governanca/rede/chaves (R3 fora do espaco de mutacao)."
+    },
+    {
+      "id": "3.3",
+      "phase": 3,
+      "title": "Sandbox de fitness (gVisor/Firecracker)",
+      "status": "pending",
+      "deps": [
+        "3.1"
+      ],
+      "files": [
+        "visao/evolve/sandbox.py"
+      ],
+      "notes": "sem rede, sem persistencia; toda variante roda aqui antes de promover."
+    },
+    {
+      "id": "3.4",
+      "phase": 3,
+      "title": "Teste de transferencia (fora do conjunto)",
+      "status": "pending",
+      "deps": [
+        "3.2",
+        "3.3"
+      ],
+      "files": [
+        "FASE3_EVOLUCAO.md"
+      ],
+      "notes": "ganho so aceito se generaliza; impede trapacear benchmark."
     }
   ]
 }
