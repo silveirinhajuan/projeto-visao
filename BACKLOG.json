@@ -361,6 +361,20 @@
         "visao/governance/tests/test_containment.py"
       ],
       "notes": "arquivo violado e rejeitado no load; sem bypass."
+    },
+    {
+      "id": "0.2",
+      "phase": 0,
+      "title": "Artigo cientifico PDF (Preprint VISÃO) — Typst",
+      "status": "done",
+      "deps": [
+        "0.1"
+      ],
+      "files": [
+        "PROPOSTA_PESQUISA.md",
+        "AGENTE_AUTOCONTIDO.md"
+      ],
+      "notes": "PDF gerado via typst, 2 paginas, verificado visualmente. Ancora em resultados Fase0 reais."
     }
   ]
 }
