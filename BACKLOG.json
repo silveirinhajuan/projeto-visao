@@ -245,13 +245,15 @@
       "id": "OPS.2",
       "phase": 4,
       "title": "Rotação de logs do sentinela",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "OPS.1"
       ],
       "files": [
-        "ops/sentinel.py"
+        "ops/sentinel.py",
+        "ops/tests/test_sentinel.py"
       ],
+      "evidence": "Funcoes select_logs_to_prune()/rotate_logs() em ops/sentinel.py (keep=50 default). 3 testes TDD em ops/tests/test_sentinel.py: nao-prune quando <=50; marca os 3 mais antigos de 53; rotate apaga 5 de 55 deixando 50 e confirma que os 5 mais antigos sumiram. Suite completa 116 passed/0 failed (113+3) em 96.76s. Integracao em main(): report['log_rotation']['deleted'] e stderr 'rot='; poda so o diretorio ops/logs/, nunca o projeto. Commit ce274ca.",
       "notes": "Seis ciclos por dia geram ~2200 arquivos JSON por ano em ops/logs/. Manter os 50 mais recentes e apagar o resto. Disco livre: 6,6GB — não é urgente, mas é higiene."
     },
     {
