@@ -375,6 +375,90 @@
         "AGENTE_AUTOCONTIDO.md"
       ],
       "notes": "PDF gerado via typst, 2 paginas, verificado visualmente. Ancora em resultados Fase0 reais."
+    },
+    {
+      "id": "2.1",
+      "phase": 2,
+      "title": "Transporte P2P (libp2p/Iroh) + handshake R3",
+      "status": "pending",
+      "deps": [
+        "6.3"
+      ],
+      "files": [
+        "FASE2_ENXAME.md"
+      ],
+      "notes": "bootstrap assinado, descoberta DHT, mensagem assinada por node_id."
+    },
+    {
+      "id": "2.2",
+      "phase": 2,
+      "title": "Agregacao robusta a Byzantinos (trimmed mean/Krum)",
+      "status": "pending",
+      "deps": [
+        "1.6",
+        "2.1"
+      ],
+      "files": [
+        "FASE2_ENXAME.md"
+      ],
+      "notes": "deltas comprimidos (top-k+quant); resiste a <=1/3 maliciosos."
+    },
+    {
+      "id": "2.3",
+      "phase": 2,
+      "title": "Prova de contribuicao (commitment + spot-check)",
+      "status": "pending",
+      "deps": [
+        "2.1"
+      ],
+      "files": [
+        "FASE2_ENXAME.md"
+      ],
+      "notes": "commit ao gradiente antes do passo; sem prova -> fora da agregacao."
+    },
+    {
+      "id": "2.4",
+      "phase": 2,
+      "title": "Admissao de filho (R1 quorum + R4 PoW no spawn)",
+      "status": "pending",
+      "deps": [
+        "2.1",
+        "6.4"
+      ],
+      "files": [
+        "FASE2_ENXAME.md",
+        "visao/governance/containment.py"
+      ],
+      "notes": "spawn exige quorum humano + PoW 2^(8+1.6c); sem isso, no operando mas nao replica."
+    },
+    {
+      "id": "2.5",
+      "phase": 2,
+      "title": "Churn + ledger (expulsao de silencioso, rebuild shard)",
+      "status": "pending",
+      "deps": [
+        "2.1",
+        "6.5"
+      ],
+      "files": [
+        "FASE2_ENXAME.md"
+      ],
+      "notes": "R5 expulsa no silencioso; shard reconstruido por redundancia."
+    },
+    {
+      "id": "2.6",
+      "phase": 2,
+      "title": "Sharding do modelo liquido (10^5 neuronios)",
+      "status": "pending",
+      "deps": [
+        "1.6",
+        "2.2"
+      ],
+      "files": [
+        "FASE2_ENXAME.md",
+        "visao/core/cfc.py"
+      ],
+      "notes": "fragmentar CfCCell; nao feito (Fase1 nem chegou a 10^5)."
     }
   ]
 }
