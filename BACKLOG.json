@@ -148,14 +148,16 @@
       "id": "1.8",
       "phase": 1,
       "title": "Estabilidade do reservatório: espectro e borda do caos",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "1.3b"
       ],
       "files": [
         "visao/analysis/stability.py",
-        "visao/tests/test_stability.py"
+        "visao/tests/test_stability.py",
+        "visao/analysis/results_stability.json"
       ],
+      "evidence": "5 testes em test_stability.py PASSAM; suíte completa 71 passed/0 failed. MEDIDO (n_hidden=96, dt=0.1, T=600, entrada agitada): SR(W_rec)=0.7577 (<1, ESN ok); SR(jacobiano local) máx=0.9754 (<1, contrativo); LE=-0.7484 (SUB-CAÓTICO, memória estável); ||x|| final=3.726, std dinâmico=0.306 (NÃO morto, responde à entrada). Veredito: utilizável na borda do caos do lado estável. Evidência numérica em visao/analysis/results_stability.json.",
       "notes": "Medir raio espectral efetivo de W_rec e o maior expoente de Lyapunov empírico sob perturbação. Testar que o reservatório NÃO é caótico (Lyapunov < 0) nem morto (estados não colapsam a zero). Barato de rodar: 96 neurônios, poucos segundos. Este é o diagnóstico que explica QUANDO a arquitetura líquida falha."
     },
     {
