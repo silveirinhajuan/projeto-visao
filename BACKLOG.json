@@ -268,14 +268,16 @@
       "id": "5.1",
       "phase": 5,
       "title": "Dashboard de churn (a métrica que mata projetos)",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "5.0"
       ],
       "files": [
         "network/churn_dashboard.py",
-        "network/tests/test_churn.py"
+        "network/tests/test_churn.py",
+        "network/results_churn.json"
       ],
+      "evidence": "8 testes TDD em network/tests/test_churn.py PASSAM (janela 7d, churn mensal 0/1/3, steady_state fechado inflow/churn e recuperação de params via série sintética). Suíte completa 124 passed/0 failed. VALIDAÇÃO DA MATEMÁTICA (série sintética 60 meses, initial=2000, inflow=200, churn=0.2): churn mensal médio recuperado=0.2000; entrada mensal=200.0; N* observado=1000.2 vs previsto=1000.0 (razão 1.0002). Esquema SQLite em network/churn_dashboard.py (tabela heartbeat node_id/day); métricas: active_in_window(7d), monthly_churn_rate, compare_nstar(observado vs previsto). results_churn.json emitido pelo main().",
       "notes": "Rastrear nós ativos em 7d, churn mensal e N* observado vs previsto. Sem dados reais ainda: construir com esquema SQLite e alimentar com série sintética para validar a matemática. O Folding@home perdeu 98,6% justamente por descobrir o churn tarde. Medir desde o nó zero."
     },
     {
