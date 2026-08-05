@@ -1,0 +1,64 @@
+{
+  "timestamp": "2026-08-05 19:00:10",
+  "governance": {
+    "intact": true,
+    "detail": "INTACTA"
+  },
+  "tests": {
+    "exit_code": 0,
+    "passed": 155,
+    "failed": 0,
+    "green": true,
+    "tail": "........................................................................ [ 46%]\n........................................................................ [ 92%]\n...........                                                              [100%]\n155 passed in 101.91s (0:01:41)"
+  },
+  "phase0": {
+    "available": true,
+    "plastic_forgetting": 0.008297116110643415,
+    "naive_forgetting": 0.29238043000457414,
+    "reduction_pct": 97.1622190614763,
+    "hypothesis_holds": true
+  },
+  "next_task": {
+    "id": "6.3",
+    "phase": 6,
+    "title": "Self-verify no load (R3)",
+    "status": "pending",
+    "deps": [
+      "6.2"
+    ],
+    "files": [
+      "visao/governance/seal.py"
+    ],
+    "notes": "hash de containment.py bate com manifesto; diverge -> aborta (BoundaryBreached)."
+  },
+  "backlog": {
+    "total": 38,
+    "done": 23,
+    "in_progress": 1,
+    "blocked": 1,
+    "pending": 13
+  },
+  "git": {
+    "recent": [
+      "7030de1 docs(backlog): 6.2 done \u2014 pacote .py autocontido",
+      "9b47f59 feat(6.2): empacotar CfCCell em .py unico autocontido (pesos base64)",
+      "c5073fb docs(backlog): 6.1 done \u2014 save_brain/load_brain round-trip",
+      "6701a8d feat(6.1): save_brain()/load_brain() round-trip via jnp.savez (erro < 1e-6)",
+      "0bbf448 chore(wip): checkpoint autom\u00e1tico 20260805_110045"
+    ],
+    "uncommitted": 1
+  },
+  "resources": {
+    "cores": 4,
+    "mem_available_gb": 5.91,
+    "mem_total_gb": 7.64,
+    "swap_used_pct": 76.8,
+    "disk_free_gb": 5.29,
+    "heavy_work_safe": true
+  },
+  "safe_to_proceed": true,
+  "elapsed_s": 103.0,
+  "log_rotation": {
+    "deleted": 0
+  }
+}
