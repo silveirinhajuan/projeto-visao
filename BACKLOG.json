@@ -344,13 +344,16 @@
       "id": "6.2",
       "phase": 6,
       "title": "Empacotar arquivo unico autocontido",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "6.1"
       ],
       "files": [
-        "AGENTE_AUTOCONTIDO.md"
+        "visao/core/bundle.py",
+        "visao/tests/test_bundle.py",
+        "visao/core/cfc.py"
       ],
+      "evidence": "visao/core/bundle.py::build_bundle() gera 1 .py unico com pesos em base64 (npz codificado) + import da arquitetura (visao.core.cfc.CfCCell). 2 testes TDD em test_bundle.py PASSAM: (1) cria exatamente 1 arquivo .py com WEIGHTS_B64 e import da arquitetura; (2) rollout do .py recarregado bate com o original a atol=1e-6. Reuso de save_brain (npz) via novo load_brain_state() em cfc.py (sem tocar disco). Suíte completa 155 passed/0 failed (era 153+2). Commit 9b47f59. NOTA: variante .py (doc sec.3) importa a arquitetura; o .tar com módulos embutidos + manifesto ficou para 6.4 (assinatura).",
       "notes": ".py com pesos em base64 OU .tar assinado (modulos + weights.msgpack + manifest.json)."
     },
     {
