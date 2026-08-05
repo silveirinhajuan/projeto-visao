@@ -88,6 +88,12 @@ class CfCCell:
         self.tau = jnp.asarray(tau)
         self.A = jnp.asarray(A)
 
+        # hiperparâmetros guardados para reconstrução do artefato (Fase 6)
+        self.sparsity = float(sparsity)
+        self.tau_min = float(tau_min)
+        self.tau_max = float(tau_max)
+        self.seed = int(seed)
+
         self._step_jit = jax.jit(self._step_raw)
         self._rollout_jit = jax.jit(self._rollout_raw)
 
@@ -180,6 +186,14 @@ class CfCCell:
     def load_brain(self, path) -> None:
         """Recarrega o estado salvo por save_brain(), sobrescrevendo os pesos."""
         state = jnp.load(self._brain_path(path))
+        self.load_brain_state(state)
+
+    def load_brain_state(self, state) -> None:
+        """Aplica um dicionário de estado (npz/jnp) aos pesos da célula.
+
+        Usado pelo artefato autocontido (6.2) que decodifica os pesos em
+        memória, sem tocar disco. Re-jit dos kernels após a troca.
+        """
         self.W_in = jnp.asarray(state["W_in"])
         self.W_rec = jnp.asarray(state["W_rec"])
         self.b = jnp.asarray(state["b"])
