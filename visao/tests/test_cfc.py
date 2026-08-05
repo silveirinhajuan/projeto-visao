@@ -119,3 +119,46 @@ class TestFormaEContrato:
         mask = np.asarray(cell.mask)
         assert np.all(W[mask == 0] == 0.0)
         assert np.all(np.diag(W) == 0.0), "sem auto-sinapse; o vazamento já faz isso"
+
+
+class TestBrainPersistencia:
+    """O cérebro precisa sair do processo vivo e voltar idêntico.
+
+    save_brain()/load_brain() é a fundação da Fase 6 (agente autocontido)
+    e da Fase 3 (arquivo de variantes). Se o round-trip não for bit-faithful
+    a nível de 1e-6, todo o resto da Fase 6 é construído sobre areia.
+    """
+
+    def test_save_load_roundtrip_pesos(self, tmp_path):
+        """Pesos salvos e recarregados numa célula com seed DIFERENTE devem bater."""
+        orig = CfCCell(n_in=2, n_hidden=48, dt=0.1, seed=11)
+        path = tmp_path / "brain"
+        orig.save_brain(path)
+
+        carregada = CfCCell(n_in=2, n_hidden=48, dt=0.1, seed=99)
+        carregada.load_brain(path)
+
+        for name in ("W_in", "W_rec", "b", "A", "mask", "tau"):
+            a = np.asarray(getattr(orig, name))
+            b = np.asarray(getattr(carregada, name))
+            assert np.allclose(a, b, atol=1e-6), (
+                f"{name} divergiu no round-trip: max err "
+                f"{np.abs(a - b).max():.3e}"
+            )
+
+    def test_save_load_roundtrip_rollout(self, tmp_path):
+        """Rollout da célula recarregada deve ser numericamente idêntico."""
+        u = entrada_agitada(150, seed=3)
+        orig = CfCCell(n_in=2, n_hidden=48, dt=0.1, seed=11)
+        path = tmp_path / "brain"
+        orig.save_brain(path)
+
+        carregada = CfCCell(n_in=2, n_hidden=48, dt=0.1, seed=99)
+        carregada.load_brain(path)
+
+        so, _ = orig.rollout(u)
+        sc, _ = carregada.rollout(u)
+        assert np.allclose(np.asarray(so), np.asarray(sc), atol=1e-6), (
+            f"rollout divergiu após round-trip: max err "
+            f"{np.abs(np.asarray(so) - np.asarray(sc)).max():.3e}"
+        )

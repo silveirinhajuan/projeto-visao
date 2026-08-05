@@ -151,3 +151,40 @@ class CfCCell:
             i += n
         self._step_jit = jax.jit(self._step_raw)
         self._rollout_jit = jax.jit(self._rollout_raw)
+
+    # -------------------------------------------------- persistência (Fase 6)
+    @staticmethod
+    def _brain_path(path: str) -> str:
+        path = str(path)
+        return path if path.endswith(".npz") else path + ".npz"
+
+    def save_brain(self, path) -> None:
+        """Salva o estado completo (pesos + topologia) via jnp.savez.
+
+        `path` recebe a extensão .npz. É a base do agente autocontido (6.2)
+        e do arquivo de variantes (3.1).
+
+        Nota: jax.save/load não existem neste build (jax 0.10.2); usa-se a
+        serialização nativa jnp.savez/jnp.load, que é fiel a nível de 1e-6.
+        """
+        state = {
+            "W_in": self.W_in,
+            "W_rec": self.W_rec,
+            "b": self.b,
+            "A": self.A,
+            "mask": self.mask,
+            "tau": self.tau,
+        }
+        jnp.savez(self._brain_path(path), **state)
+
+    def load_brain(self, path) -> None:
+        """Recarrega o estado salvo por save_brain(), sobrescrevendo os pesos."""
+        state = jnp.load(self._brain_path(path))
+        self.W_in = jnp.asarray(state["W_in"])
+        self.W_rec = jnp.asarray(state["W_rec"])
+        self.b = jnp.asarray(state["b"])
+        self.A = jnp.asarray(state["A"])
+        self.mask = jnp.asarray(state["mask"])
+        self.tau = jnp.asarray(state["tau"])
+        self._step_jit = jax.jit(self._step_raw)
+        self._rollout_jit = jax.jit(self._rollout_raw)
