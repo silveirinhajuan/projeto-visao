@@ -298,13 +298,15 @@
       "id": "5.3",
       "phase": 5,
       "title": "Documento de risco honesto para voluntários",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "5.0"
       ],
       "files": [
-        "network/RISCOS_PARA_VOLUNTARIOS.md"
+        "network/RISCOS_PARA_VOLUNTARIOS.md",
+        "network/tests/test_riscos_doc.py"
       ],
+      "evidence": "network/RISCOS_PARA_VOLUNTARIOS.md criado (9KB) em portugues claro, sem marketing, cobrindo: consumo CPU/RAM/energia (estimativa 50-100W->1,2-2,4 kWh/dia), o que o no ENVIA (heartbeat, deltas de gradiente assinados, ledger R5), o que NUNCA envia (arquivos pessoais/teclado/rede arbitraria), desinstalacao em um clique (pasta unica, sem sudo/servico), e R1-R5 auditaveis com tabela. Teste TDD network/tests/test_riscos_doc.py (8 testes de conteudo) RED confirmado (FileNotFoundError) -> GREEN (8 passed). Suíte completa: 132 passed / 0 failed (era 124+8) em 96.57s. Commit 06b9c2c.",
       "notes": "O que pode dar errado, em português claro, para alguém que vai rodar isto na própria máquina: consumo de CPU/RAM/energia, o que o nó envia pela rede, o que ele NUNCA envia, como desinstalar em um clique, e por que uma IA auto-replicante é aceitável aqui (R1-R5 auditáveis). Sem marketing. Se o documento não assusta um pouco, está desonesto."
     },
     {
