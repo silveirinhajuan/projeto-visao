@@ -313,14 +313,16 @@
       "id": "5.4",
       "phase": 5,
       "title": "Checklist F5.0 automatizado (bloqueia recrutamento prematuro)",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "5.1",
         "5.3"
       ],
       "files": [
-        "network/readiness_check.py"
+        "network/readiness_check.py",
+        "network/tests/test_readiness.py"
       ],
+      "evidence": "network/readiness_check.py verifica os 5 pre-requisitos do briefing (Fase4 verde, Fase1 fechada c/ benchmarks, cliente <5min, problema 5.2, doc risco 5.3). TDD: 19 testes em network/tests/test_readiness.py PASSAM (RED ModuleNotFoundError confirmado -> GREEN). Suite completa: 151 passed / 0 failed (era 132+19) em 100.5s. Execucao REAL do script neste ciclo: PROIBIDO RECRUTAR — [FALHOU] Cliente instalavel <5min (benchmark ausente) e [FALHOU] Problema escolhido (5.2 status=blocked). Os 3 itens restantes OK. Guardiao honrando seu proposito: bloqueia recrutamento prematuro. Commit 6ee4ecb.",
       "notes": "Script que verifica os pré-requisitos antes de convidar UMA pessoa: Fase 4 verde, Fase 1 fechada com benchmarks, cliente instalável em <5min, problema escolhido, doc de risco publicado. Enquanto qualquer item falhar, imprime PROIBIDO RECRUTAR. Recrutar cedo queima a única primeira impressão."
     },
     {
