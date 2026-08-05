@@ -329,7 +329,7 @@
       "id": "6.1",
       "phase": 6,
       "title": "save_brain()/load_brain() round-trip",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "1.6"
       ],
@@ -337,7 +337,8 @@
         "visao/core/cfc.py",
         "visao/tests/test_cfc.py"
       ],
-      "notes": "jax.save/load dos pesos + teste de round-trip numerico (erro < 1e-6)."
+      "notes": "jax.save/load dos pesos + teste de round-trip numerico (erro < 1e-6).",
+      "evidence": "TDD estrito: 2 testes RED (AttributeError save_brain ausente) -> GREEN. Implementado com jnp.savez/jnp.load (jax.save/jax.load NAO existem neste build jax 0.10.2; usada a serializacao nativa equivalente). save_brain salva W_in/W_rec/b/A/mask/tau, load_brain recarrega. VALIDADO: round-trip de pesos (W_in,W_rec,b,A,mask,tau) allclose atol=1e-6 em celula com seed DIFERENTE; rollout recarregado allclose atol=1e-6 vs original. 2 testes em test_cfc.py::TestBrainPersistencia PASSAM; suíte completa 153 passed/0 failed. Commit 6701a8d."
     },
     {
       "id": "6.2",
