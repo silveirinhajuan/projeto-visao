@@ -1,0 +1,65 @@
+{
+  "timestamp": "2026-08-05 11:00:45",
+  "governance": {
+    "intact": true,
+    "detail": "INTACTA"
+  },
+  "tests": {
+    "exit_code": 0,
+    "passed": 151,
+    "failed": 0,
+    "green": true,
+    "tail": "........................................................................ [ 47%]\n........................................................................ [ 95%]\n.......                                                                  [100%]\n151 passed in 100.38s (0:01:40)"
+  },
+  "phase0": {
+    "available": true,
+    "plastic_forgetting": 0.008297116110643415,
+    "naive_forgetting": 0.29238043000457414,
+    "reduction_pct": 97.1622190614763,
+    "hypothesis_holds": true
+  },
+  "next_task": {
+    "id": "6.1",
+    "phase": 6,
+    "title": "save_brain()/load_brain() round-trip",
+    "status": "pending",
+    "deps": [
+      "1.6"
+    ],
+    "files": [
+      "visao/core/cfc.py",
+      "visao/tests/test_cfc.py"
+    ],
+    "notes": "jax.save/load dos pesos + teste de round-trip numerico (erro < 1e-6)."
+  },
+  "backlog": {
+    "total": 38,
+    "done": 21,
+    "in_progress": 1,
+    "blocked": 1,
+    "pending": 15
+  },
+  "git": {
+    "recent": [
+      "0098d3f docs(backlog): 5.4 done com evidencia medida (PROIBIDO RECRUTAR honesto)",
+      "6ee4ecb feat(5.4): checklist F5.0 prontidao recrutamento",
+      "a2533d7 docs(5.3): marca tarefa done no BACKLOG com evidencia medida",
+      "06b9c2c feat(5.3): documento de risco honesto para voluntarios + testes de conteudo (TDD)",
+      "3fa62a0 chore(wip): checkpoint autom\u00e1tico 20260805_030038"
+    ],
+    "uncommitted": 1
+  },
+  "resources": {
+    "cores": 4,
+    "mem_available_gb": 5.68,
+    "mem_total_gb": 7.64,
+    "swap_used_pct": 66.5,
+    "disk_free_gb": 5.57,
+    "heavy_work_safe": true
+  },
+  "safe_to_proceed": true,
+  "elapsed_s": 101.4,
+  "log_rotation": {
+    "deleted": 0
+  }
+}
