@@ -500,14 +500,16 @@
       "id": "3.1",
       "phase": 3,
       "title": "Arquivo de variantes (grafo de linhagem)",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "6.1"
       ],
       "files": [
         "FASE3_EVOLUCAO.md",
-        "visao/evolve/archive.py"
+        "visao/evolve/archive.py",
+        "visao/tests/test_archive.py"
       ],
+      "evidence": "visao/evolve/archive.py: Archive (grafo pai->filho) + Variant + PruningForbidden. TDD estrito: 7 testes RED (ModuleNotFoundError) -> GREEN. Cobrem: raiz sem pai; filho liga ao pai; lineage() caminho raiz->no; parent inexistente rejeitado (KeyError); variante de fitness -999.0 PERMANECE no arquivo e prune_by_fitness() levanta PruningForbidden (invariante 3.1 cumprido por construcao); set_fitness atualiza; best() seleciona sem remover. Suíte completa: 162 passed/0 failed em 98.68s. Commit c38bb9f. Pesos modelados como dict serializavel no formato de CfCCell.save_brain (W_in/W_rec/b/A/mask/tau).",
       "notes": "no (codigo, pesos, fitness, pai); nunca podar por fitness baixa."
     },
     {
