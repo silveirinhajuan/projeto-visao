@@ -360,13 +360,14 @@
       "id": "6.3",
       "phase": 6,
       "title": "Self-verify no load (R3)",
-      "status": "pending",
+      "status": "blocked",
       "deps": [
         "6.2"
       ],
       "files": [
         "visao/governance/seal.py"
       ],
+      "blocked_reason": "Requer modificar/executar visao/governance/seal.py (e/ou containment.py) para implementar o gatilho de self-verify no load. Veda LIMITE do agente autonomo: 'NÃO modifique visao/governance/* nem execute seal.py. Fronteira imutável é imutável.' So com quorum humano (R1).",
       "notes": "hash de containment.py bate com manifesto; diverge -> aborta (BoundaryBreached)."
     },
     {
