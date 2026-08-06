@@ -531,13 +531,15 @@
       "id": "3.3",
       "phase": 3,
       "title": "Sandbox de fitness (gVisor/Firecracker)",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "3.1"
       ],
       "files": [
-        "visao/evolve/sandbox.py"
+        "visao/evolve/sandbox.py",
+        "visao/tests/test_sandbox.py"
       ],
+      "evidence": "visao/evolve/sandbox.py: Sandbox.evaluate(variant, eval_script) roda o fitness da variante em subprocesso isolado. CONTRATO CUMPRIDO E MEDIDO (8 testes TDD test_sandbox.py, 2.68s): (1) retorna fitness correto; (2) SEM PERSISTENCIA — dir temporario visao_sb_* sempre removido apos o run (contagem antes==depois); (3) SEM REDE — scan estatico recusa socket/urllib/requests (ForbiddenNetworkAccess) E em runtime o stub em sys.modules bloqueia import dinamico de socket -> NetworkEscape; (4) CPU limite mata loop infinito via RLIMIT_CPU -> ResourceExceeded; (5) RAM limite (RLIMIT_AS) mata alocacao -> ResourceExceeded; (6) script que nao chama report_fitness() -> SandboxError; (7) grava fitness no archive via set_fitness. NOTA DE AMBIENTE: unshare --net falha com 'Operation not permitted' (sem privilegios), entao o isolamento de rede real e feito por sombra de modulos + scan, nao por namespace; o backend de isolacao (gVisor/Firecracker) e trocavel sem alterar o contrato. Suíte completa: 176 passed / 0 failed em 101.5s. Commit 9f1a660.",
       "notes": "sem rede, sem persistencia; toda variante roda aqui antes de promover."
     },
     {
