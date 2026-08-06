@@ -546,14 +546,17 @@
       "id": "3.4",
       "phase": 3,
       "title": "Teste de transferencia (fora do conjunto)",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "3.2",
         "3.3"
       ],
       "files": [
-        "FASE3_EVOLUCAO.md"
+        "FASE3_EVOLUCAO.md",
+        "visao/evolve/transfer.py",
+        "visao/tests/test_transfer.py"
       ],
+      "evidence": "visao/evolve/transfer.py: TransferGate (aceita variante so se o ganho no conjunto de otimizacao se sustenta num conjunto de TRANSFERENCIA fora do conjunto; SameTaskError se a tarefa de transferencia for a mesma da otimizacao). 5 testes TDD em visao/tests/test_transfer.py PASSAM (RED ModuleNotFoundError confirmado -> GREEN): (1) aceita quando ganho transfere (transfer 0.90 >= baseline 0.80); (2) REJEITA quando trapaceia benchmark (transfer 0.55 < baseline 0.80, apesar de ganho no opt); (3) tolerancia de 0.1 admite regressao pequena (0.75 vs 0.80); (4) SameTaskError se transfer_task_id == opt_task_id; (5) end-to-end com fitness MEDIDO de verdade no Sandbox (subprocess): variante reporta 0.98 no opt e 0.40 na transferencia, portao rejeita (nao generaliza). Suíte completa: 181 passed / 0 failed (era 176+5) em 102.67s. Commit 32aa08d.",
       "notes": "ganho so aceito se generaliza; impede trapacear benchmark."
     }
   ]
