@@ -516,15 +516,16 @@
       "id": "3.2",
       "phase": 3,
       "title": "Loop de mutacao (permitidas/proibidas)",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "3.1"
       ],
       "files": [
         "visao/evolve/mutate.py",
-        "visao/governance/containment.py"
+        "visao/tests/test_mutate.py"
       ],
-      "notes": "proibidas: governanca/rede/chaves (R3 fora do espaco de mutacao)."
+      "evidence": "visao/evolve/mutate.py: MutationLoop + mutate_tau/mutate_plasticity/mutate_code + guarda _contains_forbidden (R3). TDD estrito: 6 testes RED (ModuleNotFoundError) -> GREEN. Cobrem: mutate_tau perturba faixa de tau e preserva demais campos/plasticidade; mutate_plasticity perturba oja/surprise/consolidation_lr mantendo pesos; mutate_code anexa tag sem tocar pesos; loop gera filho com parent_id correto; marcadores FORBIDDEN_MARKERS (visao.governance/visao_governance/network.policy/containment/chaves_cripto/PRIVATE_KEY) detectados e codigo de celula liquida (visao.core.cfc) NAO; loop levanta ForbiddenMutation e NAO adiciona ao arquivo se o DNA pai/filho tocar zona proibida. Suite completa: 168 passed/0 failed (era 162+6) em 98.66s. Commit e8815af. NOTA: containment.py (visao/governance) NAO foi tocado — limite do agente; a guarda R3 vive dentro do mutate.py e o manifesto selado (4.1, 39 testes) segue intacto.",
+      "notes": "proibidas: governanca/rede/chaves (R3 fora do espaco de mutacao). containment.py e imutavel; guarda implementada em mutate.py."
     },
     {
       "id": "3.3",
