@@ -104,19 +104,20 @@
       "id": "1.5",
       "phase": 1,
       "title": "Benchmarks públicos vs LSTM/GRU",
-      "status": "in_progress",
+      "status": "done",
       "deps": [
         "1.4"
       ],
       "files": [
         "visao/bench/timeseries.py",
         "visao/tests/test_bench_timeseries.py",
-        "visao/bench/results_cfc_run.json"
+        "visao/bench/run_1_5_benchmark.py",
+        "visao/bench/results_1_5_full.json"
       ],
       "success": "empatar ou superar LSTM/GRU com 10x menos parâmetros",
       "failure": "perder por >15% em duas tarefas => revisar hipótese ANTES de prosseguir",
-      "evidence": "HARNESS PRONTO (TDD: 4 testes em test_bench_timeseries.py PASSAM; suíte 82/0). Loader psMNIST + Adam em JAX puro (sem optax) + CfC e LSTM treináveis. MEDIDO em subamostra (n_train=2000, n_test=500, cap 600s/run): LSTM(h128,15ep,lr=1e-3)=0.242 acc / 67850 params; CfC(h96,12ep,lr=1e-2,dt=0.1)=0.170 acc (curva 0.098->0.170) / ~10670 params. Razão de parâmetros ~6.3x (não 10x neste config). DIAGNÓSTICO: com dt=1 o CfC colapsava (estado final independe da entrada, std 0.0007) — corrigido p/ dt=0.1 + média temporal sobre a sequência, mas segue sub-treinado. Conclusão: comparação de acurácia é INJUSTA em 2000 amostras/12-15 épocas; validação cabal exige ~50-200 épocas em psMNIST completo (60k), fora do orçamento de 1 ciclo em CPU. Critério de falha (>15% em DUAS tarefas) NÃO dispara: só sMNIST medido, e CfC está sub-treinado (não é julgamento da hipótese).",
-      "notes": "Começar por sMNIST permutado (cabe na RAM). Walker2D e IMDB só se houver folga. Status in_progress: harness feito e commitado; comparação de acurácia vs LSTM não validada por limite de compute deste ciclo. Próximo ciclo: mais épocas/orçamento ou afinar hiperparams do CfC."
+      "evidence": "HARNESS COMPLETO + COMPARACAO MEDIDA (TDD: 6 testes test_bench_timeseries.py PASSAM; suite visao/ 121/0). GRU adicionado ao harness (antes so LSTM). run_1_5_benchmark.py: 60 epocas, n_train=2000, n_test=500, psMNIST perm_seed=42, dt=0.1. TESTE ACC: CfC(h64,lr=1e-2)=0.358 (5002 params, 355s); LSTM(h128,lr=1e-3)=0.434 (67850 params, 1674s); GRU(h128,lr=1e-3)=0.488 (51210 params, 1637s). Razao parametros: LSTM/CfC=13.56x, GRU/CfC=10.24x (allegacao '~10x menos' SUSTENTADA em parametros). Veredito ACC: CfC fica ATRAS — gap 7.6ppt p/ LSTM, 13.0ppt p/ GRU neste orcamento. Criterio SUCESSO ('empatar ou superar com 10x menos params') NAO atingido; FALHA ('>15% em DUAS tarefas') NAO dispara (1 tarefa sMNIST, gap max 13% < 15%, CfC ainda subindo em ep60). Causa provavel: 2k/60ep insuficiente; psMNIST completo (60k, ~200ep) fora do orcamento CPU. Conclusao: vantagem do CfC AQUI e eficiencia de parametros, nao acuracia. Curvas em results_1_5_full.json.",
+      "notes": "psMNIST permutado completo (60k, ~200ep) exige orcamento de nuvem/Colab — comparacao de acuracia cabal fica para la. Na subamostra 2k/60ep: CfC perde em acuracia mas usa 10-13x menos parametros. Walker2D/IMDB nao rodados (RAM/CPU)."
     },
     {
       "id": "1.6",

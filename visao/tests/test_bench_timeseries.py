@@ -38,6 +38,21 @@ def test_cfc_trainable_params_below_lstm():
     assert cfc_p < lstm_p  # a alegação do projeto: menos parâmetros
 
 
+def test_gru_trainable_params_below_lstm():
+    from visao.bench import timeseries
+    gru_p = timeseries.count_params(timeseries.gru_params(gru_hidden=128))
+    lstm_p = timeseries.count_params(timeseries.lstm_params(lstm_hidden=128))
+    assert gru_p < lstm_p  # GRU tem 3 portas, LSTM 4
+
+
+def test_gru_forward_runs():
+    from visao.bench import timeseries
+    import jax.numpy as jnp
+    p = timeseries.gru_params(gru_hidden=16)
+    out = timeseries.gru_forward(p, jnp.zeros((5, 1)))
+    assert out.shape == (10,)
+
+
 def test_benchmark_runs_and_reports():
     from visao.bench import timeseries
     res = timeseries.benchmark_smnist(

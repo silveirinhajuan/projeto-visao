@@ -161,6 +161,49 @@ def lstm_forward(params, seq):  # seq (T,1)
     return params["W_out"] @ h + params["b_out"]
 
 
+# ------------------------------------------------------------------ GRU
+def gru_params(gru_hidden: int = 128, seed: int = 2):
+    rng = np.random.default_rng(seed)
+    h = gru_hidden
+    s = 1.0 / np.sqrt(h)
+    W_r = rng.normal(0, s, (h, h + 1)).astype(np.float32)
+    b_r = np.zeros(h, dtype=np.float32)
+    W_z = rng.normal(0, s, (h, h + 1)).astype(np.float32)
+    b_z = np.zeros(h, dtype=np.float32)
+    W_n = rng.normal(0, s, (h, h + 1)).astype(np.float32)
+    b_n = np.zeros(h, dtype=np.float32)
+    W_out = rng.normal(0, 1.0 / np.sqrt(h), (10, h)).astype(np.float32)
+    b_out = np.zeros(10, dtype=np.float32)
+    return {
+        "W_r": jnp.asarray(W_r), "b_r": jnp.asarray(b_r),
+        "W_z": jnp.asarray(W_z), "b_z": jnp.asarray(b_z),
+        "W_n": jnp.asarray(W_n), "b_n": jnp.asarray(b_n),
+        "W_out": jnp.asarray(W_out), "b_out": jnp.asarray(b_out),
+    }
+
+
+def gru_forward(params, seq):  # seq (T,1)
+    h = jnp.zeros(params["W_r"].shape[0])
+    W_r, b_r = params["W_r"], params["b_r"]
+    W_z, b_z = params["W_z"], params["b_z"]
+    W_n, b_n = params["W_n"], params["b_n"]
+
+    def body(h, x):
+        cat = jnp.concatenate([h, x])
+        r = jax.nn.sigmoid(W_r @ cat + b_r)
+        z = jax.nn.sigmoid(W_z @ cat + b_z)
+        g_n = W_n @ cat + b_n
+        # candidato GRU: tanh(W_nx@x + r*(W_nh@h) + b) ; g_n ja tem W_nh@h,
+        # entao subtrai e re-adiciona ponderado por r.
+        r_h = W_n[:, : h.shape[0]] @ h
+        n = jnp.tanh(g_n + (r - 1.0) * r_h)
+        h = (1.0 - z) * n + z * h
+        return h, h
+
+    _, states = jax.lax.scan(body, h, seq)
+    return params["W_out"] @ states[-1] + params["b_out"]
+
+
 # ------------------------------------------------------------------ treino
 def count_params(params) -> int:
     return int(sum(int(p.size) for k, p in params.items() if k != "mask"))
