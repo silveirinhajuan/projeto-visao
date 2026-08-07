@@ -1,0 +1,52 @@
+{
+  "timestamp": "2026-08-06 23:00:34",
+  "governance": {
+    "intact": true,
+    "detail": "INTACTA"
+  },
+  "tests": {
+    "exit_code": 0,
+    "passed": 181,
+    "failed": 0,
+    "green": true,
+    "tail": " 39%]\n........................................................................ [ 79%]\n.....................................                                    [100%]\n=============================== warnings summary ===============================\nvisao/tests/test_sandbox.py::test_evaluate_returns_fitness\nvisao/tests/test_sandbox.py::test_no_persistence_temp_cleaned\nvisao/tests/test_sandbox.py::test_runtime_blocks_socket_use\nvisao/tests/test_sandbox.py::test_cpu_limit_kills_runaway\nvisao/tests/test_sandbox.py::test_mem_limit_kills_allocation\nvisao/tests/test_sandbox.py::test_eval_must_call_report\nvisao/tests/test_sandbox.py::test_evaluate_records_into_archive\nvisao/tests/test_transfer.py::test_portao_usa_fitness_medido_no_sandbox\n  /home/juan/.hermes/hermes-agent/.hermes-runtime/python/generation-1785185141-911078-ffa7b164/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:1885: RuntimeWarning: os.fork() was called. os.fork() is incompatible with multithreaded code, and JAX is multithreaded, so this will likely lead to a deadlock.\n    self.pid = _fork_exec(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n181 passed, 8 warnings in 102.67s (0:01:42)"
+  },
+  "phase0": {
+    "available": true,
+    "plastic_forgetting": 0.008297116110643415,
+    "naive_forgetting": 0.29238043000457414,
+    "reduction_pct": 97.1622190614763,
+    "hypothesis_holds": true
+  },
+  "next_task": null,
+  "backlog": {
+    "total": 38,
+    "done": 27,
+    "in_progress": 1,
+    "blocked": 2,
+    "pending": 8
+  },
+  "git": {
+    "recent": [
+      "72eccdd docs(3.4): registra evid\u00eancia de conclus\u00e3o no BACKLOG",
+      "32aa08d feat(3.4): port\u00e3o de transfer\u00eancia \u2014 ganho s\u00f3 aceito se generaliza (anti-trapa\u00e7a de benchmark)",
+      "9fab0e8 chore(wip): checkpoint autom\u00e1tico 20260806_190032",
+      "0e7c0ae chore(backlog): 3.3 done (fitness sandbox isolado)",
+      "9f1a660 feat(3.3): sandbox de fitness isolado (sem rede, sem persistencia, limites CPU/RAM)"
+    ],
+    "uncommitted": 0
+  },
+  "resources": {
+    "cores": 4,
+    "mem_available_gb": 5.81,
+    "mem_total_gb": 7.64,
+    "swap_used_pct": 74.0,
+    "disk_free_gb": 4.93,
+    "heavy_work_safe": true
+  },
+  "safe_to_proceed": true,
+  "elapsed_s": 103.9,
+  "log_rotation": {
+    "deleted": 0
+  }
+}
