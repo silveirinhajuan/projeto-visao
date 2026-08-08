@@ -1,0 +1,25 @@
+{
+  "config": {
+    "n_train": 60000, "n_test": 10000, "n_epochs": 40, "batch": 512, "dt": 0.1,
+    "dataset": "psMNIST (perm_seed=42, 60k completo)", "device": "Tesla T4 (Colab)"
+  },
+  "models": {
+    "cfc": {"params": 5002, "test_acc": 0.6939, "lr": 0.01, "hidden": 64, "seconds": 530.4, "status": "measured"},
+    "lstm": {"params": 67850, "test_acc": 0.8149, "lr": 0.001, "hidden": 128, "seconds": 1081.1, "status": "measured"},
+    "gru": {"params": 50816, "test_acc": null, "lr": 0.001, "hidden": 128, "status": "NOT_MEASURED", "note": "treino interrompido em ep35/40 (train_acc=0.797) por queda da sessao Colab (limite de cota GPU / token). nao foi salvo test_acc final."}
+  },
+  "param_ratios": {
+    "lstm_over_cfc": 13.56,
+    "gru_over_cfc": 10.16
+  },
+  "verdict": {
+    "best_model": "lstm",
+    "best_test_acc": 0.8149,
+    "cfc_vs_best_gap": 0.121,
+    "note": "psMNIST 60k no T4, 40 ep. CfC perde 12.1pp de acuracia mas usa 13.6x menos params. Comparacao de acuracia cabal (antes so em subamostra 2k). GRU nao medido (sessao caiu)."
+  },
+  "interrupt": {
+    "cause": "Colab session 'visao' (T4) destruida pelo servidor durante o treino do GRU ( ep35/40 ) — TooManyAssignments ao tentar recriar (sessao orfa em limbo consumindo cota GPU).",
+    "recovered": "CfC e LSTM medidos de verdade (log capturado antes da queda). GRU pendente."
+  }
+}
