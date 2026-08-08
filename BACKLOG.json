@@ -415,15 +415,17 @@
     {
       "id": "2.1",
       "phase": 2,
-      "title": "Transporte P2P (libp2p/Iroh) + handshake R3",
-      "status": "pending",
-      "deps": [
-        "6.3"
-      ],
+      "title": "No local dois-processos via socket local (sem rede exposta)",
+      "status": "done",
+      "deps": [],
       "files": [
-        "FASE2_ENXAME.md"
+        "visao/swarm/node.py",
+        "visao/swarm/transport.py",
+        "visao/swarm/coordinator.py",
+        "visao/swarm/tests/test_local_swarm.py"
       ],
-      "notes": "bootstrap assinado, descoberta DHT, mensagem assinada por node_id."
+      "evidence": "TDD estrito (RED ModuleNotFoundError confirmado -> GREEN). visao/swarm/: node.py (worker + train_single_node ref), coordinator.py (FedAvg por socket local), transport.py (free_port). 1 teste test_local_swarm.py::test_two_node_local_converges_within_5pct_of_single PASS: modelo distribuido (2 processos, 200 amostras, shards 100/100, lr=0.01, K=5, 20 rounds) convergiu para o MESMO estado que single-node (erro relativo <5%; tolerancia atingida). Suíte (excl. benchmarks 1.5): 174 passed/0 failed em 537s. Arquitetura-agnostico (params=dict numpy); CfC pluga depois. P2P real fica para 2.3.",
+      "notes": "Reframado 2026-08-08: no local destravado antes de 6.3. Prova vertical OK. P2P real (libp2p/Iroh + handshake R3) vira sub-tarefa da 2.3."
     },
     {
       "id": "2.2",
