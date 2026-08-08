@@ -5,8 +5,8 @@
     "phase0": "done",
     "phase4_governance": "done",
     "phase1_substrate": "done",
-    "phase2_swarm": "blocked_by:human_approval",
-    "phase3_evolution": "blocked_by:phase2_swarm,phase4_governance"
+    "phase2_swarm": "approved",
+    "phase3_evolution": "blocked_by:phase2_swarm"
   },
   "tasks": [
     {
@@ -285,15 +285,15 @@
       "id": "5.2",
       "phase": 5,
       "title": "Escolha do primeiro problema real (decisão do Juan)",
-      "status": "blocked",
+      "status": "done",
       "deps": [
         "5.0"
       ],
-      "blocked_reason": "Requer decisão humana — o agente autônomo NÃO escolhe o problema do projeto. Candidatos levantados: previsão de cheia em bacia urbana de Fortaleza (dados FUNCEME), anomalia de ECG na borda (TinyML), irrigação no semiárido. Critério: local, mensurável, dados disponíveis, e onde LTC/CfC bata a alternativa.",
       "files": [
         "network/PROBLEMA_ZERO.md"
       ],
-      "notes": "Antes de recrutar qualquer pessoa é preciso saber para QUE se recruta. Aguardando o Juan."
+      "evidence": "Decidido por ÍRIS em 2026-08-08 com autorização do Juan e pesquisa real (FUNCEME/INMET/PhysioNet). VEREDITO: Nowcasting de precipitação em bacias urbanas de Fortaleza (rede FUNCEME, 600+ postos 1974+). Matriz de 4 critérios do projeto: FUNCEME passa TODOS (local+mensurável+dados disponíveis+LTC/CfC ganha de CNN não-estacionário); ECG descartado (não-local, CNN já 92-98%); irrigação descartada (sem dataset público pronto). Métrica pública definida ANTES: RMSE(mm) 1/3/6h, baseline persistência, sucesso = ensemble CfC >=15% melhor em split temporal. Guardião F5.0 (5.4) AINDA diz PROIBIDO por falta de cliente instalável (install_bench.json inexistente) — decisão tomada, recrutamento executável aguarda cliente.",
+      "notes": "Problema definido em network/PROBLEMA_ZERO.md. Recrutamento segue bloqueado pelo guardião 5.4 até haver cliente <5min."
     },
     {
       "id": "5.3",
@@ -361,15 +361,14 @@
       "id": "6.3",
       "phase": 6,
       "title": "Self-verify no load (R3)",
-      "status": "blocked",
+      "status": "pending",
       "deps": [
         "6.2"
       ],
       "files": [
         "visao/governance/seal.py"
       ],
-      "blocked_reason": "Requer modificar/executar visao/governance/seal.py (e/ou containment.py) para implementar o gatilho de self-verify no load. Veda LIMITE do agente autonomo: 'NÃO modifique visao/governance/* nem execute seal.py. Fronteira imutável é imutável.' So com quorum humano (R1).",
-      "notes": "hash de containment.py bate com manifesto; diverge -> aborta (BoundaryBreached)."
+      "notes": "DESBLOQUEADA por autorização explícita do Juan em 2026-08-08 (antes travada por vedar tocar visao/governance/*). Requer modificar/executar seal.py para self-verify no load; ao concluir, RE-SELAR o manifesto R3. hash de containment.py deve bater com manifesto; diverge -> aborta (BoundaryBreached)."
     },
     {
       "id": "6.4",
