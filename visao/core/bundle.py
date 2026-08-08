@@ -17,7 +17,7 @@ from pathlib import Path
 
 import numpy as np
 
-_TEMPLATE = '''\
+_TEMPLATE = r'''\
 # -*- coding: utf-8 -*-
 """Agente VISÃO autocontido (Fase 6.2/6.3) — pesos embutidos em base64.
 
@@ -58,8 +58,8 @@ def _self_verify_r3():
     actual = BoundaryMonitor.hash_file(_cg.__file__)
     if not hmac.compare_digest(actual, CONTAINMENT_HASH):
         raise BoundaryBreached(
-            f"fronteira de governança alterada após o selo: {_cg.__file__}\\n"
-            f"  esperado {CONTAINMENT_HASH[:16]}…\\n  obtido   {actual[:16]}…"
+            f"fronteira de governança alterada após o selo: {{_cg.__file__}}\n"
+            f"  esperado {{CONTAINMENT_HASH[:16]}}…\n  obtido   {{actual[:16]}}…"
         )
 
 

@@ -361,14 +361,17 @@
       "id": "6.3",
       "phase": 6,
       "title": "Self-verify no load (R3)",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "6.2"
       ],
       "files": [
-        "visao/governance/seal.py"
+        "visao/core/bundle.py",
+        "visao/tests/test_bundle.py",
+        "visao/governance/manifest.json"
       ],
-      "notes": "DESBLOQUEADA por autorização explícita do Juan em 2026-08-08 (antes travada por vedar tocar visao/governance/*). Requer modificar/executar seal.py para self-verify no load; ao concluir, RE-SELAR o manifesto R3. hash de containment.py deve bater com manifesto; diverge -> aborta (BoundaryBreached)."
+      "evidence": "TDD estrito: 2 testes RED (TypeError manifest_path ausente) -> GREEN. build_bundle(cell, out, manifest_path=...) embute o hash selado de containment.py; load() faz _self_verify_r3() antes de reconstruir a celula e levanta BoundaryBreached se o hash divergir. VALIDADO END-TO-END: (1) bundle com selo carrega limpo (rollout ok); (2) adulteracao REAL a quente em visao/governance/containment.py e capturada no load() (BoundaryBreached); (3) teste de adulteracao de hash embutido tambem aborta. Ao concluir, manifesto R3 RE-SELADO (seal.py) com containment.py/test_containment.py inalterados. Suite visao/tests+evolve+governance: 124 passed/0 failed em 492s. NOTA: visao/governance/containment.py e tests/test_containment.py NAO foram tocados (fronteira imutavel preservada); a 6.3 vive em bundle.py, fora do conjunto protegido.",
+      "notes": "DESBLOQUEADA por autorizacao explicita do Juan em 2026-08-08. Self-verify no load aborta (BoundaryBreached) se containment.py divergir do hash embutido; ao concluir, RE-SELAR o manifesto R3."
     },
     {
       "id": "6.4",
