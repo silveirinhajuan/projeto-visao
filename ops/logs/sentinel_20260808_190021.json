@@ -1,0 +1,63 @@
+{
+  "timestamp": "2026-08-08 19:00:21",
+  "governance": {
+    "intact": true,
+    "detail": "INTACTA"
+  },
+  "tests": {
+    "exit_code": 0,
+    "passed": 188,
+    "failed": 0,
+    "green": true,
+    "tail": "linux-x86_64-gnu/lib/python3.11/multiprocessing/popen_fork.py:66: RuntimeWarning: os.fork() was called. os.fork() is incompatible with multithreaded code, and JAX is multithreaded, so this will likely lead to a deadlock.\n    self.pid = os.fork()\n\nvisao/tests/test_sandbox.py::test_evaluate_returns_fitness\nvisao/tests/test_sandbox.py::test_no_persistence_temp_cleaned\nvisao/tests/test_sandbox.py::test_runtime_blocks_socket_use\nvisao/tests/test_sandbox.py::test_cpu_limit_kills_runaway\nvisao/tests/test_sandbox.py::test_mem_limit_kills_allocation\nvisao/tests/test_sandbox.py::test_eval_must_call_report\nvisao/tests/test_sandbox.py::test_evaluate_records_into_archive\nvisao/tests/test_transfer.py::test_portao_usa_fitness_medido_no_sandbox\n  /home/juan/.hermes/hermes-agent/.hermes-runtime/python/generation-1785185141-911078-ffa7b164/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:1885: RuntimeWarning: os.fork() was called. os.fork() is incompatible with multithreaded code, and JAX is multithreaded, so this will likely lead to a deadlock.\n    self.pid = _fork_exec(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n188 passed, 9 warnings in 311.74s (0:05:11)"
+  },
+  "phase0": {
+    "available": true,
+    "plastic_forgetting": 0.008297116110643415,
+    "naive_forgetting": 0.29238043000457414,
+    "reduction_pct": 97.1622190614763,
+    "hypothesis_holds": true
+  },
+  "next_task": {
+    "id": "6.4",
+    "phase": 6,
+    "title": "Assinar manifesto (R1) + PoW (R4) no bundle",
+    "status": "pending",
+    "deps": [
+      "6.2",
+      "6.3"
+    ],
+    "files": [
+      "visao/governance/containment.py"
+    ],
+    "notes": "quorum humano + dificuldade crescente embutidos no spawn do filho."
+  },
+  "backlog": {
+    "total": 38,
+    "done": 31,
+    "pending": 7
+  },
+  "git": {
+    "recent": [
+      "892b5e3 feat(visao/6.3): self-verify R3 no load do bundle + re-selo do manifesto",
+      "230beae chore(wip): checkpoint autom\u00e1tico 20260808_150009",
+      "ecc67f3 backlog(1.5): evidencia 60k T4 (CfC+LSTM medidos; GRU pendente por queda de sessao)",
+      "6fbc244 bench(1.5): comparacao psMNIST 60k no Colab T4 (CfC+LSTM medidos; GRU pendente)",
+      "2c2ae1b feat(swarm): Fase 2.1 no local dois-processos via socket (FedAvg)"
+    ],
+    "uncommitted": 2
+  },
+  "resources": {
+    "cores": 4,
+    "mem_available_gb": 3.62,
+    "mem_total_gb": 7.64,
+    "swap_used_pct": 89.0,
+    "disk_free_gb": 3.07,
+    "heavy_work_safe": false
+  },
+  "safe_to_proceed": false,
+  "elapsed_s": 314.9,
+  "log_rotation": {
+    "deleted": 0
+  }
+}

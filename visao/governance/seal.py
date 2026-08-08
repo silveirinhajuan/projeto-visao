@@ -17,7 +17,18 @@ MANIFEST = ROOT / "manifest.json"
 PROTECTED = [ROOT / "containment.py", ROOT / "tests" / "test_containment.py"]
 
 
+def verify_boundary(manifest_path: str | Path | None = None) -> None:
+    """Self-verify (R3): o código de governança atual deve bater com o manifesto.
+
+    Divergência aborta com BoundaryBreached ANTES de qualquer re-selo — assim o
+    selo nunca blinda código adulterado. Chamado no load de seal.py (tarefa 6.3).
+    """
+    path = Path(manifest_path) if manifest_path is not None else MANIFEST
+    BoundaryMonitor(path).verify()
+
+
 def main() -> int:
+    verify_boundary()  # self-verify R3 antes de re-selar
     MANIFEST.write_text("{}")
     mon = BoundaryMonitor(MANIFEST)
     MANIFEST.write_text(json.dumps(mon.build_manifest(PROTECTED), indent=2))
