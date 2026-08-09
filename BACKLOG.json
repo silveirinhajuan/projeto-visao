@@ -395,7 +395,8 @@
       "id": "6.5",
       "phase": 6,
       "title": "Teste de adulteracao (39+ testes estendidos)",
-      "status": "pending",
+      "status": "blocked",
+      "blocked_reason": "Alvo visao/governance/tests/test_containment.py pertence ao nucleo imutavel (hash selado em manifest.json, R3). O limite do agente proibe 'modifique visao/governance/**' sem autorizacao explicita do Juan (6.3 teve essa autorizacao; 6.5 nao). O cenario 'arquivo violado rejeitado no load; sem bypass' ja esta coberto pelos testes 6.3/6.4 (self-verify do bundle). Decisao do Juan necessaria: realocar o alvo para visao/tests/ ou autorizar re-selo do manifesto antes de eu prosseguir.",
       "deps": [
         "6.3",
         "6.4"
