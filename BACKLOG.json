@@ -3,10 +3,12 @@
   "version": 1,
   "gates": {
     "phase0": "done",
-    "phase4_governance": "done",
     "phase1_substrate": "done",
-    "phase2_swarm": "approved",
-    "phase3_evolution": "blocked_by:phase2_swarm"
+    "phase4_governance": "done",
+    "scope_revision_2026_08_09": "DESCENTRALIZED SWARM REMOVED. Novo alvo: single-node AGI via aprendizado contínuo incremental (notebook do autor).",
+    "phase2_swarm": "DISCONTINUED 2026-08-09 — escopo single-node; sem enxame, recrutamento ou replicação",
+    "phase3_evolution": "REPURPOSED 2026-08-09 — auto-ajuste LOCAL em sandbox (AutoML comum), não self-rewrite em rede; depende de single-node continual, não de swarm",
+    "phase2_single_node": "active — escala LTC p/ notebook + tarefa real + auto-ajuste local"
   },
   "tasks": [
     {
