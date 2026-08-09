@@ -377,15 +377,17 @@
       "id": "6.4",
       "phase": 6,
       "title": "Assinar manifesto (R1) + PoW (R4) no bundle",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "6.2",
         "6.3"
       ],
       "files": [
-        "visao/governance/containment.py"
+        "visao/core/bundle.py",
+        "visao/tests/test_bundle_64.py"
       ],
-      "notes": "quorum humano + dificuldade crescente embutidos no spawn do filho."
+      "evidence": "TDD estrito (RED ImportError confirmado -> GREEN). visao/core/bundle.py reutiliza QuorumGate (R1) e ReplicationThrottle (R4) JA EXISTENTES em visao/governance/containment.py, somente-leitura — containment.py NAO foi modificado (fronteira R3 imutavel preservada; os testes de self-verify 6.3 continuam passando). 4 testes em visao/tests/test_bundle_64.py: (1) quorum valido k=2/n=3 autoriza; (2) assinaturas abaixo de k -> QuorumDenied; (3) pedido adulterado apos assinar -> QuorumDenied (digest nao bate); (4) PoW obrigatorio e dificuldade crescente (difficulty_for(0,0)=8 < difficulty_for(5,5)=24) -> ThrottleExceeded se quebrado. Suite completa: 192 passed / 0 failed (era 188+4) em 131.9s.",
+      "notes": "quorum humano + dificuldade crescente embutidos no spawn do filho. Implementado em bundle.py (fora do conjunto protegido), igual a 6.3. O 'segredo' simula chaves de hardware dos operadores; em producao cada operador assina com chave propria, sem mudar a interface."
     },
     {
       "id": "6.5",

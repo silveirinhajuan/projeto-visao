@@ -11,8 +11,12 @@ Assinatura (6.4) e teste de adulteração (6.5) são tarefas separadas.
 from __future__ import annotations
 
 import base64
+import hashlib
+import hmac
 import io
 import json
+import os
+import time
 from pathlib import Path
 
 import numpy as np
@@ -144,3 +148,126 @@ def build_bundle(cell, out_path, *, manifest_path=None) -> str:
     )
     out_path.write_text(content, encoding="utf-8")
     return str(out_path)
+
+
+# ════════════════════════════════════════════════════════════════════════════
+# 6.4 — R1 (quórum humano) + R4 (PoW de dificuldade crescente) no spawn do filho
+#
+# Reutiliza as primitivas JÁ EXISTENTES em visao/governance/containment.py
+# (QuorumGate = R1, ReplicationThrottle = R4). NÃO modifica aquele arquivo:
+# a fronteira de governança é imutável (regra R3). Tudo aqui vive fora do
+# conjunto protegido, igual à 6.3.
+#
+# O "segredo" abaixo SIMULA as chaves de hardware dos operadores humanos. Em
+# produção cada operador assina com sua própria chave (YubiKey/Ledger); a
+# interface do QuorumGate não muda, só a função de verificação.
+# ════════════════════════════════════════════════════════════════════════════
+
+
+def _mine_pow(challenge: bytes, generation: int, children: int) -> int:
+    """Minera um nonce de PoW válido para a dificuldade atual (R4)."""
+    from visao.governance.containment import ReplicationThrottle
+
+    throttle = ReplicationThrottle()
+    difficulty = throttle.difficulty_for(generation, children)
+    nonce = 0
+    while not throttle.verify_work(challenge, nonce, difficulty):
+        nonce += 1
+    return nonce
+
+
+def make_spawn_authorization(
+    child_spec_hash: str,
+    operator_pubids: list[str],
+    k: int,
+    secret: bytes,
+    *,
+    generations: int = 0,
+    children: int = 0,
+    nonce: str | None = None,
+    pow_nonce: int | None = None,
+) -> dict:
+    """Constrói a autorização de spawn do filho: R1 (quórum assinado) + R4 (PoW).
+
+    Parameters
+    ----------
+    child_spec_hash : str
+        Hash do spec do filho (vem de ``build_bundle`` / ``CfCCell``).
+    operator_pubids : list[str]
+        IDs dos operadores humanos (k-de-n).
+    k : int
+        Quórum exigido.
+    secret : bytes
+        Segredo compartilhado que SIMULA a assinatura de cada operador.
+    generations, children : int
+        Contagem para a dificuldade R4 crescente.
+    nonce, pow_nonce : opcionais
+        Sobrescrevem o nonce do pedido / da prova de trabalho.
+    """
+    from visao.governance.containment import ReplicationRequest
+
+    req = ReplicationRequest(
+        parent_id="visao-parent",
+        child_spec_hash=child_spec_hash,
+        nonce=nonce or os.urandom(8).hex(),
+        requested_at=time.time(),
+    )
+    digest = req.digest()
+    # R1: cada operador assina o digest (simulado com HMAC do segredo).
+    signatures = {
+        op: hmac.new(secret, digest, hashlib.sha256).hexdigest()
+        for op in operator_pubids
+    }
+    # R4: PoW com dificuldade crescente embutida no spawn.
+    if pow_nonce is None:
+        pow_nonce = _mine_pow(digest, generations, children)
+
+    return {
+        "child_spec_hash": child_spec_hash,
+        "request": {
+            "parent_id": req.parent_id,
+            "nonce": req.nonce,
+            "requested_at": req.requested_at,
+        },
+        "operator_pubids": list(operator_pubids),
+        "k": k,
+        "signatures": signatures,
+        "generation": generations,
+        "children": children,
+        "pow_nonce": pow_nonce,
+    }
+
+
+def verify_spawn_authorization(auth: dict, secret: bytes) -> bool:
+    """R1 + R4 embutidos no spawn do filho.
+
+    Levanta ``QuorumDenied`` (R1) se o quórum for inválido ou ``ThrottleExceeded``
+    (R4) se a prova de trabalho for insuficiente. Retorna True se ambos passarem.
+    """
+    from visao.governance.containment import (
+        QuorumGate,
+        ReplicationRequest,
+        ReplicationThrottle,
+    )
+
+    req = ReplicationRequest(
+        parent_id=auth["request"]["parent_id"],
+        child_spec_hash=auth["child_spec_hash"],
+        nonce=auth["request"]["nonce"],
+        requested_at=auth["request"]["requested_at"],
+    )
+
+    def _verifier(op_id: str, sig: str, digest: bytes) -> bool:
+        expected = hmac.new(secret, digest, hashlib.sha256).hexdigest()
+        return hmac.compare_digest(expected, sig)
+
+    # R1 — quórum humano (levanta QuorumDenied se insuficiente/inválido).
+    gate = QuorumGate(auth["operator_pubids"], auth["k"], verifier=_verifier)
+    gate.authorize(req, auth["signatures"])
+
+    # R4 — prova de trabalho de dificuldade crescente (levanta ThrottleExceeded).
+    throttle = ReplicationThrottle()
+    throttle.assert_permitted(
+        req.digest(), auth["pow_nonce"], auth["generation"], auth["children"]
+    )
+    return True
