@@ -39,13 +39,24 @@ derivação que você pode repetir. Nos blocos «Prova viva» eu indico exatamen
 nesta sessão. Tudo verificável por você.
 #set par(justify: true)
 
-= 1. A célula CfC: o solver fundido e por que ele é estável
+= 1. O solver fundido do `cfc.py`: o que ele *realmente* é (e o que não é)
 
 No `visao/core/cfc.py` a dinâmica *não* é integrada por Euler a cada passo. Ela usa um
-*solver fundido* (explícito/implícito) que é incondicionalmente estável para $d t > 0$,
-$tau > 0$, $f >= 0$. Parta da EDO:
+*solver fundido* (Euler semi-implícito) que é incondicionalmente estável para $d t > 0$,
+$tau > 0$, $f >= 0$. Parta da EDO da LTC:
 
 $ (d x)/(d t) = -[1/tau + f(x, I)] x + f(x, I) A $
+
+#nota[**Correção de nomenclatura (importante).** O que está em `cfc.py` é uma *LTC com
+solver fundido* (discretização Euler semi-implícita da EDO), **não** o CfC fechado de
+Hasani et al. 2022. O CfC verdadeiro aproxima a trajetória inteira por uma *interpolação
+sigmoidal* entre duas sub-redes ponderada por $sigma(-f t)$, sem iterar passo a passo —
+pula de $t=0$ a qualquer $t$. O repositório oficial da Hasani tem inclusive uma *flag*
+para rodar a LTC com solver de EDO semi-implícito em vez do CfC completo: é exatamente o
+esquema deste arquivo. Nome correto: «LTC com solver fundido» ou «ODE-LTC». A prova de
+estabilidade abaixo continua válida — só muda o rótulo. MAT-22 vai dar o vocabulário formal
+(rigidez de EDO, métodos implícitos vs explícitos): tratar o termo em $x$ de forma
+implícita é o mesmo truque de décadas em simulação de reação química e circuitos.]
 
 #deriv[
 *Passo 1 — discretizar com Euler explícito/implícito fundido.*
@@ -64,8 +75,9 @@ $ x_(t+1) = (x_t + d t f A) / (1 + d t (1/tau + f)) $
 
 É exatamente a linha 19 do `cfc.py`: `num = x + dt*f*A ; den = 1 + dt*(1/tau + f) ;
 return num/den`. O denominador é sempre $> 1$ (pois $d t, tau, f > 0$), logo *nunca* divide
-por zero e o estado não explode. Este é o motivo técnico de ser «Closed-form»: a solução de
-um passo é analítica, não numérica.
+por zero e o estado não explode. Este é o motivo técnico da estabilidade incondicional do
+solver (não confunda com «Closed-form» no sentido do CfC de Hasani — aqui é passo fechado
+de integração, não função fechada de $t$): a solução de um passo é analítica, não numérica.
 ]
 
 #codigo[
@@ -125,6 +137,24 @@ A ablação 2×2×2 (BACKLOG 1.9) isola *quem* cause isto. A descoberta honesta:
 - Surpresa ligada *sem* consolidação **diverge** (pesos explodem) — reportado como
   «divergiu», não como vitória.
 
+#nota[**A história que o curso abre está errada — e a ablação já dizia isso.** Os capítulos
+1-2 do curso base vendem «peso local esquece menos porque só quem sabe de A mexe no peso de
+A». Mas a ablação mostra o oposto: Oja isolado (a parte *genuinamente local*) reduz só
+$-0,092$; surpresa isolada é $-0,262$ (o componente principal); consolidação sozinha *piora*
+($+0,178$). O que protege memória não é *localidade* — é *quando* você atualiza (só sob
+surpresa), não *quem pode* atualizar. Descoberta legítima, só de outra família da que abre o
+curso.
+
+Duas conexões úteis: (1) Oja (1982) não é só «Hebb com freio» — é *PCA online*: o vetor de
+peso converge para o autovetor principal da covariância da entrada (o mesmo motor do PCA em
+streaming). (2) Existe uma abordagem inteiramente *global* — *Elastic Weight Consolidation*
+(Kirkpatrick et al., PNAS 2017) — que penaliza mexer em pesos importantes para tarefas
+antigas via informação de Fisher, e funciona bem apesar de ser tão global quanto backprop.
+Reforça o que a ablação sugere: o eixo que importa é proteger atualização por *importância*
+(sinalizada localmente por surpresa, ou globalmente por Fisher), não onde o peso mora.
+Experimento barato pra isolar isso: um EWC guiado por surpresa em vez de Fisher teria a mesma
+cara de curva que vocês mediram?]
+
 #ita[No ITA isto é *análise de variância* e *design de experimentos*: grade fatorial 2×2×2
 (3 fatores, 2 níveis = 8 células, 5 replicatas). Você vai ver exatamente este tipo de
 isolamento de efeito em estatística experimental. O VISÃO já faz.]
@@ -161,13 +191,37 @@ agitada):
 ]
 
 #prova[
-Tentei medir o Lyapunov «na mão» perturbando o estado inicial em 0,01 e rodando o rollout.
-Resultado: as trajetórias convergiram *exatamente* (o sigmoid saturou a perturbação) — o
-próprio fato de dar $-inf$ no log é a assinatura de um sistema fortemente contrativo. O
-projeto mede $lambda$ pelo espectro do jacobiano local ao longo da trajetória, não por
-perturbação bruta (que satura). Deixei o laudo do JSON como fonte autoritativa:
-$lambda = -0,7484$.
+*A medição correta de Lyapunov (algoritmo de Benettin, 1980).* Tentei medir «na mão»
+perturbando o estado inicial em 0,01 — deu $-inf$ no log. Isso *não* é limitação do método:
+é o sintoma clássico de medir Lyapunov com perturbação única sem renormalizar. Num sistema
+fortemente contrativo ($lambda approx -0,75$), qualquer $delta x$ inicial encolhe
+exponencialmente e estoura o underflow de ponto flutuante antes de $T=600$. O remédio
+padrão (Benettin) é: evolua a perturbação 1 passo, meça $log(||delta x'||/||delta x||)$,
+*renormalize* $delta x$ de volta a $e p s$, repita. $lambda approx$ média dos logs. Rodei isto:
+
+```
+Benettin: 600 passos válidos
+  lambda (por passo)       = -0,0788
+  lambda (por unidade temp) = -0,7876
+  razão de contração média por passo = 0,9243
+```
+
+Duas estimativas independentes — espectro de jacobiano ($-0,7484$) e Benettin ($-0,7876$) —
+convergem no mesmo sinal (sub-caótico, contrativo) e na mesma ordem de grandeza. É assim que
+se confirma um número de estabilidade de verdade.
 ]
+
+#nota[**«Borda do caos» — ajuste de vocabulário.** O critério $rho(W_"rec") < 1$ que usamos
+é literalmente a *echo state property* de Jaeger (ESN, 2001) — reservoir computing «puro»,
+não LTC. E «líquido» tem origem paralela: as *Liquid State Machines* de Maass, Natschläger &
+Markram (2002) se chamam assim porque o estado do reservatório é como a superfície de um
+líquido perturbada por uma pedra (o pulso de entrada) — nada a ver com a «constante de tempo
+líquida» da Hasani. Três linhagens (LSM, ESN, LTC) convergem no mesmo vocabulário por boas
+razões matemáticas, mas *não* são a mesma família. E o número avisa: $-0,7484$ não está «na
+borda» — está razoavelmente fundo na zona estável. Para um protótipo é a escolha certa, mas
+na literatura de reservoir (Bertschinger & Natschläger, 2004) a capacidade computacional de
+um reservatório é *maximizada* perto de $lambda approx 0^-$. Vale, mais adiante, tunar para
+$lambda$ mais perto de zero e comparar a memória dos dois regimes.]
 
 = 4. FedAvg: a média que converge (e a prova de $<5%$)
 
@@ -183,15 +237,24 @@ single-node com erro relativo $< 5%$.
 #deriv[
 *Por que a média de pesos faz sentido (intuição de gradiente).*
 Cada nó faz descida de gradiente local: $w_k arrow.r w_k - eta nabla L_k$. Se todos
-partem de $w_0$ e dão um passo, a média dos pesos é:
+partem de $w_0$ e dão **um** passo ($K = 1$), a média dos pesos é:
 
 $ sum_k n_k/n (w_0 - eta nabla L_k) = w_0 - eta sum_k n_k/n nabla L_k $
 
 Mas $sum_k n_k/n nabla L_k = nabla (sum_k n_k L_k / n) = nabla L_(p o o l)$ — o gradiente da
-perda *poolsada* (todos os dados juntos). Portanto a média de uma passada de cada nó =
-*um passo de gradiente descendente sobre o dataset completo*. FedAvg é descida de gradiente
-distribuída. Daí convergir para o mesmo ótimo do single-node.
+perda *poolsada* (todos os dados juntos). Portanto, com $K = 1$, a média de uma passada de
+cada nó = *um passo de gradiente descendente sobre o dataset completo*. FedAvg é descida de
+gradiente distribuída. Daí convergir para o mesmo ótimo do single-node.
 ]
+
+#nota[**A derivação acima é exata só com $K = 1$.** O teste de vocês usa $K = 5$ passos
+locais por rodada. Com $K > 1$ isso deixa de ser exatamente SGD centralizado — funciona bem
+quando os shards são parecidos ou $K$ é pequeno, e degrada sob *heterogeneidade* (os dados
+dos nós diferem). É o fenômeno de *client drift*, estudado após o FedAvg original (McMahan et
+al. 2017) por trabalhos como SCAFFOLD (Karimireddy et al. 2020). Shards 100/100 idênticos
+não revelam isso ainda — mas é exatamente o que vai aparecer na Fase 2.2 com voluntários de
+dados e hardware heterogêneos. Vale preparar correção de drift (SCAFFOLD, FedProx) antes de
+escalar.]
 
 #codigo[
 ```python

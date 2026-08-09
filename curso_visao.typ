@@ -227,8 +227,16 @@ Se $alpha$ for constante num passo, a EDO tem solução analítica:
 $ x(t) = A + (x_0 - A) e^(-alpha t) $
 
 Não precisamos integrar numericamente a cada passo — a célula «salta» para o estado
-relaxado. É por isso que CfC (Closed-form Continuous-time) roda rápido: a solução existe em
+relaxado. É por isso que a família CfC/LTC roda rápido: a solução de um passo existe em
 forma fechada.
+
+#nota[**Correção de nomenclatura (lida o aprofundamento técnico antes de citar isto).**
+O que está implementado em `visao/core/cfc.py` é uma *LTC com solver fundido* (Euler
+semi-implícito da EDO), **não** o CfC fechado de Hasani 2022 (que interpola a trajetória
+inteira por sigmoid sem iterar passos). O `cfc.py` inclusive tem a flag de rodar LTC com
+solver de EDO. O rótulo «CfC» no código é histórico; o correto é ODE-LTC. A matemática
+deste capítulo (solução analítica do passo, estabilidade) continua válida para o solver
+fundido.]
 
 #ex[Resolva $dot(x) = -alpha (x - A)$ com $x(0) = x_0$. Mostre que $x(t) arrow.r A$ quando
 $t arrow.r oo$ (para $alpha > 0$). É só separar variáveis e integrar — a resposta está no
@@ -605,8 +613,8 @@ antes da Fase 3.
 
 == 14.1 Glossário
 
-- *CfC* = Closed-form Continuous-time (célula líquida com solução analítica).
-- *LTC* = Liquid Time-constant (rede de constantes de tempo adaptativas).
+- *CfC* = Closed-form Continuous-time (célula de Hasani 2022; *atencao*: o `cfc.py` do VISÃO é ODE-LTC com solver fundido, nao o CfC fechado — ver aprofundamento).
+- *LTC* = Liquid Time-constant (rede de constantes de tempo adaptativas; o `cfc.py` é ODE-LTC solver fundido).
 - *ESN* = Echo State Network (reservatório com raio espectral < 1).
 - *FedAvg* = Federated Averaging (média ponderada de pesos de nós).
 - *PoW* = Proof of Work (custo computacional crescente).
