@@ -2,7 +2,7 @@
   title: "Neuroplasticidade Local sem Backpropagation como Substrato de Aprendizado Contínuo em Rede Descentralizada e Auto-Replicante sob Contenção Criptográfica Verificável",
   author: "Juan Guerra · Projeto VISÃO",
 )
-#set page(numbering: "1", margin: 2.0cm)
+#set page(numbering: "1", margin: 1.6cm)
 #set text(size: 10.5pt, lang: "pt")
 #set par(justify: true)
 #set heading(numbering: "1.")
