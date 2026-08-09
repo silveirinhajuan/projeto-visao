@@ -423,7 +423,7 @@
       "id": "2.1",
       "phase": 2,
       "title": "No local dois-processos via socket local (sem rede exposta)",
-      "status": "done",
+      "status": "discontinued_2026_08_09",
       "deps": [],
       "files": [
         "visao/swarm/node.py",
@@ -432,13 +432,14 @@
         "visao/swarm/tests/test_local_swarm.py"
       ],
       "evidence": "TDD estrito (RED ModuleNotFoundError confirmado -> GREEN). visao/swarm/: node.py (worker + train_single_node ref), coordinator.py (FedAvg por socket local), transport.py (free_port). 1 teste test_local_swarm.py::test_two_node_local_converges_within_5pct_of_single PASS: modelo distribuido (2 processos, 200 amostras, shards 100/100, lr=0.01, K=5, 20 rounds) convergiu para o MESMO estado que single-node (erro relativo <5%; tolerancia atingida). Suíte (excl. benchmarks 1.5): 174 passed/0 failed em 537s. Arquitetura-agnostico (params=dict numpy); CfC pluga depois. P2P real fica para 2.3.",
-      "notes": "Reframado 2026-08-08: no local destravado antes de 6.3. Prova vertical OK. P2P real (libp2p/Iroh + handshake R3) vira sub-tarefa da 2.3."
+      "notes": "Reframado 2026-08-08: no local destravado antes de 6.3. Prova vertical OK. P2P real (libp2p/Iroh + handshake R3) vira sub-tarefa da 2.3.",
+      "note_scope": "ENXAME REMOVIDO — escopo single-node; tarefa não será executada"
     },
     {
       "id": "2.2",
       "phase": 2,
       "title": "Agregacao robusta a Byzantinos (trimmed mean/Krum)",
-      "status": "pending",
+      "status": "discontinued_2026_08_09",
       "deps": [
         "1.6",
         "2.1"
@@ -446,26 +447,28 @@
       "files": [
         "FASE2_ENXAME.md"
       ],
-      "notes": "deltas comprimidos (top-k+quant); resiste a <=1/3 maliciosos."
+      "notes": "deltas comprimidos (top-k+quant); resiste a <=1/3 maliciosos.",
+      "note_scope": "ENXAME REMOVIDO — escopo single-node; tarefa não será executada"
     },
     {
       "id": "2.3",
       "phase": 2,
       "title": "Prova de contribuicao (commitment + spot-check)",
-      "status": "pending",
+      "status": "discontinued_2026_08_09",
       "deps": [
         "2.1"
       ],
       "files": [
         "FASE2_ENXAME.md"
       ],
-      "notes": "commit ao gradiente antes do passo; sem prova -> fora da agregacao."
+      "notes": "commit ao gradiente antes do passo; sem prova -> fora da agregacao.",
+      "note_scope": "ENXAME REMOVIDO — escopo single-node; tarefa não será executada"
     },
     {
       "id": "2.4",
       "phase": 2,
       "title": "Admissao de filho (R1 quorum + R4 PoW no spawn)",
-      "status": "pending",
+      "status": "discontinued_2026_08_09",
       "deps": [
         "2.1",
         "6.4"
@@ -474,13 +477,14 @@
         "FASE2_ENXAME.md",
         "visao/governance/containment.py"
       ],
-      "notes": "spawn exige quorum humano + PoW 2^(8+1.6c); sem isso, no operando mas nao replica."
+      "notes": "spawn exige quorum humano + PoW 2^(8+1.6c); sem isso, no operando mas nao replica.",
+      "note_scope": "ENXAME REMOVIDO — escopo single-node; tarefa não será executada"
     },
     {
       "id": "2.5",
       "phase": 2,
       "title": "Churn + ledger (expulsao de silencioso, rebuild shard)",
-      "status": "pending",
+      "status": "discontinued_2026_08_09",
       "deps": [
         "2.1",
         "6.5"
@@ -488,13 +492,14 @@
       "files": [
         "FASE2_ENXAME.md"
       ],
-      "notes": "R5 expulsa no silencioso; shard reconstruido por redundancia."
+      "notes": "R5 expulsa no silencioso; shard reconstruido por redundancia.",
+      "note_scope": "ENXAME REMOVIDO — escopo single-node; tarefa não será executada"
     },
     {
       "id": "2.6",
       "phase": 2,
       "title": "Sharding do modelo liquido (10^5 neuronios)",
-      "status": "pending",
+      "status": "discontinued_2026_08_09",
       "deps": [
         "1.6",
         "2.2"
@@ -503,7 +508,8 @@
         "FASE2_ENXAME.md",
         "visao/core/cfc.py"
       ],
-      "notes": "fragmentar CfCCell; nao feito (Fase1 nem chegou a 10^5)."
+      "notes": "fragmentar CfCCell; nao feito (Fase1 nem chegou a 10^5).",
+      "note_scope": "ENXAME REMOVIDO — escopo single-node; tarefa não será executada"
     },
     {
       "id": "3.1",
@@ -567,6 +573,35 @@
       ],
       "evidence": "visao/evolve/transfer.py: TransferGate (aceita variante so se o ganho no conjunto de otimizacao se sustenta num conjunto de TRANSFERENCIA fora do conjunto; SameTaskError se a tarefa de transferencia for a mesma da otimizacao). 5 testes TDD em visao/tests/test_transfer.py PASSAM (RED ModuleNotFoundError confirmado -> GREEN): (1) aceita quando ganho transfere (transfer 0.90 >= baseline 0.80); (2) REJEITA quando trapaceia benchmark (transfer 0.55 < baseline 0.80, apesar de ganho no opt); (3) tolerancia de 0.1 admite regressao pequena (0.75 vs 0.80); (4) SameTaskError se transfer_task_id == opt_task_id; (5) end-to-end com fitness MEDIDO de verdade no Sandbox (subprocess): variante reporta 0.98 no opt e 0.40 na transferencia, portao rejeita (nao generaliza). Suíte completa: 181 passed / 0 failed (era 176+5) em 102.67s. Commit 32aa08d.",
       "notes": "ganho so aceito se generaliza; impede trapacear benchmark."
+    },
+    {
+      "id": "5.1",
+      "phase": 5,
+      "title": "Escala LTC p/ notebook (n=512-1024) validando RAM/CPU",
+      "status": "pending",
+      "deps": [
+        "1.6"
+      ],
+      "evidence": "",
+      "notes": "Alvo: caber em 7.6GB/CPU Ryzen. Medir pico de RAM e tempo por passo."
+    },
+    {
+      "id": "5.2",
+      "title": "Tarefa contínua real do autor (ex: previsão de série temporal da rotina/estudos)",
+      "status": "pending",
+      "deps": [
+        "5.1"
+      ],
+      "notes": "Substituir psMNIST por problema real; demonstrar nunca-esquecer entre 2+ tarefas sequenciais."
+    },
+    {
+      "id": "5.3",
+      "title": "Auto-ajuste local em sandbox (arquitetura/hiperparams) sem self-rewrite em rede",
+      "status": "pending",
+      "deps": [
+        "5.1"
+      ],
+      "notes": "AutoML local comum; R3 protege núcleo. Fora do escopo: replicação."
     }
   ]
 }
