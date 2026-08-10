@@ -1,0 +1,62 @@
+{
+  "timestamp": "2026-08-10 03:00:45",
+  "governance": {
+    "intact": true,
+    "detail": "INTACTA"
+  },
+  "tests": {
+    "exit_code": 0,
+    "passed": 192,
+    "failed": 0,
+    "green": true,
+    "tail": "linux-x86_64-gnu/lib/python3.11/multiprocessing/popen_fork.py:66: RuntimeWarning: os.fork() was called. os.fork() is incompatible with multithreaded code, and JAX is multithreaded, so this will likely lead to a deadlock.\n    self.pid = os.fork()\n\nvisao/tests/test_sandbox.py::test_evaluate_returns_fitness\nvisao/tests/test_sandbox.py::test_no_persistence_temp_cleaned\nvisao/tests/test_sandbox.py::test_runtime_blocks_socket_use\nvisao/tests/test_sandbox.py::test_cpu_limit_kills_runaway\nvisao/tests/test_sandbox.py::test_mem_limit_kills_allocation\nvisao/tests/test_sandbox.py::test_eval_must_call_report\nvisao/tests/test_sandbox.py::test_evaluate_records_into_archive\nvisao/tests/test_transfer.py::test_portao_usa_fitness_medido_no_sandbox\n  /home/juan/.hermes/hermes-agent/.hermes-runtime/python/generation-1785185141-911078-ffa7b164/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:1885: RuntimeWarning: os.fork() was called. os.fork() is incompatible with multithreaded code, and JAX is multithreaded, so this will likely lead to a deadlock.\n    self.pid = _fork_exec(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n192 passed, 9 warnings in 123.49s (0:02:03)"
+  },
+  "phase0": {
+    "available": true,
+    "plastic_forgetting": 0.008297116110643415,
+    "naive_forgetting": 0.29238043000457414,
+    "reduction_pct": 97.1622190614763,
+    "hypothesis_holds": true
+  },
+  "next_task": {
+    "id": "5.1",
+    "phase": 5,
+    "title": "Escala LTC p/ notebook (n=512-1024) validando RAM/CPU",
+    "status": "pending",
+    "deps": [
+      "1.6"
+    ],
+    "evidence": "",
+    "notes": "Alvo: caber em 7.6GB/CPU Ryzen. Medir pico de RAM e tempo por passo."
+  },
+  "backlog": {
+    "total": 41,
+    "done": 31,
+    "blocked": 1,
+    "discontinued_2026_08_09": 6,
+    "pending": 3
+  },
+  "git": {
+    "recent": [
+      "51415b0 chore: bloqueia 6.5 \u2014 alvo em nucleo imutavel (R3), sem autorizacao",
+      "8408ce5 chore(wip): checkpoint autom\u00e1tico 20260809_190004",
+      "e281299 docs: VIS\u00c3O - A Nova Realidade (retrato single-node p\u00f3s-virada de escopo)",
+      "030f0c3 refactor: virada de escopo para single-node AGI (corta enxame/recrutamento/replica\u00e7\u00e3o)",
+      "b9e8d5a docs: corre\u00e7\u00f5es t\u00e9cnicas (LTC-solver vs CfC, Benettin, Oja=PCA/EWC, FedAvg K>1, ESN/LSM) + Benettin vivo"
+    ],
+    "uncommitted": 1
+  },
+  "resources": {
+    "cores": 4,
+    "mem_available_gb": 3.72,
+    "mem_total_gb": 7.64,
+    "swap_used_pct": 86.1,
+    "disk_free_gb": 3.67,
+    "heavy_work_safe": false
+  },
+  "safe_to_proceed": false,
+  "elapsed_s": 125.0,
+  "log_rotation": {
+    "deleted": 0
+  }
+}
