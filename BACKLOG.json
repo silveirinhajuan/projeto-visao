@@ -576,33 +576,38 @@
       "notes": "ganho so aceito se generaliza; impede trapacear benchmark."
     },
     {
-      "id": "5.1",
+      "id": "5.5",
       "phase": 5,
       "title": "Escala LTC p/ notebook (n=512-1024) validando RAM/CPU",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "1.6"
       ],
-      "evidence": "",
-      "notes": "Alvo: caber em 7.6GB/CPU Ryzen. Medir pico de RAM e tempo por passo."
+      "evidence": "visao/analysis/scale_ltc.py + test_scale_ltc.py (3 testes TDD PASSAM). MEDIDO (T=500, n_in=2, CPU Ryzen, envelope 7.6GB=7782MB): n=512 -> pico RSS 623.8MB, tempo/passo 2.55us; n=1024 -> pico RSS 647.4MB (delta da celula +19.0MB), tempo/passo 5.18us. Ambos CABEM no orcamento (647.4 << 7782MB); rollout de 500 passos em 2.6ms (n=1024). Suite completa: 195 passed/0 failed. Conclusao: a celula liquida escala a 512-1024 neuronios no notebook com margem vasta de RAM/CPU; o gargalo real sera o treino (optimizer states), nao a dinamica.",
+      "files": [
+        "visao/analysis/scale_ltc.py",
+        "visao/tests/test_scale_ltc.py",
+        "visao/analysis/results_scale_ltc.json"
+      ],
+      "notes": "Alvo: caber em 7.6GB/CPU Ryzen. Medir pico de RAM e tempo por passo. Renomeado de 5.1 (havia colisao de ID com o 5.1 done de churn do network)."
     },
     {
-      "id": "5.2",
+      "id": "5.6",
       "title": "Tarefa contínua real do autor (ex: previsão de série temporal da rotina/estudos)",
       "status": "pending",
       "deps": [
-        "5.1"
+        "5.5"
       ],
-      "notes": "Substituir psMNIST por problema real; demonstrar nunca-esquecer entre 2+ tarefas sequenciais."
+      "notes": "Substituir psMNIST por problema real; demonstrar nunca-esquecer entre 2+ tarefas sequenciais. Renomeado de 5.2 (colisao de ID com 5.2 done de problema-zero do network)."
     },
     {
-      "id": "5.3",
+      "id": "5.7",
       "title": "Auto-ajuste local em sandbox (arquitetura/hiperparams) sem self-rewrite em rede",
       "status": "pending",
       "deps": [
-        "5.1"
+        "5.5"
       ],
-      "notes": "AutoML local comum; R3 protege núcleo. Fora do escopo: replicação."
+      "notes": "AutoML local comum; R3 protege núcleo. Fora do escopo: replicação. Renomeado de 5.3 (colisao de ID com 5.3 done de riscos do network)."
     }
   ]
 }

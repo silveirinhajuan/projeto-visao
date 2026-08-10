@@ -1,0 +1,29 @@
+{
+  "budget_mb": 7782.4,
+  "n_512": {
+    "n_hidden": 512,
+    "n_in": 2,
+    "T": 500,
+    "dt": 0.1,
+    "rss_before_mb": 623.8,
+    "rss_mid_mb": 616.1,
+    "rss_after_mb": 616.44,
+    "peak_ram_mb": 623.8,
+    "cell_ram_delta_mb": -7.36,
+    "time_per_step_s": 2.55e-06,
+    "rollout_total_s": 0.001276
+  },
+  "n_1024": {
+    "n_hidden": 1024,
+    "n_in": 2,
+    "T": 500,
+    "dt": 0.1,
+    "rss_before_mb": 628.41,
+    "rss_mid_mb": 647.41,
+    "rss_after_mb": 647.41,
+    "peak_ram_mb": 647.41,
+    "cell_ram_delta_mb": 19.0,
+    "time_per_step_s": 5.18e-06,
+    "rollout_total_s": 0.002589
+  }
+}
