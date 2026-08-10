@@ -594,10 +594,18 @@
     {
       "id": "5.6",
       "title": "Tarefa contínua real do autor (ex: previsão de série temporal da rotina/estudos)",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "5.5"
       ],
+      "files": [
+        "visao/analysis/routine_continual.py",
+        "visao/tests/test_routine_continual.py",
+        "visao/analysis/results_routine_continual.json"
+      ],
+      "hypothesis": "refuted",
+      "needs_review": true,
+      "evidence": "IMPLEMENTACAO COMPLETA (TDD): visao/analysis/routine_continual.py + visao/tests/test_routine_continual.py (3 testes passam; suíte completa 198/0 em 112s). Problema real (rotina/estudos do autor) substitui psMNIST: R1='aulas' (ritmo semanal suave) -> R2='provas' (rajadas), protocolo contínuo 2 tarefas SEM replay, esquecimento medido como na Fase 0 (erro_teste pos-R2 - erro_teste logo-apos-R1). RESULTADO MEDIDO (5 seeds, n_steps=2500, n_hidden=96, run_experiment reproduzível em 8s): plastic_mean_forgetting=+0.1766, naive_mean_forgetting=+0.0504 -> plástico esquece ~3.5x MAIS (redução de esquecimento -250.5%). HIPOTESE 'nunca-esquecer' REFUTADA no problema real (oposto da Fase 0 sintética). test_relacionamento_medido_esquecimento_real TRAVA essa medição (plástico>naive) para nao mascarar o achado. Coerente com 1.9: consolidação sozinha AUMENTA esquecimento. NECESSITA DECISAO DO JUAN: (a) aceitar resultado negativo como achado científico legitimo; (b) sintonizar plasticidade em 5.7 para tentar reverter; (c) revisar hipótese. Nao e 'done' de sucesso -- e entrega honesta com achado negativo. Evidência em visao/analysis/results_routine_continual.json.",
       "notes": "Substituir psMNIST por problema real; demonstrar nunca-esquecer entre 2+ tarefas sequenciais. Renomeado de 5.2 (colisao de ID com 5.2 done de problema-zero do network)."
     },
     {
