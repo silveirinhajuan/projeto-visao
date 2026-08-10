@@ -5,25 +5,25 @@
     "n_in": 2,
     "T": 500,
     "dt": 0.1,
-    "rss_before_mb": 626.57,
-    "rss_mid_mb": 618.42,
-    "rss_after_mb": 618.42,
-    "peak_ram_mb": 626.57,
-    "cell_ram_delta_mb": -8.15,
-    "time_per_step_s": 1.1e-06,
-    "rollout_total_s": 0.00055
+    "rss_before_mb": 617.16,
+    "rss_mid_mb": 617.24,
+    "rss_after_mb": 617.24,
+    "peak_ram_mb": 617.24,
+    "cell_ram_delta_mb": 0.07,
+    "time_per_step_s": 2.91e-06,
+    "rollout_total_s": 0.001453
   },
   "n_1024": {
     "n_hidden": 1024,
     "n_in": 2,
     "T": 500,
     "dt": 0.1,
-    "rss_before_mb": 618.64,
-    "rss_mid_mb": 633.63,
-    "rss_after_mb": 633.63,
-    "peak_ram_mb": 633.63,
-    "cell_ram_delta_mb": 14.99,
-    "time_per_step_s": 4.82e-06,
-    "rollout_total_s": 0.002412
+    "rss_before_mb": 636.18,
+    "rss_mid_mb": 679.35,
+    "rss_after_mb": 680.51,
+    "peak_ram_mb": 680.51,
+    "cell_ram_delta_mb": 44.33,
+    "time_per_step_s": 1.8e-06,
+    "rollout_total_s": 0.000901
   }
 }
