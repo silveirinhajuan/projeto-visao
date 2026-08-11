@@ -1,0 +1,60 @@
+{
+  "timestamp": "2026-08-10 23:00:05",
+  "governance": {
+    "intact": true,
+    "detail": "INTACTA"
+  },
+  "tests": {
+    "exit_code": 0,
+    "passed": 198,
+    "failed": 0,
+    "green": true,
+    "tail": "linux-x86_64-gnu/lib/python3.11/multiprocessing/popen_fork.py:66: RuntimeWarning: os.fork() was called. os.fork() is incompatible with multithreaded code, and JAX is multithreaded, so this will likely lead to a deadlock.\n    self.pid = os.fork()\n\nvisao/tests/test_sandbox.py::test_evaluate_returns_fitness\nvisao/tests/test_sandbox.py::test_no_persistence_temp_cleaned\nvisao/tests/test_sandbox.py::test_runtime_blocks_socket_use\nvisao/tests/test_sandbox.py::test_cpu_limit_kills_runaway\nvisao/tests/test_sandbox.py::test_mem_limit_kills_allocation\nvisao/tests/test_sandbox.py::test_eval_must_call_report\nvisao/tests/test_sandbox.py::test_evaluate_records_into_archive\nvisao/tests/test_transfer.py::test_portao_usa_fitness_medido_no_sandbox\n  /home/juan/.hermes/hermes-agent/.hermes-runtime/python/generation-1785185141-911078-ffa7b164/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:1885: RuntimeWarning: os.fork() was called. os.fork() is incompatible with multithreaded code, and JAX is multithreaded, so this will likely lead to a deadlock.\n    self.pid = _fork_exec(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n198 passed, 9 warnings in 112.03s (0:01:52)"
+  },
+  "phase0": {
+    "available": true,
+    "plastic_forgetting": 0.008297116110643415,
+    "naive_forgetting": 0.29238043000457414,
+    "reduction_pct": 97.1622190614763,
+    "hypothesis_holds": true
+  },
+  "next_task": {
+    "id": "5.7",
+    "title": "Auto-ajuste local em sandbox (arquitetura/hiperparams) sem self-rewrite em rede",
+    "status": "pending",
+    "deps": [
+      "5.5"
+    ],
+    "notes": "AutoML local comum; R3 protege n\u00facleo. Fora do escopo: replica\u00e7\u00e3o. Renomeado de 5.3 (colisao de ID com 5.3 done de riscos do network)."
+  },
+  "backlog": {
+    "total": 41,
+    "done": 33,
+    "blocked": 1,
+    "discontinued_2026_08_09": 6,
+    "pending": 1
+  },
+  "git": {
+    "recent": [
+      "db9bb28 feat(5.6): problema real cont\u00ednuo (rotina/estudos) \u2014 hip\u00f3tese nunca-esquecer REFUTADA (medido)",
+      "94f3b3f chore(wip): checkpoint autom\u00e1tico 20260810_190002",
+      "cf647b6 chore(wip): checkpoint autom\u00e1tico 20260810_150000",
+      "cfe84b3 feat(5.5): escala LTC p/ notebook (n=512-1024) validada em RAM/CPU + saneamento de IDs duplicados no BACKLOG",
+      "eb000a8 chore(wip): checkpoint autom\u00e1tico 20260810_110057"
+    ],
+    "uncommitted": 1
+  },
+  "resources": {
+    "cores": 4,
+    "mem_available_gb": 5.79,
+    "mem_total_gb": 7.64,
+    "swap_used_pct": 47.4,
+    "disk_free_gb": 3.03,
+    "heavy_work_safe": true
+  },
+  "safe_to_proceed": true,
+  "elapsed_s": 113.3,
+  "log_rotation": {
+    "deleted": 0
+  }
+}
