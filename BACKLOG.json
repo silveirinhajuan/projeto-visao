@@ -611,10 +611,15 @@
     {
       "id": "5.7",
       "title": "Auto-ajuste local em sandbox (arquitetura/hiperparams) sem self-rewrite em rede",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "5.5"
       ],
+      "files": [
+        "visao/evolve/automl.py",
+        "visao/tests/test_automl.py"
+      ],
+      "evidence": "visao/evolve/automl.py::AutoTuner reusa Archive+Sandbox existentes. TDD estrito: 5 testes em test_automl.py (RED ModuleNotFoundError confirmado -> GREEN). Cobrem: (1) avalia candidatos e devolve o melhor por fitness; (2) respeita orcamento (budget=4 => 4 avaliacoes, nenhuma a mais); (3) deterministico com seed (random mode, seed=42 => mesma melhor config); (4) codigo de toda variante e R3-safe (marcador neutro, _contains_forbidden==False, never toca governance/rede/chaves); (5) registra todas as combinacoes no Archive com fitness. Suíte COMPLETA: 203 passed / 0 failed (era 198+5) em 116s. SEM self-rewrite em rede: o tuner so propoe/avalia/selectiona hiperparametros dentro do sandbox; replicacao fora do escopo por design. Commit 32fc036.",
       "notes": "AutoML local comum; R3 protege núcleo. Fora do escopo: replicação. Renomeado de 5.3 (colisao de ID com 5.3 done de riscos do network)."
     }
   ]
