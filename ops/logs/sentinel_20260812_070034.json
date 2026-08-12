@@ -1,0 +1,51 @@
+{
+  "timestamp": "2026-08-12 07:00:34",
+  "governance": {
+    "intact": true,
+    "detail": "INTACTA"
+  },
+  "tests": {
+    "exit_code": 0,
+    "passed": 203,
+    "failed": 0,
+    "green": true,
+    "tail": ".........................................................              [100%]\n=============================== warnings summary ===============================\nvisao/swarm/tests/test_local_swarm.py::test_two_node_local_converges_within_5pct_of_single[0.01-5-20]\n  /home/juan/.hermes/hermes-agent/.hermes-runtime/python/generation-1785185141-911078-ffa7b164/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/multiprocessing/popen_fork.py:66: RuntimeWarning: os.fork() was called. os.fork() is incompatible with multithreaded code, and JAX is multithreaded, so this will likely lead to a deadlock.\n    self.pid = os.fork()\n\nvisao/tests/test_automl.py: 5 warnings\nvisao/tests/test_sandbox.py: 7 warnings\nvisao/tests/test_transfer.py: 1 warning\n  /home/juan/.hermes/hermes-agent/.hermes-runtime/python/generation-1785185141-911078-ffa7b164/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:1885: RuntimeWarning: os.fork() was called. os.fork() is incompatible with multithreaded code, and JAX is multithreaded, so this will likely lead to a deadlock.\n    self.pid = _fork_exec(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n203 passed, 14 warnings in 120.78s (0:02:00)"
+  },
+  "phase0": {
+    "available": true,
+    "plastic_forgetting": 0.008297116110643415,
+    "naive_forgetting": 0.29238043000457414,
+    "reduction_pct": 97.1622190614763,
+    "hypothesis_holds": true
+  },
+  "next_task": null,
+  "backlog": {
+    "total": 41,
+    "done": 34,
+    "blocked": 1,
+    "discontinued_2026_08_09": 6
+  },
+  "git": {
+    "recent": [
+      "8944780 chore(wip): checkpoint autom\u00e1tico 20260812_030031",
+      "228b09e chore(wip): checkpoint autom\u00e1tico 20260811_230027",
+      "5dd0e0a chore(wip): checkpoint autom\u00e1tico 20260811_190023",
+      "ad2f271 chore(wip): checkpoint autom\u00e1tico 20260811_150020",
+      "496d013 chore(wip): checkpoint autom\u00e1tico 20260811_110015"
+    ],
+    "uncommitted": 1
+  },
+  "resources": {
+    "cores": 4,
+    "mem_available_gb": 6.05,
+    "mem_total_gb": 7.64,
+    "swap_used_pct": 57.4,
+    "disk_free_gb": 2.45,
+    "heavy_work_safe": true
+  },
+  "safe_to_proceed": true,
+  "elapsed_s": 122.0,
+  "log_rotation": {
+    "deleted": 1
+  }
+}
