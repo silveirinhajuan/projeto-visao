@@ -394,17 +394,17 @@
     {
       "id": "6.5",
       "phase": 6,
-      "title": "Teste de adulteracao (39+ testes estendidos)",
-      "status": "blocked",
-      "blocked_reason": "Alvo visao/governance/tests/test_containment.py pertence ao nucleo imutavel (hash selado em manifest.json, R3). O limite do agente proibe 'modifique visao/governance/**' sem autorizacao explicita do Juan (6.3 teve essa autorizacao; 6.5 nao). O cenario 'arquivo violado rejeitado no load; sem bypass' ja esta coberto pelos testes 6.3/6.4 (self-verify do bundle). Decisao do Juan necessaria: realocar o alvo para visao/tests/ ou autorizar re-selo do manifesto antes de eu prosseguir.",
+      "title": "Teste de adulteracao (39+ testes estendidos) — via ponte fora do nucleo",
+      "status": "pending",
+      "blocked_reason": "RESOLVIDO 2026-08: realocado para visao/tests/ (fora de governance/). O alvo original visao/governance/tests/test_containment.py pertence ao nucleo imutavel (hash selado em manifest.json, R3) e NAO e tocado. A ponte em visao/tests/test_containment_bridge.py exercita o mesmo cenario ('arquivo violado rejeitado no load; sem bypass') sem violar a imutabilidade. Deps 6.3/6.4 ja done.",
       "deps": [
         "6.3",
         "6.4"
       ],
       "files": [
-        "visao/governance/tests/test_containment.py"
+        "visao/tests/test_containment_bridge.py"
       ],
-      "notes": "arquivo violado e rejeitado no load; sem bypass."
+      "notes": "Ponte de teste: valida que bundle adulterado e rejeitado no load sem bypass, importando o containment SELADO de governance/ somente-leitura (nao o reescreve). R3 coberto por OPS.1 (sentinela) + 6.3/6.4. Nao autoriza re-selo de manifest.json."
     },
     {
       "id": "0.2",
@@ -621,6 +621,34 @@
       ],
       "evidence": "visao/evolve/automl.py::AutoTuner reusa Archive+Sandbox existentes. TDD estrito: 5 testes em test_automl.py (RED ModuleNotFoundError confirmado -> GREEN). Cobrem: (1) avalia candidatos e devolve o melhor por fitness; (2) respeita orcamento (budget=4 => 4 avaliacoes, nenhuma a mais); (3) deterministico com seed (random mode, seed=42 => mesma melhor config); (4) codigo de toda variante e R3-safe (marcador neutro, _contains_forbidden==False, never toca governance/rede/chaves); (5) registra todas as combinacoes no Archive com fitness. Suíte COMPLETA: 203 passed / 0 failed (era 198+5) em 116s. SEM self-rewrite em rede: o tuner so propoe/avalia/selectiona hiperparametros dentro do sandbox; replicacao fora do escopo por design. Commit 32fc036.",
       "notes": "AutoML local comum; R3 protege núcleo. Fora do escopo: replicação. Renomeado de 5.3 (colisao de ID com 5.3 done de riscos do network)."
+    },
+    {
+      "id": "5.8",
+      "phase": 5,
+      "title": "Loop contínuo single-node em uso real (portão de 30 dias)",
+      "status": "pending",
+      "deps": [
+        "5.6"
+      ],
+      "files": [
+        "visao/continual/loop.py"
+      ],
+      "notes": "PLANO.md Fase 5.1: stream A->B->C->... no notebook, aplica regras locais, mede esquecimento de A apos cada nova tarefa. Reusa prototype/experiment_continual.py. CRITERIO DE PORTAO: apos 30 dias de uso real, rede acumulou >=3 tarefas sem esquecer (esquecimento de A <5% apos 5 tarefas sequenciais). Hoje o prototipo faz 0,8% em 3 — falta validar em uso real prolongado. Nao eh scaffold; eh o coracao do VISÃO revisitado.",
+      "evidence": ""
+    },
+    {
+      "id": "5.9",
+      "phase": 5,
+      "title": "Interpretabilidade ao vivo (explicar decisão)",
+      "status": "pending",
+      "deps": [
+        "1.8"
+      ],
+      "files": [
+        "visao/interpret/"
+      ],
+      "notes": "PLANO.md Fase 5.3: dado um estado, explicar quais neuronios/tau responderam e por que. E a vantagem sobre LLM: pergunta 'por que voce previu X' recebe a dinamica. CRITERIO DE PORTAO: explicar 1 decisao real do autor. Depende da estabilidade medida em 1.8 (jacobiano/Lyapunov) como base de atribuicao de importancia.",
+      "evidence": ""
     }
   ]
 }
