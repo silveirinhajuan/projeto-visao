@@ -395,8 +395,9 @@
       "id": "6.5",
       "phase": 6,
       "title": "Teste de adulteracao (39+ testes estendidos) — via ponte fora do nucleo",
-      "status": "pending",
+      "status": "done",
       "blocked_reason": "RESOLVIDO 2026-08: realocado para visao/tests/ (fora de governance/). O alvo original visao/governance/tests/test_containment.py pertence ao nucleo imutavel (hash selado em manifest.json, R3) e NAO e tocado. A ponte em visao/tests/test_containment_bridge.py exercita o mesmo cenario ('arquivo violado rejeitado no load; sem bypass') sem violar a imutabilidade. Deps 6.3/6.4 ja done.",
+      "evidence": "visao/tests/test_containment_bridge.py: 37 testes PASSAM (ponte importa BoundaryMonitor/BoundaryBreached/QuorumGate/LifetimeGuard/LineageLedger do containment SELADO somente-leitura, sem reescreve-lo). Cobertura: selo vivo confere intacto; copia temp adulterada/removida -> BoundaryBreached; tentativas de bypass no bundle (hash apagado/modificado/nulo) recusam carregar; R1-R5 exercitadas via simulacoes na ponte; estresse de boundary em bundles com multiplos seeds/params. Suite completa 240 passed / 0 failed (commit 617bb15 + re-verificacao neste ciclo). manifest.json NAO re-selado (fronteira R3 imutavel preservada).",
       "deps": [
         "6.3",
         "6.4"
