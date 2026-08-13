@@ -58,6 +58,13 @@ class CfCCell:
         seed: int = 0,
         rng: np.random.Generator | None = None,
     ):
+        if n_in <= 0:
+            raise ValueError(f"n_in deve ser > 0, obtido {n_in}")
+        if n_hidden <= 0:
+            raise ValueError(f"n_hidden deve ser > 0, obtido {n_hidden}")
+        if dt <= 0:
+            raise ValueError(f"dt deve ser > 0, obtido {dt}")
+
         rng = rng if rng is not None else np.random.default_rng(seed)
         self.n_in = n_in
         self.n_hidden = n_hidden

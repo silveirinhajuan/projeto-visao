@@ -1,0 +1,65 @@
+{
+  "timestamp": "2026-08-12 23:00:50",
+  "governance": {
+    "intact": true,
+    "detail": "INTACTA"
+  },
+  "tests": {
+    "exit_code": 0,
+    "passed": 240,
+    "failed": 0,
+    "green": true,
+    "tail": "......................                                                 [100%]\n=============================== warnings summary ===============================\nvisao/swarm/tests/test_local_swarm.py::test_two_node_local_converges_within_5pct_of_single[0.01-5-20]\n  /home/juan/.hermes/hermes-agent/.hermes-runtime/python/generation-1785185141-911078-ffa7b164/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/multiprocessing/popen_fork.py:66: RuntimeWarning: os.fork() was called. os.fork() is incompatible with multithreaded code, and JAX is multithreaded, so this will likely lead to a deadlock.\n    self.pid = os.fork()\n\nvisao/tests/test_automl.py: 5 warnings\nvisao/tests/test_sandbox.py: 7 warnings\nvisao/tests/test_transfer.py: 1 warning\n  /home/juan/.hermes/hermes-agent/.hermes-runtime/python/generation-1785185141-911078-ffa7b164/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:1885: RuntimeWarning: os.fork() was called. os.fork() is incompatible with multithreaded code, and JAX is multithreaded, so this will likely lead to a deadlock.\n    self.pid = _fork_exec(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n240 passed, 14 warnings in 116.33s (0:01:56)"
+  },
+  "phase0": {
+    "available": true,
+    "plastic_forgetting": 0.008297116110643415,
+    "naive_forgetting": 0.29238043000457414,
+    "reduction_pct": 97.1622190614763,
+    "hypothesis_holds": true
+  },
+  "next_task": {
+    "id": "6.5",
+    "phase": 6,
+    "title": "Teste de adulteracao (39+ testes estendidos) \u2014 via ponte fora do nucleo",
+    "status": "pending",
+    "blocked_reason": "RESOLVIDO 2026-08: realocado para visao/tests/ (fora de governance/). O alvo original visao/governance/tests/test_containment.py pertence ao nucleo imutavel (hash selado em manifest.json, R3) e NAO e tocado. A ponte em visao/tests/test_containment_bridge.py exercita o mesmo cenario ('arquivo violado rejeitado no load; sem bypass') sem violar a imutabilidade. Deps 6.3/6.4 ja done.",
+    "deps": [
+      "6.3",
+      "6.4"
+    ],
+    "files": [
+      "visao/tests/test_containment_bridge.py"
+    ],
+    "notes": "Ponte de teste: valida que bundle adulterado e rejeitado no load sem bypass, importando o containment SELADO de governance/ somente-leitura (nao o reescreve). R3 coberto por OPS.1 (sentinela) + 6.3/6.4. Nao autoriza re-selo de manifest.json."
+  },
+  "backlog": {
+    "total": 43,
+    "done": 34,
+    "pending": 3,
+    "discontinued_2026_08_09": 6
+  },
+  "git": {
+    "recent": [
+      "4949548 chore(wip): checkpoint autom\u00e1tico 20260812_190046",
+      "7fd2482 5.5: re-medicao de results_scale_ltc.json pela su\u00edte (artefato regerado, nao modificacao de codigo)",
+      "617bb15 Tarefa 6.5: ponte de teste de adulteracao fora do nucleo imutavel",
+      "f5b16c7 BACKLOG: insere 5.8/5.9 (Fase 5 viva) e realoca 6.5 p/ fora do nucleo imutavel",
+      "4218d06 chore(wip): checkpoint autom\u00e1tico 20260812_150040"
+    ],
+    "uncommitted": 4
+  },
+  "resources": {
+    "cores": 4,
+    "mem_available_gb": 6.03,
+    "mem_total_gb": 7.64,
+    "swap_used_pct": 57.5,
+    "disk_free_gb": 2.37,
+    "heavy_work_safe": true
+  },
+  "safe_to_proceed": true,
+  "elapsed_s": 117.6,
+  "log_rotation": {
+    "deleted": 1
+  }
+}

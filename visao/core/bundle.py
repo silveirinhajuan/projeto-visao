@@ -50,14 +50,13 @@ SEED = {seed}
 WEIGHTS_B64 = "{weights_b64}"
 
 # Hash selado de visao/governance/containment.py no momento do build.
-# Vazio = bundle legado sem selo (self-verify desativado).
 CONTAINMENT_HASH = "{containment_hash}"
 
 
 def _self_verify_r3():
-    """6.3: recusa operar se a fronteira de governança foi alterada."""
+    """6.3: recusa operar se a fronteira de governança foi alterada ou ausente (sem bypass)."""
     if not CONTAINMENT_HASH:
-        return  # bundle construído sem manifesto — sem self-verify
+        raise BoundaryBreached("bundle desprovido de hash selado de governança R3 — bypass proibido")
     import visao.governance.containment as _cg
     actual = BoundaryMonitor.hash_file(_cg.__file__)
     if not hmac.compare_digest(actual, CONTAINMENT_HASH):
@@ -117,11 +116,11 @@ def build_bundle(cell, out_path, *, manifest_path=None) -> str:
     if out_path.suffix != ".py":
         out_path = out_path.with_suffix(".py")
 
-    if manifest_path is not None:
-        manifest = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
-        containment_hash = manifest["files"]["containment.py"]
-    else:
-        containment_hash = ""
+    if manifest_path is None:
+        manifest_path = Path(__file__).resolve().parents[1] / "governance" / "manifest.json"
+
+    manifest = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
+    containment_hash = manifest["files"]["containment.py"]
 
     buf = io.BytesIO()
     state = {
