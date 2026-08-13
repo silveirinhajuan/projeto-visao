@@ -1,0 +1,64 @@
+{
+  "timestamp": "2026-08-13 07:00:56",
+  "governance": {
+    "intact": true,
+    "detail": "INTACTA"
+  },
+  "tests": {
+    "exit_code": 0,
+    "passed": 240,
+    "failed": 0,
+    "green": true,
+    "tail": "......................                                                 [100%]\n=============================== warnings summary ===============================\nvisao/swarm/tests/test_local_swarm.py::test_two_node_local_converges_within_5pct_of_single[0.01-5-20]\n  /home/juan/.hermes/hermes-agent/.hermes-runtime/python/generation-1785185141-911078-ffa7b164/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/multiprocessing/popen_fork.py:66: RuntimeWarning: os.fork() was called. os.fork() is incompatible with multithreaded code, and JAX is multithreaded, so this will likely lead to a deadlock.\n    self.pid = os.fork()\n\nvisao/tests/test_automl.py: 5 warnings\nvisao/tests/test_sandbox.py: 7 warnings\nvisao/tests/test_transfer.py: 1 warning\n  /home/juan/.hermes/hermes-agent/.hermes-runtime/python/generation-1785185141-911078-ffa7b164/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:1885: RuntimeWarning: os.fork() was called. os.fork() is incompatible with multithreaded code, and JAX is multithreaded, so this will likely lead to a deadlock.\n    self.pid = _fork_exec(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n240 passed, 14 warnings in 117.08s (0:01:57)"
+  },
+  "phase0": {
+    "available": true,
+    "plastic_forgetting": 0.008297116110643415,
+    "naive_forgetting": 0.29238043000457414,
+    "reduction_pct": 97.1622190614763,
+    "hypothesis_holds": true
+  },
+  "next_task": {
+    "id": "5.8",
+    "phase": 5,
+    "title": "Loop cont\u00ednuo single-node em uso real (port\u00e3o de 30 dias)",
+    "status": "pending",
+    "deps": [
+      "5.6"
+    ],
+    "files": [
+      "visao/continual/loop.py"
+    ],
+    "notes": "PLANO.md Fase 5.1: stream A->B->C->... no notebook, aplica regras locais, mede esquecimento de A apos cada nova tarefa. Reusa prototype/experiment_continual.py. CRITERIO DE PORTAO: apos 30 dias de uso real, rede acumulou >=3 tarefas sem esquecer (esquecimento de A <5% apos 5 tarefas sequenciais). Hoje o prototipo faz 0,8% em 3 \u2014 falta validar em uso real prolongado. Nao eh scaffold; eh o coracao do VIS\u00c3O revisitado.",
+    "evidence": ""
+  },
+  "backlog": {
+    "total": 43,
+    "done": 35,
+    "discontinued_2026_08_09": 6,
+    "pending": 2
+  },
+  "git": {
+    "recent": [
+      "03417ce chore(wip): checkpoint autom\u00e1tico 20260813_030053",
+      "c705aa5 6.5: marca ponte de teste de adulteracao como concluida (37 testes, suite 240/0)",
+      "7ce66c8 chore(wip): checkpoint autom\u00e1tico 20260812_230050",
+      "4949548 chore(wip): checkpoint autom\u00e1tico 20260812_190046",
+      "7fd2482 5.5: re-medicao de results_scale_ltc.json pela su\u00edte (artefato regerado, nao modificacao de codigo)"
+    ],
+    "uncommitted": 1
+  },
+  "resources": {
+    "cores": 4,
+    "mem_available_gb": 5.95,
+    "mem_total_gb": 7.64,
+    "swap_used_pct": 53.1,
+    "disk_free_gb": 2.28,
+    "heavy_work_safe": true
+  },
+  "safe_to_proceed": true,
+  "elapsed_s": 118.4,
+  "log_rotation": {
+    "deleted": 1
+  }
+}
