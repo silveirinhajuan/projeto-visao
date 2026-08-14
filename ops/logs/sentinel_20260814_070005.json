@@ -1,0 +1,50 @@
+{
+  "timestamp": "2026-08-14 07:00:05",
+  "governance": {
+    "intact": true,
+    "detail": "INTACTA"
+  },
+  "tests": {
+    "exit_code": 0,
+    "passed": 247,
+    "failed": 0,
+    "green": true,
+    "tail": ".............................                                          [100%]\n=============================== warnings summary ===============================\nvisao/swarm/tests/test_local_swarm.py::test_two_node_local_converges_within_5pct_of_single[0.01-5-20]\n  /home/juan/.hermes/hermes-agent/.hermes-runtime/python/generation-1785185141-911078-ffa7b164/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/multiprocessing/popen_fork.py:66: RuntimeWarning: os.fork() was called. os.fork() is incompatible with multithreaded code, and JAX is multithreaded, so this will likely lead to a deadlock.\n    self.pid = os.fork()\n\nvisao/tests/test_automl.py: 5 warnings\nvisao/tests/test_sandbox.py: 7 warnings\nvisao/tests/test_transfer.py: 1 warning\n  /home/juan/.hermes/hermes-agent/.hermes-runtime/python/generation-1785185141-911078-ffa7b164/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/subprocess.py:1885: RuntimeWarning: os.fork() was called. os.fork() is incompatible with multithreaded code, and JAX is multithreaded, so this will likely lead to a deadlock.\n    self.pid = _fork_exec(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n247 passed, 14 warnings in 119.08s (0:01:59)"
+  },
+  "phase0": {
+    "available": true,
+    "plastic_forgetting": 0.008297116110643415,
+    "naive_forgetting": 0.29238043000457414,
+    "reduction_pct": 97.1622190614763,
+    "hypothesis_holds": true
+  },
+  "next_task": null,
+  "backlog": {
+    "total": 43,
+    "done": 37,
+    "discontinued_2026_08_09": 6
+  },
+  "git": {
+    "recent": [
+      "6fdeef8 chore(wip): checkpoint autom\u00e1tico 20260814_030057",
+      "4529da2 chore(wip): checkpoint autom\u00e1tico 20260813_230049",
+      "383ddc6 docs(backlog): 5.9 done \u2014 interpretabilidade ao vivo (evidencia medida)",
+      "ee873b9 feat(5.9): interpretabilidade ao vivo \u2014 explica neuronios/tau e decisao (TDD)",
+      "306338e chore(wip): checkpoint autom\u00e1tico 20260813_190010"
+    ],
+    "uncommitted": 1
+  },
+  "resources": {
+    "cores": 4,
+    "mem_available_gb": 5.64,
+    "mem_total_gb": 7.64,
+    "swap_used_pct": 15.2,
+    "disk_free_gb": 3.38,
+    "heavy_work_safe": true
+  },
+  "safe_to_proceed": true,
+  "elapsed_s": 120.4,
+  "log_rotation": {
+    "deleted": 1
+  }
+}
