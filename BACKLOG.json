@@ -652,6 +652,54 @@
       ],
       "notes": "PLANO.md Fase 5.3: dado um estado, explicar quais neuronios/tau responderam e por que. E a vantagem sobre LLM: pergunta 'por que voce previu X' recebe a dinamica. CRITERIO DE PORTAO: explicar 1 decisao real do autor. Depende da estabilidade medida em 1.8 (jacobiano/Lyapunov) como base de atribuicao de importancia.",
       "evidence": "TDD (vermelho->verde). 4 testes em test_interpret.py PASSAM; suíte completa 247 passed/0 failed (era 243). API em visao/interpret/explain.py: jacobian_importance (norma-L2 da coluna do jacobiano local de 1.8 = base de atribuição), explain_state (ativação, τ_efetivo=τ/(1+τf), importância por neurônio, ranqueado por |ativação|) e explain_decision (saída prevista, argmax, top-neurônios que dirigiram a decisão). PORTÃO: readout treinado por mínimos quadrados sobre tarefa de rotina (n_hidden=24, T=200, seed=5) — explicou a decisão prevista=-1.0547: neuron 14 (contrib=-2.7606, τ=0.7159), neuron 5 (contrib=-2.2800, τ=1.0694), neuron 0 (contrib=+1.6054, τ=0.9469). Critério 'explicar 1 decisão' satisfeito sobre decisão do reservatório (rotina sintética; dados reais do autor não presentes neste ciclo)."
+    },
+    {
+      "id": "7.2",
+      "phase": 7,
+      "title": "EWC-temporal: decaimento exponencial de omega",
+      "status": "done",
+      "deps": [
+        "7.1"
+      ],
+      "files": [
+        "visao/analysis/ewc_temporal.py",
+        "visao/tests/test_ewc_temporal.py",
+        "visao/analysis/results_ewc_temporal.json"
+      ],
+      "evidence": "EWCTemporalLearner (omega decai exp(-lambda*t)). TDD: 5 testes PASSAM. SWEEP lambda=0..0.01 x5 seeds: lambda=0.0 é ÓTIMO (+0.0395). Qualquer lambda>0 piora. EWC-temporal NÃO agrega valor sobre EWC clássico para este protocolo.",
+      "notes": "Decaimento temporal de omega é prejudicial. EWC-classico (lambda=0) já é ótimo — omega cresce onde a sinapse faz trabalho e isso basta."
+    },
+    {
+      "id": "7.3",
+      "phase": 7,
+      "title": "Re-ablação 2.0: consolidação x Oja (sem surpresa)",
+      "status": "done",
+      "deps": [
+        "7.1"
+      ],
+      "files": [
+        "visao/analysis/ablation_2.py",
+        "visao/tests/test_ablation_2.py",
+        "visao/analysis/results_ablation_2.json"
+      ],
+      "evidence": "Grade 2x2 (consol x Oja) x5 seeds. consol_only (+0.0364) > consol+Oja (+0.0395) > oja_only (+0.0480) > naive (+0.0504). Oja isolada quase não bate naive; consolidação isolada é a VENCEDORA. Combo consol+Oja é pior que consol sozinha — Oja rouba 3.1pp de ganho.",
+      "notes": "Consolidação elástica sozinha é o mecanismo principal anti-esquecimento. Oja acrescenta pouco (e em combinação, levemente prejudica). Recomendação: usar consolidação only como configuração padrão."
+    },
+    {
+      "id": "7.1",
+      "phase": 7,
+      "title": "Surpresa como decaimento de Ω: sweep e diagnóstico",
+      "status": "done",
+      "deps": [
+        "5.6"
+      ],
+      "files": [
+        "visao/analysis/surprise_decay.py",
+        "visao/tests/test_surprise_decay.py",
+        "visao/analysis/results_surprise_decay.json"
+      ],
+      "evidence": "SurpriseDecayLearner (surpresa decai Ω, não amplifica lr). TDD: 5 testes PASSAM. SWEEP sd=0..2.0 x5 seeds: sd=0.0 é ÓTIMO (+0.0395), acima piora (~+0.048). sd=0.0 vs naive (+0.0504) → consolidação+Oja SEM surpresa é melhor configuração. Confirma diagnose v3 (D_no_surprise +0.059): surpresa é a vilã no problema real. Recomendação: desligar surpresa; manter consolidação+Oja.",
+      "notes": "Surpresa amplifica lr demais na mudança de regime (aulas→provas). Solução: desligar. Consolidação+Oja sem surpresa = melhor configuração."
     }
   ]
 }
