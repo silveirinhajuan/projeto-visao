@@ -83,6 +83,9 @@ class VisaoBrain:
         surprise_gain: float = 3.0,
         lambda_decay: float = 0.0005,
         meta_learn: bool = False,
+        adaptive_consolidation: bool = False,
+        c_min: float = 0.0,
+        c_max: float = 16.0,
         dt: float = 0.15,
         seed: int = 0,
     ):
@@ -132,6 +135,13 @@ class VisaoBrain:
         self._meta_alpha = 0.01  # taxa de ajuste do meta-learner
         self._meta_min = lr * 0.1
         self._meta_max = lr * 5.0
+
+        # --- Consolidação adaptativa ---
+        self.adaptive_consolidation = adaptive_consolidation
+        self.c_min = c_min
+        self.c_max = c_max
+        self._surprise_window = []
+        self._window_size = 100
 
     # ==============================================================
     #  API PÚBLICA
@@ -296,13 +306,14 @@ class VisaoBrain:
         Aplica na ordem:
           1. Predição
           2. Surpresa (gate neuromodulatório)
-          3. lr efetivo: base / (1 + consolidation * omega) * surprise_boost
-          4. Atualização delta rule
-          5. Crescimento de importancia (EWC)
-          6. Decaimento temporal de importancia (EWC-temporal)
-          7. Surpresa como decaimento de omega (surprise_decay 7.1)
-          8. Oja no recorrente
-          9. Atualização dos baselines de surpresa
+          3. Consolidação adaptativa (se ativada)
+          4. lr efetivo: base / (1 + consolidation * omega)
+          5. Atualização delta rule
+          6. Crescimento de importancia (EWC)
+          7. Decaimento temporal de importancia (EWC-temporal)
+          8. Surpresa como decaimento de omega (surprise_decay 7.1)
+          9. Oja no recorrente
+          10. Atualização dos baselines de surpresa
         """
         learner = self.learner
 
@@ -314,33 +325,43 @@ class VisaoBrain:
         # 2. Surpresa
         s = learner.surprise(err_mag)
 
-        # 3. lr efetivo: EWC fecha pela importancia; surpresa NÃO amplifica
+        # 3. Consolidação adaptativa
+        if self.adaptive_consolidation:
+            self._surprise_window.append(s)
+            if len(self._surprise_window) > self._window_size:
+                self._surprise_window.pop(0)
+            if len(self._surprise_window) >= self._window_size:
+                mean_s = np.mean(self._surprise_window)
+                normalized = np.clip((mean_s - 1.0) / 1.0, 0.0, 1.0)
+                learner.consolidation = self.c_min + (self.c_max - self.c_min) * normalized
+
+        # 4. lr efetivo: EWC fecha pela importancia; surpresa NÃO amplifica
         #    (conforme 7.1: surpresa decai omega, não amplifica lr)
         eff = learner.lr / (1.0 + learner.consolidation * learner.omega)
 
-        # 4. Delta rule
+        # 5. Delta rule
         delta = np.outer(err, x)
         learner.W_out += eff * delta
         learner.b_out += learner.lr * err
 
-        # 5. Crescimento de importancia (EWC)
+        # 6. Crescimento de importancia (EWC)
         learner.omega += 0.01 * np.abs(delta)
 
-        # 6. Decaimento temporal de importancia (EWC-temporal 7.2)
+        # 7. Decaimento temporal de importancia (EWC-temporal 7.2)
         if self.lambda_decay > 0:
             learner.omega *= np.exp(-self.lambda_decay)
 
-        # 7. Surpresa como decaimento de omega (surprise_decay 7.1)
+        # 8. Surpresa como decaimento de omega (surprise_decay 7.1)
         #    Surpresa alta -> decai omega (afrouxa consolidacao, permite aprender)
         if s > 1.0:
             decay = np.exp(-(s - 1.0) * 0.5)  # factor ~0.6 for s=2
             learner.omega *= decay
 
-        # 8. Oja no recorrente (auto-organizacao)
+        # 9. Oja no recorrente (auto-organizacao)
         if learner.oja_lr > 0:
             learner.oja_update(self.cell, x_prev, x)
 
-        # 9. Atualizacao dos baselines de surpresa (Welford)
+        # 10. Atualizacao dos baselines de surpresa (Welford)
         d = err_mag - learner.err_ema
         learner.err_ema += 0.02 * d
         learner.err_var += 0.02 * (d * d - learner.err_var)
