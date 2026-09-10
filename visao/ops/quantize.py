@@ -132,11 +132,14 @@ class QuantizedBrain:
         Hiperparâmetros do brain.
     quantized_weights : dict[str, QuantizedTensor]
         Pesos quantizados do cell e learner.
+    float_weights : dict[str, np.ndarray]
+        Pesos mantidos em float64 (pequenos e sensíveis).
     state : dict
         Estado interno (x, err_ema, etc).
     """
     config: dict
     quantized_weights: dict[str, QuantizedTensor]
+    float_weights: dict[str, np.ndarray]
     state: dict
     _mode: str = "infer"
 
@@ -145,13 +148,14 @@ class QuantizedBrain:
     _cache_valid: bool = False
 
     def _dequantize_all(self) -> dict[str, np.ndarray]:
-        """Dequantiza todos os pesos (com cache)."""
+        """Dequantiza todos os pesos (com cache), mesclando com float_weights."""
         if self._cache_valid and self._cache:
             return self._cache
-        self._cache = {
+        dequantized = {
             name: qt.dequantize()
             for name, qt in self.quantized_weights.items()
         }
+        self._cache = {**dequantized, **self.float_weights}
         self._cache_valid = True
         return self._cache
 

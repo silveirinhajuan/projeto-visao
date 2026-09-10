@@ -1,11 +1,13 @@
 {
   "with_detection": {
-    "mse_total": 0.34913812626863117,
-    "mse_total_std": 0.017694183669163806,
-    "avg_change_points": 0.0
+    "mse_total": 0.056839606843344284,
+    "mse_total_std": 0.021416975227036936,
+    "mse_final_500": 0.05197603629519189,
+    "avg_change_points": 181.4
   },
   "without_detection": {
     "mse_total": 0.34913812626863117,
-    "mse_total_std": 0.017694183669163806
+    "mse_total_std": 0.017694183669163806,
+    "mse_final_500": 0.5279165387121365
   }
 }
