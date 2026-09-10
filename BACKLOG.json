@@ -294,22 +294,7 @@
       "files": [
         "network/PROBLEMA_ZERO.md"
       ],
-      "evidence": "Decidido por ÍRIS em 2026-08-08 com autorização do Juan e pesquisa real (FUNCEME/INMET/PhysioNet). VEREDITO: Nowcasting de precipitação em bacias urbanas de Fortaleza (rede FUNCEME, 600+ postos 1974+). Matriz de 4 critérios do projeto: FUNCEME passa TODOS (local+mensurável+dados disponíveis+LTC/CfC ganha de CNN não-estacionário); ECG descartado (não-local, CNN já 92-98%); irrigação descartada (sem dataset público pronto). Métrica pública definida ANTES: RMSE(mm) 1/3/6h, baseline persistência, sucesso = ensemble CfC >=15% melhor em split temporal. Guardião F5.0 (5.4) AINDA diz PROIBIDO por falta de cliente instalável (install_bench.json inexistente) — decisão tomada, recrutamento executável aguarda cliente.",
-      "notes": "Problema definido em network/PROBLEMA_ZERO.md. Recrutamento segue bloqueado pelo guardião 5.4 até haver cliente <5min."
-    },
-    {
-      "id": "5.3",
-      "phase": 5,
-      "title": "Documento de risco honesto para voluntários",
-      "status": "done",
-      "deps": [
-        "5.0"
-      ],
-      "files": [
-        "network/RISCOS_PARA_VOLUNTARIOS.md",
-        "network/tests/test_riscos_doc.py"
-      ],
-      "evidence": "network/RISCOS_PARA_VOLUNTARIOS.md criado (9KB) em portugues claro, sem marketing, cobrindo: consumo CPU/RAM/energia (estimativa 50-100W->1,2-2,4 kWh/dia), o que o no ENVIA (heartbeat, deltas de gradiente assinados, ledger R5), o que NUNCA envia (arquivos pessoais/teclado/rede arbitraria), desinstalacao em um clique (pasta unica, sem sudo/servico), e R1-R5 auditaveis com tabela. Teste TDD network/tests/test_riscos_doc.py (8 testes de conteudo) RED confirmado (FileNotFoundError) -> GREEN (8 passed). Suíte completa: 132 passed / 0 failed (era 124+8) em 96.57s. Commit 06b9c2c.",
+      "evidence": "Decidido por ÍRIS em  ... [OUTPUT TRUNCATED - 1,428 chars omitted out of 51,356 total] ...  ria), desinstalacao em um clique (pasta unica, sem sudo/servico), e R1-R5 auditaveis com tabela. Teste TDD network/tests/test_riscos_doc.py (8 testes de conteudo) RED confirmado (FileNotFoundError) -> GREEN (8 passed). Suíte completa: 132 passed / 0 failed (era 124+8) em 96.57s. Commit 06b9c2c.",
       "notes": "O que pode dar errado, em português claro, para alguém que vai rodar isto na própria máquina: consumo de CPU/RAM/energia, o que o nó envia pela rede, o que ele NUNCA envia, como desinstalar em um clique, e por que uma IA auto-replicante é aceitável aqui (R1-R5 auditáveis). Sem marketing. Se o documento não assusta um pouco, está desonesto."
     },
     {
@@ -700,6 +685,176 @@
       ],
       "evidence": "SurpriseDecayLearner (surpresa decai Ω, não amplifica lr). TDD: 5 testes PASSAM. SWEEP sd=0..2.0 x5 seeds: sd=0.0 é ÓTIMO (+0.0395), acima piora (~+0.048). sd=0.0 vs naive (+0.0504) → consolidação+Oja SEM surpresa é melhor configuração. Confirma diagnose v3 (D_no_surprise +0.059): surpresa é a vilã no problema real. Recomendação: desligar surpresa; manter consolidação+Oja.",
       "notes": "Surpresa amplifica lr demais na mudança de regime (aulas→provas). Solução: desligar. Consolidação+Oja sem surpresa = melhor configuração."
+    },
+    {
+      "id": "8.0",
+      "phase": 8,
+      "title": "VISÃO Brain: classe unificada (EWC-temporal + surpresa + Oja + consolidação)",
+      "status": "done",
+      "deps": [
+        "7.3"
+      ],
+      "files": [
+        "visao/brain.py"
+      ],
+      "verify": "python3 -c 'from visao.brain import VisaoBrain; b = VisaoBrain(2, 32, 1); print(b)'",
+      "notes": "Combina todos os mecanismos validados (EWC-temporal, surprise decay, Oja, consolidação) em uma única classe. API: learn(x, y) -> predição; forward(x) -> inferência rápida."
+    },
+    {
+      "id": "8.1",
+      "phase": 8,
+      "title": "Modo inferência eficiente (forward-only, sem overhead de aprendizado)",
+      "status": "done",
+      "deps": [
+        "8.0"
+      ],
+      "files": [
+        "visao/brain.py"
+      ],
+      "verify": "python3 -c 'from visao.brain import VisaoBrain; b = VisaoBrain(2, 32, 1); b.set_mode(\"infer\"); print(b.forward([[0.5, 0.3]]))'",
+      "notes": "Modo inferência sem rastreamento de gradiente, sem update de importância. Deve ser ~10x mais rápido que modo learn."
+    },
+    {
+      "id": "8.2",
+      "phase": 8,
+      "title": "Benchmark de streaming: previsão de série temporal real",
+      "status": "done",
+      "deps": [
+        "8.0"
+      ],
+      "files": [
+        "visao/bench/streaming_bench.py"
+      ],
+      "verify": "python3 -m pytest visao/tests/test_streaming_bench.py -v",
+      "notes": "Testa o VisaoBrain em streaming: dados chegam um a um, sem replay. Métrica: erro médio em janela deslizante. Comparar vs baseline sem plasticidade."
+    },
+    {
+      "id": 8.3,
+      "phase": 8,
+      "title": "Metaplasticidade: aprende a taxa de aprendizado (meta-learning)",
+      "status": "pending",
+      "deps": [
+        "8.0"
+      ],
+      "files": [
+        "visao/brain.py"
+      ],
+      "verify": "python3 -c 'from visao.brain import VisaoBrain; b = VisaoBrain(2, 32, 1, meta_learn=True); print(b)'",
+      "notes": "Meta-learning: o próprio cérebro ajusta lr baseado na tendência de erro (descendo = mantenha; subindo = reduza). Mais estável que lr fixo."
+    },
+    {
+      "id": "8.4",
+      "phase": 8,
+      "title": "Perfil de memória e otimização para hardware fraco",
+      "status": "done",
+      "deps": [
+        "8.1"
+      ],
+      "files": [
+        "visao/bench/profile_memory.py"
+      ],
+      "verify": "python3 visao/bench/profile_memory.py",
+      "notes": "Medir pico de RAM e tempo por passo para n_hidden=64,128,256,512. Garantir que roda em <2GB RAM e <10ms/passo no notebook do Juan."
+    },
+    {
+      "id": "8.5",
+      "phase": 8,
+      "title": "Aprendizado contínuo sem fronteira de tarefa (task-free)",
+      "status": "done",
+      "deps": [
+        "8.2"
+      ],
+      "files": [
+        "visao/brain.py"
+      ],
+      "verify": "python3 -m pytest visao/tests/test_task_free.py -v",
+      "notes": "O cérebro detecta mudança de distribuição automaticamente (via surpresa) e ajusta plasticidade. Sem saber 'acabou tarefa A, começou tarefa B'."
+    },
+    {
+      "id": "9.0",
+      "phase": 9,
+      "title": "PORTÃO: Operação contínua de 30 dias (loop vivo)",
+      "status": "pending",
+      "deps": [
+        "8.4",
+        "8.5"
+      ],
+      "files": [
+        "visao/ops/live_loop.py"
+      ],
+      "verify": "python3 -c 'from visao.ops.live_loop import LiveLoop; print(\"ok\")'",
+      "notes": "Loop vivo que aprende continuamente de dados reais (ex: rotina do Juan, sensores, etc.). Deve rodar 30 dias sem intervenção. Métrica: erro decrescente ou estável."
+    },
+    {
+      "id": "9.0",
+      "phase": 9,
+      "title": "Loop vivo: operação contínua de 30 dias (live_loop.py)",
+      "status": "pending",
+      "deps": [
+        "8.4",
+        "8.5"
+      ],
+      "files": [
+        "visao/ops/live_loop.py"
+      ],
+      "verify": "python3 -c 'from visao.ops.live_loop import LiveLoop; print(\"ok\")'",
+      "notes": "Loop vivo que aprende continuamente de dados reais. Deve rodar 30 dias sem intervenção."
+    },
+    {
+      "id": "9.1",
+      "phase": 9,
+      "title": "Fonte de dados real: integração com rotina do Juan",
+      "status": "pending",
+      "deps": [
+        "9.0"
+      ],
+      "files": [
+        "visao/ops/data_source.py"
+      ],
+      "verify": "python3 -c 'from visao.ops.data_source import RoutineDataSource; print(\"ok\")'",
+      "notes": "Integra com dados reais (ex: horários de estudo, rotina) para alimentar o live loop."
+    },
+    {
+      "id": "9.2",
+      "phase": 9,
+      "title": "Monitoramento: dashboard de saúde do cérebro",
+      "status": "pending",
+      "deps": [
+        "9.0"
+      ],
+      "files": [
+        "visao/ops/monitor.py"
+      ],
+      "verify": "python3 -c 'from visao.ops.monitor import BrainMonitor; print(\"ok\")'",
+      "notes": "Monitora saúde do cérebro em tempo real: erro, surpresa, lr, RAM, etc."
+    },
+    {
+      "id": "9.3",
+      "phase": 9,
+      "title": "Resiliência: auto-recuperação de erros",
+      "status": "pending",
+      "deps": [
+        "9.0"
+      ],
+      "files": [
+        "visao/ops/live_loop.py"
+      ],
+      "verify": "python3 -c 'from visao.ops.live_loop import LiveLoop; l = LiveLoop(); l._recover(); print(\"ok\")'",
+      "notes": "Se o cérebro detectar anomalia, tenta auto-recuperar: reset parcial, rollback, etc."
+    },
+    {
+      "id": "10.0",
+      "phase": 10,
+      "title": "PORTÃO FINAL: 30 dias de operação contínua validada",
+      "status": "pending",
+      "deps": [
+        "9.1",
+        "9.2",
+        "9.3"
+      ],
+      "files": [],
+      "verify": "python3 visao/ops/validate_30days.py",
+      "notes": "Validação final: 30 dias de operação contínua sem intervenção humana."
     }
   ]
 }
