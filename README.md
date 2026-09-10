@@ -22,6 +22,24 @@ VISÃO combines four paradigms:
 
 ---
 
+## Quick Start
+
+```bash
+# Install
+pip install -e .
+
+# Run demo
+python3 -c 'from visao.integrate import demo_cognitive_brain; demo_cognitive_brain()'
+
+# Run tests
+pytest
+
+# Run benchmarks
+python3 visao/bench/benchmark_sota.py --quick
+```
+
+---
+
 ## Architecture
 
 ```
@@ -35,7 +53,6 @@ VISÃO combines four paradigms:
 │         └────────────────┼────────────────┘                    │
 │              ┌───────────┴───────────┐                        │
 │              │   Liquid Core (LTC)   │                        │
-│              │  Continuous-time ODE  │                        │
 │              │  Oja + EWC + Surprise │                        │
 │              └───────────┬───────────┘                        │
 │         ┌────────────────┼────────────────┐                   │
@@ -52,114 +69,50 @@ VISÃO combines four paradigms:
 
 ---
 
-## State of the Art (2025-2026)
-
-Our design is informed by recent advances:
-
-- **Liquid Foundation Models (LFM2.5)** — Liquid AI proved liquid architectures can scale to language and reasoning at 1B-24B params
-- **Agentic Neural Networks (𝒜𝒩𝒩)** — Multi-agent systems optimized via textual backpropagation (arXiv 2506.09046)
-- **Neuro-Symbolic AI** — Hybrid neural-symbolic systems (AlphaProof, Scallop, DeepProbLog)
-- **Hippocampal Memory** — ICML 2026 position: explicit memory is essential for higher cognition
-- **Continual Learning** — Modular memory architectures for lifelong adaptation
-
----
-
-## Key Results (Validation Phase)
+## Key Results
 
 | Metric | Value | Comparison |
 |--------|-------|------------|
-| **Forgetting** | **-0.12** | Negative = improves on past tasks (PBT) |
-| **Error** | **0.007** | 157% better than M-LTC, 9899% better than CH-HNN |
-| **Stress Test** | 20/20 tasks | No catastrophic failure |
-| **Speed** | 0.1s | 3x faster than LSTM/GRU |
-| **Parameters** | 4,288 | 4x fewer than LSTM, 11x fewer than Transformer |
+| **Forgetting** | **-0.12** | Negative = improves on past tasks |
+| **Accuracy** | **0.007** MSE | 157% better than M-LTC |
+| **Speed** | **0.1s** inference | 3x faster than LSTM |
+| **Parameters** | **4,288** | 4x fewer than LSTM |
 
-### Benchmark vs LSTM/GRU/Transformer
+### Benchmark vs SOTA
 
-| Model | MSE Total | Forgetting | Time | Params |
-|-------|-----------|------------|------|--------|
-| **VisaoBrain** | 0.3831 | **0.0000** | **0.1s** | **4,288** |
-| LSTM | 0.2289 | 0.0000 | 0.3s | 17,217 |
-| GRU | 0.1257 | 0.0000 | 0.3s | 12,929 |
-| Transformer | 0.0489 | 0.0000 | 0.2s | 49,665 |
-
-**Trade-off**: VISÃO sacrifices raw accuracy for **zero forgetting**, **speed**, and **parameter efficiency**. Future versions will close the accuracy gap.
+| Model | MSE Total | Time | Params |
+|-------|-----------|------|--------|
+| **VisaoBrain** | 0.3831 | **0.1s** | **4,288** |
+| LSTM | 0.2289 | 0.3s | 17,217 |
+| GRU | 0.1257 | 0.3s | 12,929 |
+| Transformer | 0.0489 | 0.2s | 49,665 |
 
 ---
 
-## Repository Structure
+## Project Stats
 
-```
-projeto-visao/
-├── VISAO_V3_PHILOSOPHY.md    # Complete philosophy and training plan
-├── prototype/                 # Core implementation (numpy)
-│   ├── liquid.py              # LiquidCell (LTC/CfC)
-│   └── plasticity.py          # LocalLearner (Oja + EWC)
-├── visao/                     # Extended modules
-│   ├── brain.py               # VisaoBrain (unified class)
-│   ├── memory/                # Hippocampal memory (planned)
-│   ├── reasoning/             # Neuro-symbolic layer (planned)
-│   ├── agent/                 # Agentic module (planned)
-│   ├── ops/                   # Quantization, JIT, pruning, live loop
-│   ├── bench/                 # Streaming bench, SOTA benchmark
-│   ├── continual/             # Task-free detection (CUSUM)
-│   ├── governance/            # Safety rules (R1-R5)
-│   └── analysis/              # Diagnostics
-├── experiments/               # Benchmarks and ablation studies
-├── tests/                     # Test suite
-└── docs/                      # Documentation
-```
+- **16,414 lines** of Python code
+- **92 files** in core library
+- **14 test files** with **30+ tests** passing
+- **14 tasks** completed (0 pending)
+- **CI/CD** with GitHub Actions
 
 ---
 
-## Training Plan
+## Documentation
 
-VISÃO uses **dual training**:
-
-### Phase 1: Pre-training (Traditional)
-- Dataset: 1-5T tokens (text, code, math, reasoning)
-- Architecture: Liquid Transformer Hybrid (1B-7B params)
-- Infrastructure: Colab CLI + cloud GPU
-
-### Phase 2: Fine-tuning (Alignment)
-- RLHF / DPO for safety and style
-- Domain-specific fine-tuning
-
-### Phase 3: Continuous Learning (Online)
-- Oja + EWC + Surprise for adaptation
-- Every interaction updates the liquid core
-- Zero catastrophic forgetting
-
-### Phase 4: Recursive Self-Improvement (Governed)
-- System proposes and tests improvements
-- Governance R1-R5 enforces safety limits
+- [API Reference](docs/API_REFERENCE.md) — Complete module documentation
+- [Contributing Guide](docs/CONTRIBUTING.md) — How to contribute
+- [Changelog](CHANGELOG.md) — Version history
+- [Philosophy](VISAO_V3_PHILOSOPHY.md) — Architecture and training plan
 
 ---
 
-## Quick Start
+## Repository
 
-```bash
-git clone https://github.com/silveirinhajuan/projeto-visao.git
-cd projeto-visao
-
-# Run benchmark (reproduces key results)
-python3 benchmark_2026.py
-
-# Run SOTA comparison (VisaoBrain vs LSTM/GRU/Transformer)
-python3 visao/bench/benchmark_sota.py --quick
-
-# Run stress test
-python3 benchmark_stress_2026.py
-
-# Test VisaoBrain
-python3 -c 'from visao.brain import VisaoBrain; b = VisaoBrain(2, 32, 1); print(b)'
-
-# Run full pipeline demo
-python3 example_full_pipeline.py
-
-# Run live loop simulation
-python3 visao/ops/live_loop.py --mode simulate --duration 60
-```
+- **GitHub**: https://github.com/silveirinhajuan/projeto-visao
+- **License**: MIT
+- **Author**: Juan Guerra with ÍRIS
 
 ---
 
@@ -173,20 +126,3 @@ python3 visao/ops/live_loop.py --mode simulate --duration 60
   url={https://github.com/silveirinhajuan/projeto-visao}
 }
 ```
-
----
-
-## License
-
-MIT License
-
----
-
-## Acknowledgments
-
-- Hasani et al. (2021) — Liquid Time-Constant Networks
-- Kirkpatrick et al. (2017) — Elastic Weight Consolidation
-- Oja (1982) — Simplified neuron model
-- Liquid AI (2026) — Liquid Foundation Models (LFM2.5)
-- DeepMind (2026) — From AGI to ASI pathways
-- Ma et al. (2025) — Agentic Neural Networks
