@@ -1,44 +1,34 @@
 """
-hippocampus.py — Tarefa 13.0: Memory System — Hipocampo do VISÃO.
+hippocampus.py — Tarefa 13.0: Memory System — Hippocampus.
 
-Implementa memória explícita compatível com o liquid core (Oja + EWC + Surprise):
+Implementa três sistemas de memória compatíveis com o liquid core (Oja + EWC + Surprise):
 
 1. EpisodicBuffer — ring buffer de experiências com consolidação automática.
-   Experiências são vetores de estado líquido + metadados. Quando o buffer
-   enche, experiências similares são fundidas (consolidação) usando surprise
-   como peso de importância — experiências surpreendentes sobrevivem.
+   Experiências são (state, action, reward, next_state, surprise).
+   Quando o buffer enche, experiências de baixa importância são consolidadas
+   no SemanticGraph (transferência hipocampo → neocórtex).
 
 2. SemanticGraph — grafo de conhecimento (entidades + relações) com busca por
-   similaridade. Entidades são vetores (embeddings); relações são arestas
-   tipadas. Busca por similaridade via cosseno. Compatível com EWC: arestas
-   importantes (omega alto) resistem a serem sobrescritas.
+   similaridade. Entidades são embeddings normalizados (Oja-like). Relações
+   são arestas tipadas. Busca por similaridade via cosseno.
 
 3. ProceduralMemory — armazenamento de políticas de ação (skills aprendidas).
-   Cada skill mapeia um padrão de contexto para uma política de ação, com
-   contador de sucesso e timestamp. Consolidação por EWC: skills bem-sucedidas
-   ficam rígidas (omega alto); skills fracassadas são podadas.
+   Mapeia estados → ações com estimativas de valor. Usa EWC para proteger
+   skills importantes e surprise para detectar necessidade de adaptação.
 
 Referências:
-  - ICML 2026: hippocampal explicit memory é essencial para planejamento,
-    metacognição e raciocínio simbólico.
-  - EWC (Kirkpatrick 2017): consolidação sináptica elástica.
-  - Oja (1982): auto-organização Hebbiana normalizada.
+    - ICML 2026: hippocampal explicit memory é essencial para planejamento,
+      metacognição e raciocínio simbólico.
+    - Oja (1982): auto-organização de embeddings.
+    - Kirkpatrick et al. (2017): consolidação elástica (EWC).
+    - Hassabis et al. (2017): sistemas de memória complementares.
 """
 
 from __future__ import annotations
 
-import sys
-from collections import OrderedDict
-from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Any, Optional
-
 import numpy as np
-
-# Garantir que o prototype/ seja importável
-_ROOT = Path(__file__).resolve().parents[2]
-if str(_ROOT) not in sys.path:
-    sys.path.insert(0, str(_ROOT))
+from dataclasses import dataclass, field
+from typing import Optional
 
 
 # ==============================================================
@@ -47,236 +37,212 @@ if str(_ROOT) not in sys.path:
 
 @dataclass
 class Experience:
-    """Uma experiência individual no buffer episódico.
-
-    Attributes
-    ----------
-    state : np.ndarray
-        Estado do reservatório líquido no momento da experiência.
-    action : np.ndarray
-        Ação tomada.
-    reward : float
-        Recompensa recebida.
-    next_state : np.ndarray
-        Estado resultante após a ação.
-    timestamp : int
-        Passo temporal da experiência.
-    surprise : float
-        Fator de surpresa no momento (do gate neuromodulatório).
-    importance : float
-        Importância acumulada (omega) — cresce com repetição/relevância.
-    """
+    """Uma experiência episódica única."""
     state: np.ndarray
-    action: np.ndarray
+    action: int
     reward: float
     next_state: np.ndarray
-    timestamp: int = 0
     surprise: float = 1.0
-    importance: float = 1.0
+    timestamp: int = 0
+    importance: float = 0.0  # calculado via EWC-like accumulation
+    consolidated: bool = False
+
+    def __post_init__(self):
+        self.state = np.asarray(self.state, dtype=np.float64).ravel()
+        self.next_state = np.asarray(self.next_state, dtype=np.float64).ravel()
 
 
 class EpisodicBuffer:
     """Ring buffer de experiências com consolidação automática.
 
-    Quando o buffer atinge capacidade, novas experiências substituem as
-    menos importantes. Experiências similares (estado próximo) são fundidas
-    para evitar redundância — este é o mecanismo de consolidação.
+    Quando o buffer atinge capacidade máxima, experiências com baixa
+    importância (omega) são consolidadas no SemanticGraph e removidas
+    do buffer. Experiências com alta importância são retidas por mais
+    tempo (consolidação seletiva).
 
-    A consolidação usa:
-    - Surpresa como peso: experiências surpreendentes sobrevivem.
-    - Similaridade de cosseno: experiências próximas são fundidas (média
-      ponderada pela importância).
-    - EWC-temporal: importância decai exponencialmente com o tempo
-      (experiências antigas e irrelevantes são esquecidas).
+    A importância cresce com a surpresa (experiências inesperadas são
+    mais importantes) e decai com o tempo (EWC-temporal).
 
     Parameters
     ----------
     capacity : int
         Número máximo de experiências no buffer.
     state_dim : int
-        Dimensão do estado do reservatório.
-    action_dim : int
-        Dimensão da ação.
-    consolidation_threshold : float
-        Limiar de similaridade para consolidação (0-1). Experiências com
-        similaridade acima disso são fundidas.
-    lambda_decay : float
+        Dimensão do vetor de estado.
+    importance_decay : float
         Decaimento temporal de importância (EWC-temporal).
-    surprise_gain : float
-        Peso da sobrevivência durante consolidação.
+    surprise_threshold : float
+        Limiar de surpresa para retenção automática.
+    consolidate_ratio : float
+        Fração de experiências a consolidar quando o buffer enche.
     """
 
     def __init__(
         self,
         capacity: int = 256,
         state_dim: int = 64,
-        action_dim: int = 1,
-        consolidation_threshold: float = 0.95,
-        lambda_decay: float = 0.001,
-        surprise_gain: float = 2.0,
+        importance_decay: float = 0.001,
+        surprise_threshold: float = 1.5,
+        consolidate_ratio: float = 0.3,
+        seed: int = 0,
     ):
         self.capacity = capacity
         self.state_dim = state_dim
-        self.action_dim = action_dim
-        self.consolidation_threshold = consolidation_threshold
-        self.lambda_decay = lambda_decay
-        self.surprise_gain = surprise_gain
+        self.importance_decay = importance_decay
+        self.surprise_threshold = surprise_threshold
+        self.consolidate_ratio = consolidate_ratio
+        self._rng = np.random.default_rng(seed)
 
-        # Ring buffer
-        self._buffer: list[Experience] = []
-        self._head = 0
+        # Ring buffer arrays (evita alocação dinâmica)
+        self._states = np.zeros((capacity, state_dim), dtype=np.float64)
+        self._next_states = np.zeros((capacity, state_dim), dtype=np.float64)
+        self._actions = np.zeros(capacity, dtype=np.int64)
+        self._rewards = np.zeros(capacity, dtype=np.float64)
+        self._surprises = np.ones(capacity, dtype=np.float64)
+        self._importances = np.zeros(capacity, dtype=np.float64)
+        self._consolidated = np.zeros(capacity, dtype=np.bool_)
+        self._timestamps = np.zeros(capacity, dtype=np.int64)
+
         self._size = 0
-
-        # Estatísticas
-        self._total_added = 0
-        self._total_consolidated = 0
-
-    def add(
-        self,
-        state: np.ndarray,
-        action: np.ndarray,
-        reward: float,
-        next_state: np.ndarray,
-        timestamp: int = 0,
-        surprise: float = 1.0,
-    ) -> None:
-        """Adiciona uma experiência ao buffer.
-
-        Se o buffer está cheio, aplica consolidação automática:
-        1. Se existe experiência similar, funde (média ponderada).
-        2. Caso contrário, substitui a menos importante.
-        """
-        state = np.asarray(state, dtype=np.float64).ravel()
-        action = np.asarray(action, dtype=np.float64).ravel()
-        next_state = np.asarray(next_state, dtype=np.float64).ravel()
-
-        exp = Experience(
-            state=state,
-            action=action,
-            reward=reward,
-            next_state=next_state,
-            timestamp=timestamp,
-            surprise=surprise,
-            importance=1.0,
-        )
-
-        self._total_added += 1
-
-        if self._size < self.capacity:
-            # Buffer não cheio: adiciona direto
-            self._buffer.append(exp)
-            self._size += 1
-        else:
-            # Buffer cheio: tenta consolidação
-            idx = self._find_similar(state)
-            if idx is not None:
-                # Funde com experiência similar
-                self._consolidate(idx, exp)
-            else:
-                # Substitui a menos importante
-                self._replace_least_important(exp)
-
-    def _find_similar(self, state: np.ndarray) -> Optional[int]:
-        """Busca experiência com estado similar (cosseno > threshold)."""
-        if self._size == 0:
-            return None
-        best_idx = None
-        best_sim = self.consolidation_threshold
-        for i, exp in enumerate(self._buffer):
-            sim = self._cosine_sim(state, exp.state)
-            if sim > best_sim:
-                best_sim = sim
-                best_idx = i
-        return best_idx
-
-    def _consolidate(self, idx: int, exp: Experience) -> None:
-        """Funde experiência existente com nova (média ponderada)."""
-        existing = self._buffer[idx]
-        w1 = existing.importance
-        w2 = exp.importance * (1.0 + self.surprise_gain * max(0, exp.surprise - 1.0))
-        total = w1 + w2
-
-        # Média ponderada
-        merged = Experience(
-            state=(w1 * existing.state + w2 * exp.state) / total,
-            action=(w1 * existing.action + w2 * exp.action) / total,
-            reward=(w1 * existing.reward + w2 * exp.reward) / total,
-            next_state=(w1 * existing.next_state + w2 * exp.next_state) / total,
-            timestamp=exp.timestamp,
-            surprise=max(existing.surprise, exp.surprise),
-            importance=min(total, 10.0),  # cap para evitar explosão
-        )
-        self._buffer[idx] = merged
-        self._total_consolidated += 1
-
-    def _replace_least_important(self, exp: Experience) -> None:
-        """Substitui a experiência de menor importância."""
-        min_idx = 0
-        min_imp = float("inf")
-        for i, e in enumerate(self._buffer):
-            if e.importance < min_imp:
-                min_imp = e.importance
-                min_idx = i
-        self._buffer[min_idx] = exp
-
-    def sample(self, n: int = 1, rng: np.random.Generator | None = None) -> list[Experience]:
-        """Amostra n experiências proporcional à importância."""
-        rng = rng or np.random.default_rng()
-        if self._size == 0:
-            return []
-        n = min(n, self._size)
-        imps = np.array([e.importance for e in self._buffer])
-        probs = imps / imps.sum()
-        indices = rng.choice(self._size, size=n, replace=False, p=probs)
-        return [self._buffer[i] for i in indices]
-
-    def query(self, state: np.ndarray, k: int = 5) -> list[Experience]:
-        """Retorna as k experiências mais similares ao estado."""
-        state = np.asarray(state, dtype=np.float64).ravel()
-        if self._size == 0:
-            return []
-        sims = [(i, self._cosine_sim(state, e.state)) for i, e in enumerate(self._buffer)]
-        sims.sort(key=lambda x: x[1], reverse=True)
-        return [self._buffer[i] for i, _ in sims[:k]]
-
-    def decay_importance(self) -> None:
-        """Decaimento temporal de importância (EWC-temporal)."""
-        for exp in self._buffer:
-            exp.importance *= np.exp(-self.lambda_decay)
-
-    @staticmethod
-    def _cosine_sim(a: np.ndarray, b: np.ndarray) -> float:
-        """Similaridade de cosseno entre dois vetores."""
-        na = np.linalg.norm(a)
-        nb = np.linalg.norm(b)
-        if na < 1e-10 or nb < 1e-10:
-            return 0.0
-        return float(np.dot(a, b) / (na * nb))
+        self._head = 0
+        self._step = 0
 
     @property
     def size(self) -> int:
         return self._size
 
-    @property
-    def is_full(self) -> bool:
-        return self._size >= self.capacity
+    def add(
+        self,
+        state: np.ndarray,
+        action: int,
+        reward: float,
+        next_state: np.ndarray,
+        surprise: float = 1.0,
+    ) -> Optional[list[Experience]]:
+        """Adiciona experiência ao buffer.
 
-    def stats(self) -> dict:
+        Se o buffer estiver cheio, consolida experiências antigas
+        e retorna a lista de experiências consolidadas (ou None).
+
+        Returns
+        -------
+        consolidated : list[Experience] | None
+            Experiências que foram consolidadas, ou None.
+        """
+        idx = self._head
+
+        self._states[idx] = np.asarray(state, dtype=np.float64).ravel()[:self.state_dim]
+        self._next_states[idx] = np.asarray(next_state, dtype=np.float64).ravel()[:self.state_dim]
+        self._actions[idx] = action
+        self._rewards[idx] = reward
+        self._surprises[idx] = surprise
+        self._timestamps[idx] = self._step
+        self._consolidated[idx] = False
+
+        # Importância inicial = surpresa (experiências inesperadas são importantes)
+        self._importances[idx] = surprise
+
+        self._head = (self._head + 1) % self.capacity
+        self._step += 1
+
+        if self._size < self.capacity:
+            self._size += 1
+            return None
+
+        # Buffer cheio: consolidar
+        return self._consolidate()
+
+    def _consolidate(self) -> list[Experience]:
+        """Consolida experiências de baixa importância.
+
+        Estratégia:
+        1. Aplica decaimento temporal (EWC-temporal).
+        2. Seleciona experiências com menor importância.
+        3. Retorna as selecionadas para transferência ao SemanticGraph.
+        """
+        # 1. Decaimento temporal
+        self._importances[:self._size] *= np.exp(-self.importance_decay)
+
+        # 2. Selecionar experiências para consolidação
+        n_consolidate = max(1, int(self._size * self.consolidate_ratio))
+        # Experiências com baixa importância E baixa surpresa
+        priority = self._importances[:self._size] + self._surprises[:self._size] * 0.1
+        consolidate_indices = np.argsort(priority)[:n_consolidate]
+
+        consolidated = []
+        for idx in consolidate_indices:
+            exp = Experience(
+                state=self._states[idx].copy(),
+                action=int(self._actions[idx]),
+                reward=float(self._rewards[idx]),
+                next_state=self._next_states[idx].copy(),
+                surprise=float(self._surprises[idx]),
+                timestamp=int(self._timestamps[idx]),
+                importance=float(self._importances[idx]),
+                consolidated=True,
+            )
+            consolidated.append(exp)
+            self._consolidated[idx] = True
+
+        return consolidated
+
+    def sample(self, n: int = 1) -> list[Experience]:
+        """Amostra n experiências do buffer (uniforme ou por importância)."""
+        if self._size == 0:
+            return []
+        n = min(n, self._size)
+        # Amostragem por importância (prioritized sampling)
+        weights = self._importances[:self._size] + 0.01
+        probs = weights / weights.sum()
+        indices = self._rng.choice(self._size, size=n, replace=False, p=probs)
+        return [
+            Experience(
+                state=self._states[i].copy(),
+                action=int(self._actions[i]),
+                reward=float(self._rewards[i]),
+                next_state=self._next_states[i].copy(),
+                surprise=float(self._surprises[i]),
+                timestamp=int(self._timestamps[i]),
+                importance=float(self._importances[i]),
+            )
+            for i in indices
+        ]
+
+    def recent(self, n: int = 1) -> list[Experience]:
+        """Retorna as n experiências mais recentes."""
+        if self._size == 0:
+            return []
+        n = min(n, self._size)
+        indices = [(self._head - 1 - i) % self.capacity for i in range(n)]
+        return [
+            Experience(
+                state=self._states[i].copy(),
+                action=int(self._actions[i]),
+                reward=float(self._rewards[i]),
+                next_state=self._next_states[i].copy(),
+                surprise=float(self._surprises[i]),
+                timestamp=int(self._timestamps[i]),
+                importance=float(self._importances[i]),
+            )
+            for i in indices
+        ]
+
+    def update_importance(self, index: int, delta: float) -> None:
+        """Atualiza importância de uma experiência (crescimento EWC-like)."""
+        if 0 <= index < self._size:
+            self._importances[index] += abs(delta)
+
+    def get_stats(self) -> dict:
         """Estatísticas do buffer."""
         if self._size == 0:
             return {"size": 0, "capacity": self.capacity}
-        imps = [e.importance for e in self._buffer]
-        surprises = [e.surprise for e in self._buffer]
         return {
             "size": self._size,
             "capacity": self.capacity,
-            "total_added": self._total_added,
-            "total_consolidated": self._total_consolidated,
-            "importance_mean": float(np.mean(imps)),
-            "importance_std": float(np.std(imps)),
-            "importance_max": float(np.max(imps)),
-            "importance_min": float(np.min(imps)),
-            "surprise_mean": float(np.mean(surprises)),
+            "mean_importance": float(np.mean(self._importances[:self._size])),
+            "mean_surprise": float(np.mean(self._surprises[:self._size])),
+            "mean_reward": float(np.mean(self._rewards[:self._size])),
+            "n_consolidated": int(np.sum(self._consolidated[:self._size])),
         }
 
 
@@ -286,315 +252,259 @@ class EpisodicBuffer:
 
 @dataclass
 class Entity:
-    """Entidade no grafo semântico (nó).
-
-    Attributes
-    ----------
-    name : str
-        Identificador único.
-    embedding : np.ndarray
-        Vetor de embedding (representação vetorial).
-    entity_type : str
-        Tipo da entidade (ex: 'concept', 'object', 'relation').
-    metadata : dict
-        Metadados adicionais.
-    importance : float
-        Importância acumulada (omega) — EWC.
-    """
-    name: str
+    """Nó do grafo semântico."""
+    id: int
     embedding: np.ndarray
-    entity_type: str = "concept"
-    metadata: dict = field(default_factory=dict)
-    importance: float = 1.0
+    label: str = ""
+    count: int = 1  # quantas vezes foi reforçado (Oja)
+    importance: float = 0.0  # EWC-like
+
+    def __post_init__(self):
+        self.embedding = np.asarray(self.embedding, dtype=np.float64).ravel()
 
 
 @dataclass
 class Relation:
-    """Relação no grafo semântico (aresta).
-
-    Attributes
-    ----------
-    source : str
-        Nome da entidade origem.
-    target : str
-        Nome da entidade destino.
-    relation_type : str
-        Tipo da relação (ex: 'is_a', 'part_of', 'causes').
-    weight : float
-        Peso da relação (força da conexão).
-    importance : float
-        Importância acumulada (omega) — EWC.
-    """
-    source: str
-    target: str
-    relation_type: str = "related"
+    """Aresta do grafo semântico."""
+    source_id: int
+    target_id: int
+    relation_type: str
     weight: float = 1.0
-    importance: float = 1.0
+    count: int = 1
 
 
 class SemanticGraph:
     """Grafo de conhecimento: entidades + relações com busca por similaridade.
 
-    Estrutura:
-    - Entidades são nós com embeddings vetoriais.
-    - Relações são arestas tipadas e ponderadas.
-    - Busca por similaridade via cosseno nos embeddings.
-    - EWC protege relações importantes contra sobrescrita.
+    Entidades são embeddings normalizados (Oja-like: reforço Hebbiano com
+    decaimento normalizador). Relações são arestas tipadas com peso.
 
-    Compatível com o liquid core:
-    - Embeddings podem vir do estado do reservatório líquido.
-    - Importância (omega) cresce com uso e decai com tempo (EWC-temporal).
+    A busca por similaridade usa cosseno entre embeddings. A consolidação
+    de experiências episódicas cria novas entidades/relações ou reforça
+    as existentes.
 
     Parameters
     ----------
     embedding_dim : int
-        Dimensão dos embeddings.
+        Dimensão dos embeddings de entidades.
     max_entities : int
-        Número máximo de entidades.
-    max_relations : int
-        Número máximo de relações.
-    lambda_decay : float
-        Decaimento temporal de importância.
+        Número máximo de entidades (apaga menos importantes quando chega ao limite).
+    similarity_threshold : float
+        Limiar de cosseno para considerar duas entidades similares.
+    oja_lr : float
+        Taxa de aprendizado Oja para reforço de embeddings.
+    ewc_decay : float
+        Decaimento temporal de importância (EWC-temporal).
     """
 
     def __init__(
         self,
         embedding_dim: int = 64,
-        max_entities: int = 128,
-        max_relations: int = 512,
-        lambda_decay: float = 0.001,
+        max_entities: int = 512,
+        similarity_threshold: float = 0.85,
+        oja_lr: float = 0.01,
+        ewc_decay: float = 0.0005,
+        seed: int = 0,
     ):
         self.embedding_dim = embedding_dim
         self.max_entities = max_entities
-        self.max_relations = max_relations
-        self.lambda_decay = lambda_decay
+        self.similarity_threshold = similarity_threshold
+        self.oja_lr = oja_lr
+        self.ewc_decay = ewc_decay
+        self._rng = np.random.default_rng(seed)
 
-        self._entities: OrderedDict[str, Entity] = OrderedDict()
-        self._relations: list[Relation] = []
-        self._adjacency: dict[str, list[int]] = {}  # entity_name -> relation indices
-
-    def add_entity(
-        self,
-        name: str,
-        embedding: np.ndarray,
-        entity_type: str = "concept",
-        metadata: dict | None = None,
-    ) -> Entity:
-        """Adiciona ou atualiza uma entidade.
-
-        Se a entidade já existe, atualiza o embedding (média ponderada
-        pela importância — EWC protege embeddings importantes).
-        """
-        embedding = np.asarray(embedding, dtype=np.float64).ravel()
-
-        if name in self._entities:
-            existing = self._entities[name]
-            w1 = existing.importance
-            w2 = 1.0
-            # Média ponderada — EWC: embedding importante resiste
-            new_embedding = (w1 * existing.embedding + w2 * embedding) / (w1 + w2)
-            existing.embedding = new_embedding
-            existing.importance = min(existing.importance + 0.5, 10.0)
-            if metadata:
-                existing.metadata.update(metadata)
-            return existing
-
-        # Capacidade: remove entidade menos importante se cheio
-        if len(self._entities) >= self.max_entities:
-            self._evict_entity()
-
-        entity = Entity(
-            name=name,
-            embedding=embedding,
-            entity_type=entity_type,
-            metadata=metadata or {},
-            importance=1.0,
-        )
-        self._entities[name] = entity
-        self._adjacency[name] = []
-        return entity
-
-    def add_relation(
-        self,
-        source: str,
-        target: str,
-        relation_type: str = "related",
-        weight: float = 1.0,
-    ) -> Relation:
-        """Adiciona uma relação entre entidades.
-
-        Se a relação já existe, atualiza o peso (EWC: peso importante resiste).
-        """
-        # Verifica se entidades existem
-        if source not in self._entities:
-            raise ValueError(f"Entidade fonte '{source}' não encontrada")
-        if target not in self._entities:
-            raise ValueError(f"Entidade alvo '{target}' não encontrada")
-
-        # Verifica se relação já existe
-        for i, rel in enumerate(self._relations):
-            if rel.source == source and rel.target == target and rel.relation_type == relation_type:
-                # Atualiza peso (EWC: peso importante resiste)
-                w1 = rel.importance
-                w2 = 1.0
-                rel.weight = (w1 * rel.weight + w2 * weight) / (w1 + w2)
-                rel.importance = min(rel.importance + 0.5, 10.0)
-                return rel
-
-        # Capacidade: remove relação menos importante se cheio
-        if len(self._relations) >= self.max_relations:
-            self._evict_relation()
-
-        rel = Relation(
-            source=source,
-            target=target,
-            relation_type=relation_type,
-            weight=weight,
-            importance=1.0,
-        )
-        idx = len(self._relations)
-        self._relations.append(rel)
-        self._adjacency[source].append(idx)
-        if target != source:
-            self._adjacency[target].append(idx)
-        return rel
-
-    def query_similar(
-        self,
-        embedding: np.ndarray,
-        k: int = 5,
-        entity_type: str | None = None,
-    ) -> list[tuple[str, float]]:
-        """Busca as k entidades mais similares ao embedding.
-
-        Returns
-        -------
-        list of (name, similarity) ordenado por similaridade decrescente.
-        """
-        embedding = np.asarray(embedding, dtype=np.float64).ravel()
-        results = []
-        for name, entity in self._entities.items():
-            if entity_type and entity.entity_type != entity_type:
-                continue
-            sim = self._cosine_sim(embedding, entity.embedding)
-            results.append((name, sim))
-        results.sort(key=lambda x: x[1], reverse=True)
-        return results[:k]
-
-    def query_relations(
-        self,
-        entity_name: str,
-        relation_type: str | None = None,
-    ) -> list[Relation]:
-        """Retorna relações de uma entidade."""
-        if entity_name not in self._adjacency:
-            return []
-        rels = []
-        for idx in self._adjacency[entity_name]:
-            rel = self._relations[idx]
-            if relation_type and rel.relation_type != relation_type:
-                continue
-            rels.append(rel)
-        return rels
-
-    def query_path(
-        self,
-        source: str,
-        target: str,
-        max_depth: int = 3,
-    ) -> list[list[Relation]]:
-        """Busca caminhos entre duas entidades (BFS limitado)."""
-        if source not in self._entities or target not in self._entities:
-            return []
-        paths = []
-        self._bfs_paths(source, target, max_depth, [], set(), paths)
-        return paths
-
-    def _bfs_paths(
-        self,
-        current: str,
-        target: str,
-        depth: int,
-        path: list[Relation],
-        visited: set,
-        results: list[list[Relation]],
-    ) -> None:
-        """BFS recursivo para encontrar caminhos."""
-        if depth <= 0 or current in visited:
-            return
-        visited.add(current)
-        for rel in self.query_relations(current):
-            next_node = rel.target if rel.source == current else rel.source
-            new_path = path + [rel]
-            if next_node == target:
-                results.append(new_path)
-            else:
-                self._bfs_paths(next_node, target, depth - 1, new_path, visited.copy(), results)
-
-    def _evict_entity(self) -> None:
-        """Remove a entidade menos importante."""
-        if not self._entities:
-            return
-        min_name = min(self._entities, key=lambda n: self._entities[n].importance)
-        # Remove relações associada
-        self._relations = [r for r in self._relations if r.source != min_name and r.target != min_name]
-        # Reconstrói adjacency
-        self._adjacency = {}
-        for i, rel in enumerate(self._relations):
-            self._adjacency.setdefault(rel.source, []).append(i)
-            self._adjacency.setdefault(rel.target, []).append(i)
-        del self._entities[min_name]
-        self._adjacency.pop(min_name, None)
-
-    def _evict_relation(self) -> None:
-        """Remove a relação menos importante."""
-        if not self._relations:
-            return
-        min_idx = min(range(len(self._relations)), key=lambda i: self._relations[i].importance)
-        removed = self._relations.pop(min_idx)
-        # Reconstrói adjacency
-        self._adjacency = {}
-        for i, rel in enumerate(self._relations):
-            self._adjacency.setdefault(rel.source, []).append(i)
-            self._adjacency.setdefault(rel.target, []).append(i)
-
-    def decay_importance(self) -> None:
-        """Decaimento temporal de importância (EWC-temporal)."""
-        for entity in self._entities.values():
-            entity.importance *= np.exp(-self.lambda_decay)
-        for rel in self._relations:
-            rel.importance *= np.exp(-self.lambda_decay)
-
-    @staticmethod
-    def _cosine_sim(a: np.ndarray, b: np.ndarray) -> float:
-        """Similaridade de cosseno."""
-        na = np.linalg.norm(a)
-        nb = np.linalg.norm(b)
-        if na < 1e-10 or nb < 1e-10:
-            return 0.0
-        return float(np.dot(a, b) / (na * nb))
+        self.entities: dict[int, Entity] = {}
+        self.relations: list[Relation] = []
+        self._next_id = 0
 
     @property
     def n_entities(self) -> int:
-        return len(self._entities)
+        return len(self.entities)
 
     @property
     def n_relations(self) -> int:
-        return len(self._relations)
+        return len(self.relations)
 
-    def stats(self) -> dict:
+    def _cosine_similarity(self, a: np.ndarray, b: np.ndarray) -> float:
+        """Similaridade cosseno entre dois vetores."""
+        a = np.asarray(a, dtype=np.float64).ravel()
+        b = np.asarray(b, dtype=np.float64).ravel()
+        norm_a = np.linalg.norm(a)
+        norm_b = np.linalg.norm(b)
+        if norm_a < 1e-10 or norm_b < 1e-10:
+            return 0.0
+        return float(np.dot(a, b) / (norm_a * norm_b))
+
+    def _normalize_embedding(self, emb: np.ndarray) -> np.ndarray:
+        """Normaliza embedding (Oja: mantém norma estável)."""
+        emb = np.asarray(emb, dtype=np.float64).ravel()
+        norm = np.linalg.norm(emb)
+        if norm < 1e-10:
+            return emb
+        return emb / norm
+
+    def add_entity(
+        self,
+        embedding: np.ndarray,
+        label: str = "",
+        importance: float = 1.0,
+    ) -> int:
+        """Adiciona entidade ao grafo. Retorna o ID."""
+        embedding = self._normalize_embedding(embedding)
+
+        # Verificar se já existe entidade similar
+        similar_id = self.find_similar(embedding)
+        if similar_id is not None:
+            # Reforço Oja: atualiza embedding existente
+            self._reinforce_entity(similar_id, embedding, importance)
+            return similar_id
+
+        # Criar nova entidade
+        eid = self._next_id
+        self._next_id += 1
+        self.entities[eid] = Entity(
+            id=eid,
+            embedding=embedding.copy(),
+            label=label,
+            importance=importance,
+        )
+
+        # Se excedeu capacidade, remove menos importante
+        if len(self.entities) > self.max_entities:
+            self._prune_entity()
+
+        return eid
+
+    def _reinforce_entity(self, eid: int, new_emb: np.ndarray, importance: float) -> None:
+        """Reforça entidade existente (Oja: Hebb + decaimento normalizador)."""
+        entity = self.entities[eid]
+        old_emb = entity.embedding
+
+        # Oja update: Δw = η * (x - w * (w·x))
+        # Equivale a mover na direção do input, mas puxando de volta pela norma
+        dot = np.dot(old_emb, new_emb)
+        delta = self.oja_lr * (new_emb - old_emb * dot)
+        new_embedding = old_emb + delta
+        entity.embedding = self._normalize_embedding(new_embedding)
+        entity.count += 1
+        entity.importance += importance
+
+    def _prune_entity(self) -> None:
+        """Remove entidade menos importante (EWC: mantém as importantes)."""
+        if not self.entities:
+            return
+        min_id = min(self.entities, key=lambda k: self.entities[k].importance)
+        del self.entities[min_id]
+        # Remove relações associadas
+        self.relations = [
+            r for r in self.relations
+            if r.source_id != min_id and r.target_id != min_id
+        ]
+
+    def add_relation(
+        self,
+        source_id: int,
+        target_id: int,
+        relation_type: str,
+        weight: float = 1.0,
+    ) -> None:
+        """Adiciona relação (aresta) entre entidades."""
+        if source_id not in self.entities or target_id not in self.entities:
+            return
+        # Verificar se já existe relação similar
+        for r in self.relations:
+            if (r.source_id == source_id and r.target_id == target_id
+                    and r.relation_type == relation_type):
+                r.weight = min(r.weight + weight, 10.0)  # clamp
+                r.count += 1
+                return
+        self.relations.append(Relation(
+            source_id=source_id,
+            target_id=target_id,
+            relation_type=relation_type,
+            weight=weight,
+        ))
+
+    def find_similar(self, embedding: np.ndarray) -> Optional[int]:
+        """Busca entidade mais similar (cosseno acima do limiar)."""
+        if not self.entities:
+            return None
+        embedding = np.asarray(embedding, dtype=np.float64).ravel()
+        best_id = None
+        best_sim = self.similarity_threshold
+        for eid, entity in self.entities.items():
+            sim = self._cosine_similarity(embedding, entity.embedding)
+            if sim > best_sim:
+                best_sim = sim
+                best_id = eid
+        return best_id
+
+    def search(self, query: np.ndarray, k: int = 5) -> list[tuple[int, float]]:
+        """Busca top-k entidades mais similares à query."""
+        if not self.entities:
+            return []
+        query = np.asarray(query, dtype=np.float64).ravel()
+        scores = [
+            (eid, self._cosine_similarity(query, entity.embedding))
+            for eid, entity in self.entities.items()
+        ]
+        scores.sort(key=lambda x: x[1], reverse=True)
+        return scores[:k]
+
+    def consolidate_experience(self, exp: Experience) -> tuple[int, int]:
+        """Consolida experiência episódica no grafo semântico.
+
+        Cria entidades para state e next_state, e uma relação 'action'
+        entre elas. Retorna (source_id, target_id).
+        """
+        source_id = self.add_entity(
+            exp.state,
+            label=f"state_t{exp.timestamp}",
+            importance=exp.importance,
+        )
+        target_id = self.add_entity(
+            exp.next_state,
+            label=f"state_t{exp.timestamp+1}",
+            importance=exp.importance,
+        )
+        self.add_relation(
+            source_id=source_id,
+            target_id=target_id,
+            relation_type=f"action_{exp.action}",
+            weight=exp.reward,
+        )
+        return source_id, target_id
+
+    def temporal_decay(self) -> None:
+        """Decaimento temporal de importância (EWC-temporal)."""
+        for entity in self.entities.values():
+            entity.importance *= np.exp(-self.ewc_decay)
+
+    def get_entity(self, eid: int) -> Optional[Entity]:
+        """Retorna entidade por ID."""
+        return self.entities.get(eid)
+
+    def get_neighbors(self, eid: int) -> list[tuple[int, str, float]]:
+        """Retorna vizinhos de uma entidade: (neighbor_id, relation_type, weight)."""
+        neighbors = []
+        for r in self.relations:
+            if r.source_id == eid and r.target_id in self.entities:
+                neighbors.append((r.target_id, r.relation_type, r.weight))
+            elif r.target_id == eid and r.source_id in self.entities:
+                neighbors.append((r.source_id, r.relation_type, r.weight))
+        return neighbors
+
+    def get_stats(self) -> dict:
         """Estatísticas do grafo."""
-        if not self._entities:
+        if not self.entities:
             return {"n_entities": 0, "n_relations": 0}
-        ent_imps = [e.importance for e in self._entities.values()]
-        rel_imps = [r.importance for r in self._relations] if self._relations else [0]
+        importances = [e.importance for e in self.entities.values()]
         return {
-            "n_entities": len(self._entities),
-            "n_relations": len(self._relations),
-            "entity_importance_mean": float(np.mean(ent_imps)),
-            "relation_importance_mean": float(np.mean(rel_imps)),
-            "entity_types": {t: sum(1 for e in self._entities.values() if e.entity_type == t)
-                           for t in set(e.entity_type for e in self._entities.values())},
+            "n_entities": len(self.entities),
+            "n_relations": len(self.relations),
+            "mean_importance": float(np.mean(importances)),
+            "max_importance": float(np.max(importances)),
+            "mean_count": float(np.mean([e.count for e in self.entities.values()])),
         }
 
 
@@ -602,377 +512,311 @@ class SemanticGraph:
 #  PROCEDURAL MEMORY
 # ==============================================================
 
-@dataclass
-class Skill:
-    """Uma skill (política de ação aprendida).
-
-    Attributes
-    ----------
-    name : str
-        Identificador único da skill.
-    context_pattern : np.ndarray
-        Padrão de contexto onde a skill se aplica.
-    action_policy : np.ndarray
-        Política de ação (mapeamento estado -> ação).
-    success_count : int
-        Número de vezes que a skill teve sucesso.
-    total_uses : int
-        Total de vezes que a skill foi usada.
-    importance : float
-        Importância acumulada (omega) — EWC.
-    last_used : int
-        Timestamp do último uso.
-    """
-    name: str
-    context_pattern: np.ndarray
-    action_policy: np.ndarray
-    success_count: int = 0
-    total_uses: int = 0
-    importance: float = 1.0
-    last_used: int = 0
-
-    @property
-    def success_rate(self) -> float:
-        if self.total_uses == 0:
-            return 0.0
-        return self.success_count / self.total_uses
-
-
 class ProceduralMemory:
-    """Armazenamento de políticas de ação (skills aprendidas).
+    """Memória procedural: armazena políticas de ação (skills aprendidas).
 
-    Cada skill mapeia um padrão de contexto para uma política de ação.
-    Mecanismos:
-    - EWC: skills bem-sucedidas (omega alto) resistem a modificação.
-    - Consolidação: skills similares são fundidas.
-    - Poda: skills com baixa taxa de sucesso são removidas.
-    - Surpresa: skills que falham inesperadamente têm importância reduzida.
+    Mapeia estados → ações com estimativas de valor (Q-learning-like).
+    Usa EWC para proteger skills importantes e surprise para detectar
+    necessidade de adaptação.
+
+    A política é representada como uma tabela de valores Q(s, a) onde
+    s é o índice de uma entidade no SemanticGraph e a é a ação.
 
     Parameters
     ----------
-    max_skills : int
-        Número máximo de skills.
-    context_dim : int
-        Dimensão do padrão de contexto.
-    action_dim : int
-        Dimensão da política de ação.
-    consolidation_threshold : float
-        Limiar de similaridade para consolidação.
-    lambda_decay : float
+    n_actions : int
+        Número de ações possíveis.
+    embedding_dim : int
+        Dimensão dos embeddings de estado.
+    lr : float
+        Taxa de aprendizado base.
+    gamma : float
+        Fator de desconto.
+    consolidation : float
+        Força da consolidação (EWC).
+    surprise_gain : float
+        Sensibilidade do gate de surpresa.
+    ewc_decay : float
         Decaimento temporal de importância.
     """
 
     def __init__(
         self,
-        max_skills: int = 64,
-        context_dim: int = 64,
-        action_dim: int = 1,
-        consolidation_threshold: float = 0.92,
-        lambda_decay: float = 0.001,
+        n_actions: int = 4,
+        embedding_dim: int = 64,
+        lr: float = 0.01,
+        gamma: float = 0.95,
+        consolidation: float = 2.0,
+        surprise_gain: float = 3.0,
+        ewc_decay: float = 0.001,
+        clip_weight: float = 10.0,
+        seed: int = 0,
     ):
-        self.max_skills = max_skills
-        self.context_dim = context_dim
-        self.action_dim = action_dim
-        self.consolidation_threshold = consolidation_threshold
-        self.lambda_decay = lambda_decay
+        self.n_actions = n_actions
+        self.embedding_dim = embedding_dim
+        self.lr = lr
+        self.gamma = gamma
+        self.consolidation = consolidation
+        self.surprise_gain = surprise_gain
+        self.ewc_decay = ewc_decay
+        self.clip_weight = clip_weight
+        self._rng = np.random.default_rng(seed)
 
-        self._skills: OrderedDict[str, Skill] = OrderedDict()
-        self._total_learned = 0
+        # Política: rede linear simples (estado → Q-values)
+        scale = 1.0 / np.sqrt(embedding_dim)
+        self.W = self._rng.normal(0, scale, (n_actions, embedding_dim))
+        self.b = np.zeros(n_actions)
 
-    def learn(
+        # Importância sináptica (EWC)
+        self.omega = np.zeros((n_actions, embedding_dim))
+
+        # Baseline de surpresa
+        self.err_ema = 1.0
+        self.err_var = 1.0
+
+        # Contador de usos por ação (para stats)
+        self.action_counts = np.zeros(n_actions, dtype=np.int64)
+
+    def predict(self, state: np.ndarray) -> np.ndarray:
+        """Prediz Q-values para um estado."""
+        state = np.asarray(state, dtype=np.float64).ravel()
+        return self.W @ state + self.b
+
+    def select_action(self, state: np.ndarray, epsilon: float = 0.1) -> int:
+        """Seleciona ação (epsilon-greedy)."""
+        if self._rng.random() < epsilon:
+            return int(self._rng.integers(self.n_actions))
+        q_values = self.predict(state)
+        return int(np.argmax(q_values))
+
+    def surprise(self, err_mag: float) -> float:
+        """Calcula surpresa (gate neuromodulatório)."""
+        z = (err_mag - self.err_ema) / (np.sqrt(self.err_var) + 1e-8)
+        return float(1.0 + self.surprise_gain * max(0.0, np.tanh(z)))
+
+    def update(
         self,
-        name: str,
-        context_pattern: np.ndarray,
-        action_policy: np.ndarray,
-        success: bool = True,
-        timestamp: int = 0,
-    ) -> Skill:
-        """Aprende ou atualiza uma skill.
+        state: np.ndarray,
+        action: int,
+        reward: float,
+        next_state: np.ndarray,
+        done: bool = False,
+    ) -> dict:
+        """Atualiza política com uma transição.
 
-        Se a skill já existe e o contexto é similar, atualiza a política
-        (EWC: política importante resiste). Caso contrário, cria nova.
-        """
-        context_pattern = np.asarray(context_pattern, dtype=np.float64).ravel()
-        action_policy = np.asarray(action_policy, dtype=np.float64).ravel()
-
-        if name in self._skills:
-            skill = self._skills[name]
-            sim = self._cosine_sim(context_pattern, skill.context_pattern)
-            if sim >= self.consolidation_threshold:
-                # Atualiza política (EWC: política importante resiste)
-                w1 = skill.importance
-                w2 = 1.0
-                skill.action_policy = (w1 * skill.action_policy + w2 * action_policy) / (w1 + w2)
-                skill.context_pattern = (w1 * skill.context_pattern + w2 * context_pattern) / (w1 + w2)
-            else:
-                # Contexto muito diferente: sobrescreve
-                skill.context_pattern = context_pattern
-                skill.action_policy = action_policy
-            skill.total_uses += 1
-            if success:
-                skill.success_count += 1
-                skill.importance = min(skill.importance + 0.5, 10.0)
-            else:
-                skill.importance *= 0.9  # Falha reduz importância
-            skill.last_used = timestamp
-            return skill
-
-        # Capacidade: remove skill menos importante se cheio
-        if len(self._skills) >= self.max_skills:
-            self._evict_skill()
-
-        skill = Skill(
-            name=name,
-            context_pattern=context_pattern,
-            action_policy=action_policy,
-            success_count=1 if success else 0,
-            total_uses=1,
-            importance=1.0,
-            last_used=timestamp,
-        )
-        self._skills[name] = skill
-        self._total_learned += 1
-        return skill
-
-    def recall(
-        self,
-        context_pattern: np.ndarray,
-        k: int = 3,
-    ) -> list[tuple[str, float, np.ndarray]]:
-        """Recupera as k skills mais relevantes para o contexto.
+        Usa Q-learning com:
+        - lr modulado por surpresa e consolidação (EWC)
+        - Surpresa como decaimento de omega (surprise_decay)
+        - Decaimento temporal de importância (EWC-temporal)
 
         Returns
         -------
-        list of (name, similarity, action_policy) ordenado por similaridade.
+        dict com 'td_error', 'surprise', 'lr_effective'
         """
-        context_pattern = np.asarray(context_pattern, dtype=np.float64).ravel()
-        results = []
-        for name, skill in self._skills.items():
-            sim = self._cosine_sim(context_pattern, skill.context_pattern)
-            results.append((name, sim, skill.action_policy))
-        results.sort(key=lambda x: x[1], reverse=True)
-        return results[:k]
+        state = np.asarray(state, dtype=np.float64).ravel()
+        next_state = np.asarray(next_state, dtype=np.float64).ravel()
 
-    def execute(self, name: str, timestamp: int = 0) -> np.ndarray | None:
-        """Executa uma skill (retorna a política de ação)."""
-        if name not in self._skills:
-            return None
-        skill = self._skills[name]
-        skill.total_uses += 1
-        skill.last_used = timestamp
-        return skill.action_policy.copy()
+        # Q-values atuais
+        q_values = self.predict(state)
+        q_current = q_values[action]
 
-    def reinforce(self, name: str, success: bool) -> None:
-        """Reforça ou punir uma skill baseado no resultado."""
-        if name not in self._skills:
-            return
-        skill = self._skills[name]
-        skill.total_uses += 1
-        if success:
-            skill.success_count += 1
-            skill.importance = min(skill.importance + 0.5, 10.0)
+        # Target
+        if done:
+            target = reward
         else:
-            skill.importance *= 0.9  # Falha reduz importância
+            q_next = self.predict(next_state)
+            target = reward + self.gamma * np.max(q_next)
 
-    def prune(self, min_success_rate: float = 0.2, min_uses: int = 5) -> int:
-        """Remove skills com baixa taxa de sucesso.
+        # TD error
+        td_error = target - q_current
+        err_mag = abs(td_error)
 
-        Returns
-        -------
-        Número de skills removidas.
-        """
-        to_remove = []
-        for name, skill in self._skills.items():
-            if skill.total_uses >= min_uses and skill.success_rate < min_success_rate:
-                to_remove.append(name)
-        for name in to_remove:
-            del self._skills[name]
-        return len(to_remove)
+        # Surpresa
+        s = self.surprise(err_mag)
 
-    def _evict_skill(self) -> None:
-        """Remove a skill menos importante."""
-        if not self._skills:
-            return
-        min_name = min(self._skills, key=lambda n: self._skills[n].importance)
-        del self._skills[min_name]
+        # lr efetivo: aberto pela surpresa, fechado pela importância (EWC)
+        eff_lr = (self.lr * s) / (1.0 + self.consolidation * self.omega[action])
 
-    def decay_importance(self) -> None:
-        """Decaimento temporal de importância (EWC-temporal)."""
-        for skill in self._skills.values():
-            skill.importance *= np.exp(-self.lambda_decay)
+        # Atualização delta rule
+        delta = td_error * state
+        self.W[action] += eff_lr * delta
+        self.b[action] += self.lr * s * td_error
 
-    @staticmethod
-    def _cosine_sim(a: np.ndarray, b: np.ndarray) -> float:
-        """Similaridade de cosseno."""
-        na = np.linalg.norm(a)
-        nb = np.linalg.norm(b)
-        if na < 1e-10 or nb < 1e-10:
-            return 0.0
-        return float(np.dot(a, b) / (na * nb))
+        # Clip pesos para estabilidade numérica
+        np.clip(self.W, -self.clip_weight, self.clip_weight, out=self.W)
+        np.clip(self.b, -self.clip_weight, self.clip_weight, out=self.b)
 
-    @property
-    def n_skills(self) -> int:
-        return len(self._skills)
+        # Crescimento de importância (EWC)
+        self.omega[action] += 0.01 * abs(delta)
 
-    def stats(self) -> dict:
-        """Estatísticas da memória procedural."""
-        if not self._skills:
-            return {"n_skills": 0, "total_learned": self._total_learned}
-        success_rates = [s.success_rate for s in self._skills.values()]
-        importances = [s.importance for s in self._skills.values()]
+        # Decaimento temporal (EWC-temporal)
+        if self.ewc_decay > 0:
+            self.omega *= np.exp(-self.ewc_decay)
+
+        # Surpresa como decaimento de omega (surprise_decay)
+        if s > 1.0:
+            decay = np.exp(-(s - 1.0) * 0.5)
+            self.omega[action] *= decay
+
+        # Atualização dos baselines de surpresa (Welford)
+        d = err_mag - self.err_ema
+        self.err_ema += 0.02 * d
+        self.err_var += 0.02 * (d * d - self.err_var)
+
+        self.action_counts[action] += 1
+
         return {
-            "n_skills": len(self._skills),
-            "total_learned": self._total_learned,
-            "success_rate_mean": float(np.mean(success_rates)),
-            "importance_mean": float(np.mean(importances)),
-            "importance_max": float(np.max(importances)),
-            "importance_min": float(np.min(importances)),
+            "td_error": float(td_error),
+            "surprise": s,
+            "lr_effective": float(np.mean(eff_lr)),
+        }
+
+    def get_skill_importance(self) -> np.ndarray:
+        """Retorna importância média por ação (EWC omega)."""
+        return np.mean(self.omega, axis=1)
+
+    def get_stats(self) -> dict:
+        """Estatísticas da memória procedural."""
+        return {
+            "omega_mean": float(np.mean(self.omega)),
+            "omega_max": float(np.max(self.omega)),
+            "omega_per_action": np.mean(self.omega, axis=1).tolist(),
+            "action_counts": self.action_counts.tolist(),
+            "err_ema": self.err_ema,
+            "W_norm": float(np.linalg.norm(self.W)),
         }
 
 
 # ==============================================================
-#  HIPPOCAMPUS — Integração
+#  HIPPOCAMPUS — integração das 3 memórias
 # ==============================================================
 
 class Hippocampus:
-    """Hipocampo: integra as três memórias (episódica, semântica, procedural).
+    """Integra EpisodicBuffer, SemanticGraph e ProceduralMemory.
 
-    Interface única para o VisaoBrain acessar memória explícita.
+    O Hipocampo coordena a transferência de informações entre
+    os três sistemas de memória:
+    - Experiências novas entram no EpisodicBuffer
+    - Quando consolidadas, viram entidades/relações no SemanticGraph
+    - Skills aprendidas ficam na ProceduralMemory
 
     Parameters
     ----------
     state_dim : int
-        Dimensão do estado do reservatório líquido.
-    action_dim : int
-        Dimensão da ação.
+        Dimensão do espaço de estados.
+    n_actions : int
+        Número de ações possíveis.
     episodic_capacity : int
         Capacidade do buffer episódico.
     max_entities : int
         Máximo de entidades no grafo semântico.
-    max_skills : int
-        Máximo de skills na memória procedural.
-    lambda_decay : float
-        Decaimento temporal de importância (EWC-temporal).
     """
 
     def __init__(
         self,
         state_dim: int = 64,
-        action_dim: int = 1,
+        n_actions: int = 4,
         episodic_capacity: int = 256,
-        max_entities: int = 128,
-        max_skills: int = 64,
-        lambda_decay: float = 0.001,
+        max_entities: int = 512,
+        seed: int = 0,
     ):
         self.state_dim = state_dim
-        self.action_dim = action_dim
+        self.n_actions = n_actions
 
         self.episodic = EpisodicBuffer(
             capacity=episodic_capacity,
             state_dim=state_dim,
-            action_dim=action_dim,
-            lambda_decay=lambda_decay,
+            seed=seed,
         )
-
         self.semantic = SemanticGraph(
             embedding_dim=state_dim,
             max_entities=max_entities,
-            lambda_decay=lambda_decay,
+            seed=seed,
         )
-
         self.procedural = ProceduralMemory(
-            max_skills=max_skills,
-            context_dim=state_dim,
-            action_dim=action_dim,
-            lambda_decay=lambda_decay,
+            n_actions=n_actions,
+            embedding_dim=state_dim,
+            seed=seed,
         )
 
-    def encode_experience(
+        self._step = 0
+
+    def encode(self, state: np.ndarray, surprise: float = 1.0) -> int:
+        """Codifica estado no grafo semântico (retorna entity ID)."""
+        return self.semantic.add_entity(state, importance=surprise)
+
+    def store(
         self,
         state: np.ndarray,
-        action: np.ndarray,
+        action: int,
         reward: float,
         next_state: np.ndarray,
         surprise: float = 1.0,
-        timestamp: int = 0,
-    ) -> None:
-        """Codifica uma experiência no buffer episódico."""
-        self.episodic.add(state, action, reward, next_state, timestamp, surprise)
+    ) -> dict:
+        """Armazena experiência nas 3 memórias.
 
-    def encode_knowledge(
-        self,
-        name: str,
-        embedding: np.ndarray,
-        entity_type: str = "concept",
-        relations: list[tuple[str, str, str]] | None = None,
-    ) -> None:
-        """Codifica conhecimento no grafo semântico."""
-        self.semantic.add_entity(name, embedding, entity_type)
-        if relations:
-            for source, target, rel_type in relations:
-                try:
-                    self.semantic.add_relation(source, target, rel_type)
-                except ValueError:
-                    pass  # Entidade não encontrada
+        1. Adiciona ao EpisodicBuffer
+        2. Se buffer consolidou, transfere para SemanticGraph
+        3. Atualiza ProceduralMemory (política)
 
-    def encode_skill(
-        self,
-        name: str,
-        context_pattern: np.ndarray,
-        action_policy: np.ndarray,
-        success: bool = True,
-        timestamp: int = 0,
-    ) -> None:
-        """Codifica uma skill na memória procedural."""
-        self.procedural.learn(name, context_pattern, action_policy, success, timestamp)
-
-    def recall_similar_experience(
-        self,
-        state: np.ndarray,
-        k: int = 5,
-    ) -> list[Experience]:
-        """Recupera experiências similares ao estado."""
-        return self.episodic.query(state, k)
-
-    def recall_similar_knowledge(
-        self,
-        embedding: np.ndarray,
-        k: int = 5,
-    ) -> list[tuple[str, float]]:
-        """Recupera conhecimento similar ao embedding."""
-        return self.semantic.query_similar(embedding, k)
-
-    def recall_skill(
-        self,
-        context_pattern: np.ndarray,
-        k: int = 3,
-    ) -> list[tuple[str, float, np.ndarray]]:
-        """Recupera skills similares ao contexto."""
-        return self.procedural.recall(context_pattern, k)
-
-    def consolidate(self) -> None:
-        """Executa consolidação em todas as memórias.
-
-        - EWC-temporal: decaimento de importância.
-        - Poda de skills fracas.
+        Returns
+        -------
+        dict com info sobre o que foi feito.
         """
-        self.episodic.decay_importance()
-        self.semantic.decay_importance()
-        self.procedural.decay_importance()
-        self.procedural.prune()
+        result = {"consolidated": False, "n_consolidated": 0}
 
-    def stats(self) -> dict:
-        """Estatísticas completas do hipocampo."""
+        # 1. Episodic buffer
+        consolidated = self.episodic.add(state, action, reward, next_state, surprise)
+
+        # 2. Consolidação → SemanticGraph
+        if consolidated is not None:
+            for exp in consolidated:
+                self.semantic.consolidate_experience(exp)
+            result["consolidated"] = True
+            result["n_consolidated"] = len(consolidated)
+
+        # 3. Procedural memory update
+        proc_result = self.procedural.update(state, action, reward, next_state)
+        result.update(proc_result)
+
+        # 4. Decay temporal no grafo
+        self.semantic.temporal_decay()
+
+        self._step += 1
+        return result
+
+    def recall(self, query: np.ndarray, k: int = 5) -> dict:
+        """Recupera informações relevantes para uma query.
+
+        Busca no SemanticGraph (entidades similares) e no EpisodicBuffer
+        (experiências recentes).
+        """
+        semantic_results = self.semantic.search(query, k=k)
+        recent_episodes = self.episodic.recent(n=min(k, 5))
+
         return {
-            "episodic": self.episodic.stats(),
-            "semantic": self.semantic.stats(),
-            "procedural": self.procedural.stats(),
+            "semantic_matches": semantic_results,
+            "recent_episodes": recent_episodes,
         }
 
-    def __repr__(self) -> str:
-        return (
-            f"Hippocampus("
-            f"episodic={self.episodic.size}/{self.episodic.capacity}, "
-            f"entities={self.semantic.n_entities}, "
-            f"skills={self.procedural.n_skills})"
-        )
+    def decide(self, state: np.ndarray, epsilon: float = 0.1) -> int:
+        """Decide ação baseada na memória procedural."""
+        return self.procedural.select_action(state, epsilon)
+
+    def get_state_embedding(self, state: np.ndarray) -> Optional[np.ndarray]:
+        """Retorna embedding semântico de um estado (se existir)."""
+        eid = self.semantic.find_similar(state)
+        if eid is not None:
+            entity = self.semantic.get_entity(eid)
+            if entity is not None:
+                return entity.embedding
+        return None
+
+    def get_stats(self) -> dict:
+        """Estatísticas agregadas das 3 memórias."""
+        return {
+            "step": self._step,
+            "episodic": self.episodic.get_stats(),
+            "semantic": self.semantic.get_stats(),
+            "procedural": self.procedural.get_stats(),
+        }
