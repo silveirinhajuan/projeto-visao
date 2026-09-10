@@ -1,1 +1,0 @@
-{"step": 4480, "timestamp": 1789015686.6738868, "state": "STOPPING", "metrics": {"total_steps": 4480, "total_errors": 5, "total_recoveries": 5}, "health": {"status": "running", "mse": 8.395442340170289e-12, "mae": 2.8965759991500877e-06, "surprise_mean": 1.0, "surprise_std": 0.0, "lr": 0.1, "steps_per_sec": 678.0, "window_size": 200}, "emergency": false}

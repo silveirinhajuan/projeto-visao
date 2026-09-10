@@ -740,8 +740,8 @@
         "visao/brain.py"
       ],
       "verify": "python3 -c 'from visao.brain import VisaoBrain; b = VisaoBrain(2, 32, 1, meta_learn=True); print(b)'",
-      "notes": "Meta-learning: o próprio cérebro ajusta lr baseado na tendência de erro (descendo = mantenha; subindo = reduza). Mais estável que lr fixo.",
-      "evidence": "MetaPlasticityLearner integrado ao VisaoBrain via meta_learn=True. lr por neurônio ajusta baseado na variância do erro (neurônio estável=lr alto, volátil=lr baixo). Hook mechanism injeta EWC-temporal + surprise decay. 25 testes passam (20 brain + 5 metaplasticity). Commit c203689."
+      "notes": "Meta-learning: o pr\u00f3prio c\u00e9rebro ajusta lr baseado na tend\u00eancia de erro (descendo = mantenha; subindo = reduza). Mais est\u00e1vel que lr fixo.",
+      "evidence": "MetaPlasticityLearner integrado ao VisaoBrain via meta_learn=True. lr por neur\u00f4nio ajusta baseado na vari\u00e2ncia do erro (neur\u00f4nio est\u00e1vel=lr alto, vol\u00e1til=lr baixo). Hook mechanism injeta EWC-temporal + surprise decay. 25 testes passam (20 brain + 5 metaplasticity). Commit c203689."
     },
     {
       "id": "8.4",
@@ -935,7 +935,7 @@
     {
       "id": "15.0",
       "title": "Agentic Module: Planejamento + Execu\u00e7\u00e3o + Auto-monitoramento",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "8.0",
         "13.0",
