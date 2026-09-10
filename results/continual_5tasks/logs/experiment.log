@@ -1,0 +1,157 @@
+Experiment: continual_5tasks
+Output: results/continual_5tasks
+Seed: 42
+Continual Learning: 5 tasks
+Models: ['MLP', 'GRU', 'LSTM', 'CfC', 'VISÃO']
+
+--- MLP (seed=42) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: 0.0023
+  BWT: -0.0029
+  Avg performance: 0.0430
+
+--- MLP (seed=43) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0000
+  BWT: 0.0000
+  Avg performance: 0.0377
+
+--- MLP (seed=44) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0001
+  BWT: 0.0001
+  Avg performance: 0.0358
+
+--- GRU (seed=42) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0110
+  BWT: 0.0138
+  Avg performance: 0.0615
+
+--- GRU (seed=43) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0152
+  BWT: 0.0190
+  Avg performance: 0.0805
+
+--- GRU (seed=44) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0147
+  BWT: 0.0184
+  Avg performance: 0.0642
+
+--- LSTM (seed=42) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0328
+  BWT: 0.0409
+  Avg performance: 0.1149
+
+--- LSTM (seed=43) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0298
+  BWT: 0.0372
+  Avg performance: 0.1068
+
+--- LSTM (seed=44) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0335
+  BWT: 0.0419
+  Avg performance: 0.0945
+
+--- CfC (seed=42) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: 0.0181
+  BWT: -0.0226
+  Avg performance: 0.8300
+
+--- CfC (seed=43) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: 0.0100
+  BWT: -0.0125
+  Avg performance: 0.8233
+
+--- CfC (seed=44) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: 0.0095
+  BWT: -0.0118
+  Avg performance: 0.8179
+
+--- VISÃO (seed=42) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0384
+  BWT: 0.0480
+  Avg performance: 0.9203
+
+--- VISÃO (seed=43) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: 0.0467
+  BWT: -0.0584
+  Avg performance: 0.9616
+
+--- VISÃO (seed=44) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0157
+  BWT: 0.0197
+  Avg performance: 0.9832
+Completed in 43.55s
+Metrics saved: results/continual_5tasks/metrics.json
