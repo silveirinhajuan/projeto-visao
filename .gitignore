@@ -1,6 +1,9 @@
-# dados de benchmark (baixados sob demanda, não versionados)
-visao/bench/data/
-
-# python
 __pycache__/
 *.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+.env
+*.swp
+.DS_Store
