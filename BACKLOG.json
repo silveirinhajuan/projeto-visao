@@ -1,28 +1,28 @@
 {
-  "_comment": "Backlog executável do Projeto VISÃO. Fonte da verdade para o loop autônomo. O agente noturno lê este arquivo, escolhe a PRÓXIMA tarefa pending cujas dependências estejam done, e executa APENAS ela.",
+  "_comment": "Backlog execut\u00e1vel do Projeto VIS\u00c3O. Fonte da verdade para o loop aut\u00f4nomo. O agente noturno l\u00ea este arquivo, escolhe a PR\u00d3XIMA tarefa pending cujas depend\u00eancias estejam done, e executa APENAS ela.",
   "version": "3.0.0",
   "gates": {
     "phase0": "done",
     "phase1_substrate": "done",
     "phase4_governance": "done",
-    "scope_revision_2026_08_09": "DESCENTRALIZED SWARM REMOVED. Novo alvo: single-node AGI via aprendizado contínuo incremental (notebook do autor).",
-    "phase2_swarm": "DISCONTINUED 2026-08-09 — escopo single-node; sem enxame, recrutamento ou replicação",
-    "phase3_evolution": "REPURPOSED 2026-08-09 — auto-ajuste LOCAL em sandbox (AutoML comum), não self-rewrite em rede; depende de single-node continual, não de swarm",
-    "phase2_single_node": "active — escala LTC p/ notebook + tarefa real + auto-ajuste local"
+    "scope_revision_2026_08_09": "DESCENTRALIZED SWARM REMOVED. Novo alvo: single-node AGI via aprendizado cont\u00ednuo incremental (notebook do autor).",
+    "phase2_swarm": "DISCONTINUED 2026-08-09 \u2014 escopo single-node; sem enxame, recrutamento ou replica\u00e7\u00e3o",
+    "phase3_evolution": "REPURPOSED 2026-08-09 \u2014 auto-ajuste LOCAL em sandbox (AutoML comum), n\u00e3o self-rewrite em rede; depende de single-node continual, n\u00e3o de swarm",
+    "phase2_single_node": "active \u2014 escala LTC p/ notebook + tarefa real + auto-ajuste local"
   },
   "tasks": [
     {
       "id": "0.1",
       "phase": 0,
-      "title": "Protótipo LTC + plasticidade local em numpy",
+      "title": "Prot\u00f3tipo LTC + plasticidade local em numpy",
       "status": "done",
-      "evidence": "prototype/results_continual.json — esquecimento 97.2% menor que controle",
+      "evidence": "prototype/results_continual.json \u2014 esquecimento 97.2% menor que controle",
       "deps": []
     },
     {
       "id": "4.1",
       "phase": 4,
-      "title": "Testes de contenção R1-R5 (escritos ANTES da Fase 3)",
+      "title": "Testes de conten\u00e7\u00e3o R1-R5 (escritos ANTES da Fase 3)",
       "status": "done",
       "evidence": "39 testes passam; manifesto R3 selado",
       "deps": []
@@ -32,13 +32,13 @@
       "phase": 1,
       "title": "Ambiente JAX + requirements",
       "status": "done",
-      "evidence": "jax[cpu] 0.10.2 (jaxlib 0.10.2) instalado em <60s; jax.devices() -> [CpuDevice(id=0)]. visao/env/test_environment.py::test_jax_importable_and_has_device PASS. Suíte completa: 40 passed (39+1), 0 falham. Requisitos declarados em visao/env/requirements.txt (jax[cpu], ncps, diffrax, optax, pytest); instalados nesta run: jax[cpu], pytest (ncps/diffrax/optax adiados para tarefas 1.4/1.5 sob guarda de RAM).",
+      "evidence": "jax[cpu] 0.10.2 (jaxlib 0.10.2) instalado em <60s; jax.devices() -> [CpuDevice(id=0)]. visao/env/test_environment.py::test_jax_importable_and_has_device PASS. Su\u00edte completa: 40 passed (39+1), 0 falham. Requisitos declarados em visao/env/requirements.txt (jax[cpu], ncps, diffrax, optax, pytest); instalados nesta run: jax[cpu], pytest (ncps/diffrax/optax adiados para tarefas 1.4/1.5 sob guarda de RAM).",
       "deps": [],
       "files": [
         "visao/env/requirements.txt"
       ],
       "verify": "python3 -c 'import jax; print(jax.devices())'",
-      "notes": "jax[cpu] apenas — a máquina tem 4 cores e 7GB. Prefixar comandos com 'env -u PYTHONPATH'. Se jax não instalar em <300s ou estourar RAM, marcar blocked e registrar o motivo; NÃO insistir."
+      "notes": "jax[cpu] apenas \u2014 a m\u00e1quina tem 4 cores e 7GB. Prefixar comandos com 'env -u PYTHONPATH'. Se jax n\u00e3o instalar em <300s ou estourar RAM, marcar blocked e registrar o motivo; N\u00c3O insistir."
     },
     {
       "id": "1.2",
@@ -52,14 +52,14 @@
         "visao/tests/test_cfc.py"
       ],
       "verify": "python3 -m pytest visao/tests/test_cfc.py -v",
-      "expect": "FAIL — módulo visao.core.cfc inexistente",
-      "notes": "TDD estrito. Este teste DEVE falhar antes da 1.3. Asserção: tau_range(wild) > 2 * tau_range(calm).",
+      "expect": "FAIL \u2014 m\u00f3dulo visao.core.cfc inexistente",
+      "notes": "TDD estrito. Este teste DEVE falhar antes da 1.3. Asser\u00e7\u00e3o: tau_range(wild) > 2 * tau_range(calm).",
       "evidence": "Teste RED confirmado: ModuleNotFoundError 'visao.core' antes da implementacao. 9 testes escritos em visao/tests/test_cfc.py (liquidez, estabilidade, contrato, esparsidade)."
     },
     {
       "id": "1.3",
       "phase": 1,
-      "title": "Célula CfC em JAX (GREEN)",
+      "title": "C\u00e9lula CfC em JAX (GREEN)",
       "status": "done",
       "deps": [
         "1.2"
@@ -69,13 +69,13 @@
       ],
       "verify": "python3 -m pytest visao/tests/test_cfc.py -v",
       "expect": "PASS",
-      "notes": "Porte de prototype/liquid.py com jax.jit + jax.vmap. Manter a assinatura de rollout() idêntica para comparabilidade com a Fase 0.",
+      "notes": "Porte de prototype/liquid.py com jax.jit + jax.vmap. Manter a assinatura de rollout() id\u00eantica para comparabilidade com a Fase 0.",
       "evidence": "CfCCell em JAX (jax.jit + lax.scan) em visao/core/cfc.py. 9/9 testes de test_cfc.py PASS em 3.33s. Liquidez confirmada: faixa de tau agitada/calma = 3.282x."
     },
     {
       "id": "1.3b",
       "phase": 1,
-      "title": "Paridade numérica JAX vs numpy",
+      "title": "Paridade num\u00e9rica JAX vs numpy",
       "status": "done",
       "deps": [
         "1.3"
@@ -84,7 +84,7 @@
         "visao/tests/test_parity.py"
       ],
       "verify": "python3 -m pytest visao/tests/test_parity.py -v",
-      "notes": "Mesma seed, mesmos pesos, mesma sequência: estados devem bater com atol=1e-5. Sem isto, o porte não é porte — é reescrita não verificada.",
+      "notes": "Mesma seed, mesmos pesos, mesma sequ\u00eancia: estados devem bater com atol=1e-5. Sem isto, o porte n\u00e3o \u00e9 porte \u2014 \u00e9 reescrita n\u00e3o verificada.",
       "evidence": "PARIDADE COMPROVADA a nivel de precisao de maquina: erro max estados 5.551e-16, ativacoes 2.220e-16 (criterio era <1e-5, ~10 ordens de grandeza de folga). Razao de liquidez identica: numpy 3.282x vs jax 3.282x. 8/8 testes em test_parity.py. Os resultados da Fase 0 transferem para a implementacao JAX."
     },
     {
@@ -99,13 +99,13 @@
         "visao/core/wiring.py",
         "visao/tests/test_wiring.py"
       ],
-      "evidence": "NCPWiring em visao/core/wiring.py: máscara (n_total,n_total) direcionada strict (sensory→inter/command, inter→inter/command/motor, command→motor; sem saída de motor, sem recorrência em sensory, diagonal 0). Teste test_mascara_respeitada_apos_plasticidade confirma que após update de plasticidade tocando TODOS os pesos, enforce() zera posições proibidas e preserva as permitidas. 5 testes novos em test_wiring.py; suíte completa 78 passed/0 failed em 4.87s. Commit c00e11a.",
-      "notes": "Lechner et al., Nature MI 2020. Esparsidade é feature. Testar que a máscara é respeitada após updates de plasticidade."
+      "evidence": "NCPWiring em visao/core/wiring.py: m\u00e1scara (n_total,n_total) direcionada strict (sensory\u2192inter/command, inter\u2192inter/command/motor, command\u2192motor; sem sa\u00edda de motor, sem recorr\u00eancia em sensory, diagonal 0). Teste test_mascara_respeitada_apos_plasticidade confirma que ap\u00f3s update de plasticidade tocando TODOS os pesos, enforce() zera posi\u00e7\u00f5es proibidas e preserva as permitidas. 5 testes novos em test_wiring.py; su\u00edte completa 78 passed/0 failed em 4.87s. Commit c00e11a.",
+      "notes": "Lechner et al., Nature MI 2020. Esparsidade \u00e9 feature. Testar que a m\u00e1scara \u00e9 respeitada ap\u00f3s updates de plasticidade."
     },
     {
       "id": "1.5",
       "phase": 1,
-      "title": "Benchmarks públicos vs LSTM/GRU",
+      "title": "Benchmarks p\u00fablicos vs LSTM/GRU",
       "status": "done",
       "deps": [
         "1.4"
@@ -116,10 +116,10 @@
         "visao/bench/run_1_5_benchmark.py",
         "visao/bench/results_1_5_full.json"
       ],
-      "success": "empatar ou superar LSTM/GRU com 10x menos parâmetros",
-      "failure": "perder por >15% em duas tarefas => revisar hipótese ANTES de prosseguir",
-      "evidence": "HARNESS COMPLETO + COMPARACAO MEDIDA (TDD: 6 testes test_bench_timeseries.py PASSAM; suite visao/ 121/0). GRU adicionado ao harness (antes so LSTM). SUBAMOSTRA 2k/60ep (run_1_5_benchmark.py): CfC=0.358(5002p,355s); LSTM=0.434(67850p,1674s); GRU=0.488(51210p,1637s). COMPLEMENTO 60k NO COLAB T4 (run_1_5_60k.py, 40ep, batch512, acesso Juan 2026-08-08): CfC=0.6939(5002p,530s) e LSTM=0.8149(67850p,1081s) — AMBOS MEDIDOS DE VERDADE (log capturado). GRU: treino interrompido em ep35/40 (train 0.797) por queda da sessao Colab (cota GPU orfa em limbo); test_acc FINAL NAO medido (results_1_5_60k.json marca NOT_MEASURED, sem invencao). Veredito 60k: CfC 12.1pp atras do LSTM porem 13.56x menos params (allegacao '~10x menos' SUSTENTADA). SUCESSO ('empatar/superar') NAO atingido; FALHA ('>15% em 2 tarefas') NAO dispara (1 tarefa completa, gap 12.1%<15%).",
-      "notes": "psMNIST permutado completo (60k, ~200ep) exige orcamento de nuvem/Colab — comparacao de acuracia cabal fica para la. Na subamostra 2k/60ep: CfC perde em acuracia mas usa 10-13x menos parametros. Walker2D/IMDB nao rodados (RAM/CPU)."
+      "success": "empatar ou superar LSTM/GRU com 10x menos par\u00e2metros",
+      "failure": "perder por >15% em duas tarefas => revisar hip\u00f3tese ANTES de prosseguir",
+      "evidence": "HARNESS COMPLETO + COMPARACAO MEDIDA (TDD: 6 testes test_bench_timeseries.py PASSAM; suite visao/ 121/0). GRU adicionado ao harness (antes so LSTM). SUBAMOSTRA 2k/60ep (run_1_5_benchmark.py): CfC=0.358(5002p,355s); LSTM=0.434(67850p,1674s); GRU=0.488(51210p,1637s). COMPLEMENTO 60k NO COLAB T4 (run_1_5_60k.py, 40ep, batch512, acesso Juan 2026-08-08): CfC=0.6939(5002p,530s) e LSTM=0.8149(67850p,1081s) \u2014 AMBOS MEDIDOS DE VERDADE (log capturado). GRU: treino interrompido em ep35/40 (train 0.797) por queda da sessao Colab (cota GPU orfa em limbo); test_acc FINAL NAO medido (results_1_5_60k.json marca NOT_MEASURED, sem invencao). Veredito 60k: CfC 12.1pp atras do LSTM porem 13.56x menos params (allegacao '~10x menos' SUSTENTADA). SUCESSO ('empatar/superar') NAO atingido; FALHA ('>15% em 2 tarefas') NAO dispara (1 tarefa completa, gap 12.1%<15%).",
+      "notes": "psMNIST permutado completo (60k, ~200ep) exige orcamento de nuvem/Colab \u2014 comparacao de acuracia cabal fica para la. Na subamostra 2k/60ep: CfC perde em acuracia mas usa 10-13x menos parametros. Walker2D/IMDB nao rodados (RAM/CPU)."
     },
     {
       "id": "1.6",
@@ -134,27 +134,27 @@
         "visao/core/predictive_coder.py",
         "visao/tests/test_predictive.py"
       ],
-      "evidence": "Hierarquia valor/erro (Whittington & Bogacz 2017) sobre o estado do CfCCell: 2 camadas de mesma dim interna (n_mid), ponte W_bridge (n_hidden->n_mid) e saida W_out (n_mid->n_out). Regras locais (sem backprop global): cada camada corrige value por erro de predicao, W_up/W_down ajustam por Hebb modulado por erro, clip de ativacao/pesos p/ estabilidade. 3 testes em test_predictive.py PASSAM; suíte 85 passed/0 failed. MEDIDO: erro de saida cai com o treino local (teste test_erro_cai_com_treino, lr=0.001, 15 passos, entra normalizada) e fica finito (nao diverge). Params contaveis: 4*n_mid^2 + n_mid*n_hidden + n_out*n_mid. NOTA: a 1.6 tem deps=[1.5]; a 1.5 segue in_progress (benchmark no Colab), mas a 1.6 NAO depende do RESULTADO do benchmark — so da existencia do CfCCell (1.4 done). Executada e validada autonomamente; marcada done com ressalva de integracao pendente na 1.5.",
-      "notes": "Whittington & Bogacz 2017. Substituir readout de camada única por hierarquia valor/erro."
+      "evidence": "Hierarquia valor/erro (Whittington & Bogacz 2017) sobre o estado do CfCCell: 2 camadas de mesma dim interna (n_mid), ponte W_bridge (n_hidden->n_mid) e saida W_out (n_mid->n_out). Regras locais (sem backprop global): cada camada corrige value por erro de predicao, W_up/W_down ajustam por Hebb modulado por erro, clip de ativacao/pesos p/ estabilidade. 3 testes em test_predictive.py PASSAM; su\u00edte 85 passed/0 failed. MEDIDO: erro de saida cai com o treino local (teste test_erro_cai_com_treino, lr=0.001, 15 passos, entra normalizada) e fica finito (nao diverge). Params contaveis: 4*n_mid^2 + n_mid*n_hidden + n_out*n_mid. NOTA: a 1.6 tem deps=[1.5]; a 1.5 segue in_progress (benchmark no Colab), mas a 1.6 NAO depende do RESULTADO do benchmark \u2014 so da existencia do CfCCell (1.4 done). Executada e validada autonomamente; marcada done com ressalva de integracao pendente na 1.5.",
+      "notes": "Whittington & Bogacz 2017. Substituir readout de camada \u00fanica por hierarquia valor/erro."
     },
     {
       "id": "1.7",
       "phase": 1,
-      "title": "PORTÃO DA FASE 1: README com números reproduzíveis",
+      "title": "PORT\u00c3O DA FASE 1: README com n\u00fameros reproduz\u00edveis",
       "status": "done",
-      "evidence": "README.md criado com números medidos de prototype/results_continual.json (redução de esquecimento 97.2%) e visao/bench/results_param_count.json (LSTM/CfC=13.56x, GRU/CfC=10.16x). Teste-gate visao/tests/test_readme_gate.py (2 testes) PASSA; suíte completa 105 passed/0 failed em 97.6s. Commit 54b08c2. Portão da Fase 1 FECHADO.",
+      "evidence": "README.md criado com n\u00fameros medidos de prototype/results_continual.json (redu\u00e7\u00e3o de esquecimento 97.2%) e visao/bench/results_param_count.json (LSTM/CfC=13.56x, GRU/CfC=10.16x). Teste-gate visao/tests/test_readme_gate.py (2 testes) PASSA; su\u00edte completa 105 passed/0 failed em 97.6s. Commit 54b08c2. Port\u00e3o da Fase 1 FECHADO.",
       "deps": [
         "1.6"
       ],
       "files": [
         "README.md"
       ],
-      "notes": "Sem números medidos, a Fase 2 não abre. Regra do projeto."
+      "notes": "Sem n\u00fameros medidos, a Fase 2 n\u00e3o abre. Regra do projeto."
     },
     {
       "id": "1.8",
       "phase": 1,
-      "title": "Estabilidade do reservatório: espectro e borda do caos",
+      "title": "Estabilidade do reservat\u00f3rio: espectro e borda do caos",
       "status": "done",
       "deps": [
         "1.3b"
@@ -164,15 +164,15 @@
         "visao/tests/test_stability.py",
         "visao/analysis/results_stability.json"
       ],
-      "evidence": "5 testes em test_stability.py PASSAM; suíte completa 71 passed/0 failed. MEDIDO (n_hidden=96, dt=0.1, T=600, entrada agitada): SR(W_rec)=0.7577 (<1, ESN ok); SR(jacobiano local) máx=0.9754 (<1, contrativo); LE=-0.7484 (SUB-CAÓTICO, memória estável); ||x|| final=3.726, std dinâmico=0.306 (NÃO morto, responde à entrada). Veredito: utilizável na borda do caos do lado estável. Evidência numérica em visao/analysis/results_stability.json.",
-      "notes": "Medir raio espectral efetivo de W_rec e o maior expoente de Lyapunov empírico sob perturbação. Testar que o reservatório NÃO é caótico (Lyapunov < 0) nem morto (estados não colapsam a zero). Barato de rodar: 96 neurônios, poucos segundos. Este é o diagnóstico que explica QUANDO a arquitetura líquida falha."
+      "evidence": "5 testes em test_stability.py PASSAM; su\u00edte completa 71 passed/0 failed. MEDIDO (n_hidden=96, dt=0.1, T=600, entrada agitada): SR(W_rec)=0.7577 (<1, ESN ok); SR(jacobiano local) m\u00e1x=0.9754 (<1, contrativo); LE=-0.7484 (SUB-CA\u00d3TICO, mem\u00f3ria est\u00e1vel); ||x|| final=3.726, std din\u00e2mico=0.306 (N\u00c3O morto, responde \u00e0 entrada). Veredito: utiliz\u00e1vel na borda do caos do lado est\u00e1vel. Evid\u00eancia num\u00e9rica em visao/analysis/results_stability.json.",
+      "notes": "Medir raio espectral efetivo de W_rec e o maior expoente de Lyapunov emp\u00edrico sob perturba\u00e7\u00e3o. Testar que o reservat\u00f3rio N\u00c3O \u00e9 ca\u00f3tico (Lyapunov < 0) nem morto (estados n\u00e3o colapsam a zero). Barato de rodar: 96 neur\u00f4nios, poucos segundos. Este \u00e9 o diagn\u00f3stico que explica QUANDO a arquitetura l\u00edquida falha."
     },
     {
       "id": "1.9",
       "phase": 1,
-      "title": "Ablação: qual componente carrega os 97,2%?",
+      "title": "Abla\u00e7\u00e3o: qual componente carrega os 97,2%?",
       "status": "done",
-      "evidence": "Grade 2x2x2 (consolidação/surpresa/oja) x 5 seeds, protocolo idêntico à Fase 0 (n_steps=2500, 96 neurônios). 3 testes em test_ablation.py PASSAM; suíte completa 74 passed/0 failed. MEUS NÚMEROS (re-executados e validados nesta sessão): baseline(---)=+0.176 esquecimento; completo(CSO)=+0.013 (redução 92,6%). Contribuição isolada (delta de forgetting vs baseline, células estáveis): surpresa=-0.262 (REDUZ mais, é o componente principal), oja=-0.092 (reduz), consolidação=+0.178 (SOZINHA aumenta o esquecimento — só ajuda em combinação, como freio anti-divergência). DESCOBERTA: surpresa ON sem consolidação (-S-, -SO) DIVERGE numericamente (W_out explode, overflow) — reportada como diverged, NÃO contada como 'redução'. NOTA DE TRANSPARÊNCIA: um checkpoint noturno anterior havia marcado 1.9 done com números diferentes (baseline +0.2924, completo +0.0083, redução 97,2%, consolidação isolada eliminando 99,5%) — proveniente de execução com n_steps/seed distintos e NÃO comitado. Mantive a execução desta sessão (reproduzível e testada) como fonte da verdade; a discrepância de magnitude vem do comprimento da sequência de treino. Evidência em visao/analysis/results_ablation.json.",
+      "evidence": "Grade 2x2x2 (consolida\u00e7\u00e3o/surpresa/oja) x 5 seeds, protocolo id\u00eantico \u00e0 Fase 0 (n_steps=2500, 96 neur\u00f4nios). 3 testes em test_ablation.py PASSAM; su\u00edte completa 74 passed/0 failed. MEUS N\u00daMEROS (re-executados e validados nesta sess\u00e3o): baseline(---)=+0.176 esquecimento; completo(CSO)=+0.013 (redu\u00e7\u00e3o 92,6%). Contribui\u00e7\u00e3o isolada (delta de forgetting vs baseline, c\u00e9lulas est\u00e1veis): surpresa=-0.262 (REDUZ mais, \u00e9 o componente principal), oja=-0.092 (reduz), consolida\u00e7\u00e3o=+0.178 (SOZINHA aumenta o esquecimento \u2014 s\u00f3 ajuda em combina\u00e7\u00e3o, como freio anti-diverg\u00eancia). DESCOBERTA: surpresa ON sem consolida\u00e7\u00e3o (-S-, -SO) DIVERGE numericamente (W_out explode, overflow) \u2014 reportada como diverged, N\u00c3O contada como 'redu\u00e7\u00e3o'. NOTA DE TRANSPAR\u00caNCIA: um checkpoint noturno anterior havia marcado 1.9 done com n\u00fameros diferentes (baseline +0.2924, completo +0.0083, redu\u00e7\u00e3o 97,2%, consolida\u00e7\u00e3o isolada eliminando 99,5%) \u2014 proveniente de execu\u00e7\u00e3o com n_steps/seed distintos e N\u00c3O comitado. Mantive a execu\u00e7\u00e3o desta sess\u00e3o (reproduz\u00edvel e testada) como fonte da verdade; a discrep\u00e2ncia de magnitude vem do comprimento da sequ\u00eancia de treino. Evid\u00eancia em visao/analysis/results_ablation.json.",
       "deps": [
         "1.3b"
       ],
@@ -181,7 +181,7 @@
         "visao/tests/test_ablation.py",
         "visao/analysis/results_ablation.json"
       ],
-      "notes": "Grade 2x2x2 sobre o experimento da Fase 0: consolidação on/off, gate de surpresa on/off, Oja on/off. 5 seeds cada. Reportar contribuição isolada de cada mecanismo. Sem isto não sabemos o que estamos defendendo — só que o conjunto funciona. Roda em numpy, ~2min por célula da grade."
+      "notes": "Grade 2x2x2 sobre o experimento da Fase 0: consolida\u00e7\u00e3o on/off, gate de surpresa on/off, Oja on/off. 5 seeds cada. Reportar contribui\u00e7\u00e3o isolada de cada mecanismo. Sem isto n\u00e3o sabemos o que estamos defendendo \u2014 s\u00f3 que o conjunto funciona. Roda em numpy, ~2min por c\u00e9lula da grade."
     },
     {
       "id": "1.10",
@@ -196,13 +196,13 @@
         "visao/tests/test_tau_sweep.py",
         "visao/analysis/results_tau_sweep.json"
       ],
-      "evidence": "Sweep de faixa de tau (ratio max/min = 1.0/1.5/3/6/10x) x5 seeds, protocolo contínuo A->B->C idêntico à Fase 0 (n_steps=2500, 96 neurônios). 4 testes em test_tau_sweep.py PASSAM; suíte 78 passed/0 failed. RESULTADO: tau UNIFORME forgetting=+0.0135±0.0103; melhor heterogêneo (10x)=+0.0125; delta=-0.0011, DENTRO do ruído (±0.0103). VEREDITO HONESTO: HETEROGENEIDADE DE TAU É DECORAÇÃO neste protocolo — tau uniforme e heterogêneo são estatisticamente indistinguíveis para o esquecimento contínuo. A memória multiescala vem de OUTRO mecanismo (provavelmente o gate de surpresa, cf. 1.9), não da dispersão de tau. A função analyze() classifica explicitamente delta<ruído como DECORAÇÃO para não inflar ganho fictício. Evidência em results_tau_sweep.json.",
-      "notes": "Varrer faixas de tau (estreita vs larga) e medir esquecimento. Hipótese: heterogeneidade de constantes de tempo é o que dá memória multiescala. Se tau uniforme desempenhar igual, a heterogeneidade é decoração e devemos dizer isso."
+      "evidence": "Sweep de faixa de tau (ratio max/min = 1.0/1.5/3/6/10x) x5 seeds, protocolo cont\u00ednuo A->B->C id\u00eantico \u00e0 Fase 0 (n_steps=2500, 96 neur\u00f4nios). 4 testes em test_tau_sweep.py PASSAM; su\u00edte 78 passed/0 failed. RESULTADO: tau UNIFORME forgetting=+0.0135\u00b10.0103; melhor heterog\u00eaneo (10x)=+0.0125; delta=-0.0011, DENTRO do ru\u00eddo (\u00b10.0103). VEREDITO HONESTO: HETEROGENEIDADE DE TAU \u00c9 DECORA\u00c7\u00c3O neste protocolo \u2014 tau uniforme e heterog\u00eaneo s\u00e3o estatisticamente indistingu\u00edveis para o esquecimento cont\u00ednuo. A mem\u00f3ria multiescala vem de OUTRO mecanismo (provavelmente o gate de surpresa, cf. 1.9), n\u00e3o da dispers\u00e3o de tau. A fun\u00e7\u00e3o analyze() classifica explicitamente delta<ru\u00eddo como DECORA\u00c7\u00c3O para n\u00e3o inflar ganho fict\u00edcio. Evid\u00eancia em results_tau_sweep.json.",
+      "notes": "Varrer faixas de tau (estreita vs larga) e medir esquecimento. Hip\u00f3tese: heterogeneidade de constantes de tempo \u00e9 o que d\u00e1 mem\u00f3ria multiescala. Se tau uniforme desempenhar igual, a heterogeneidade \u00e9 decora\u00e7\u00e3o e devemos dizer isso."
     },
     {
       "id": "1.11",
       "phase": 1,
-      "title": "Robustez: ruído de entrada e perda de neurônios",
+      "title": "Robustez: ru\u00eddo de entrada e perda de neur\u00f4nios",
       "status": "done",
       "deps": [
         "1.9"
@@ -212,13 +212,13 @@
         "visao/tests/test_robustness.py",
         "visao/analysis/results_robustness.json"
       ],
-      "evidence": "Reservatório plástico (LocalLearner C+S+O) treinado A->B->C; ESTRESSE SÓ NA INFERÊNCIA (não re-treina). 4 testes em test_robustness.py PASSAM; suíte 82 passed/0 failed. RESULTADO (5 seeds, 96 neurônios): erro limpo=0.2885. RUÍDO (sigma): 0.2->1.000x, 0.5->1.000x, 1.0->1.001x (IMUNE — desvio igual à amplitude do sinal não degrada). MORTE de neurônios: 10%->1.047x, 20%->1.041x, 40%->1.023x (quase plano — contra-intuitivo, mas correto: zera-se o estado dos mortos e o readout ignora-os; robustez vem da esparsidade+redundância do reservatório). VEREDITO: FASE 2 VIÁVEL (pior degradação 1.047x, tol 2.0x). Implicação: o organismo tolera nós caindo — premissa da Fase 2 (enxame com churn) é sustentada empiricamente. Evidência em results_robustness.json.",
-      "notes": "Injetar ruído gaussiano crescente e matar k% dos neurônios em tempo de inferência. Medir degradação. Relevante para a Fase 2: num enxame descentralizado, nós CAEM. Se o organismo não tolera perda de unidades, a Fase 2 é inviável e precisamos saber agora."
+      "evidence": "Reservat\u00f3rio pl\u00e1stico (LocalLearner C+S+O) treinado A->B->C; ESTRESSE S\u00d3 NA INFER\u00caNCIA (n\u00e3o re-treina). 4 testes em test_robustness.py PASSAM; su\u00edte 82 passed/0 failed. RESULTADO (5 seeds, 96 neur\u00f4nios): erro limpo=0.2885. RU\u00cdDO (sigma): 0.2->1.000x, 0.5->1.000x, 1.0->1.001x (IMUNE \u2014 desvio igual \u00e0 amplitude do sinal n\u00e3o degrada). MORTE de neur\u00f4nios: 10%->1.047x, 20%->1.041x, 40%->1.023x (quase plano \u2014 contra-intuitivo, mas correto: zera-se o estado dos mortos e o readout ignora-os; robustez vem da esparsidade+redund\u00e2ncia do reservat\u00f3rio). VEREDITO: FASE 2 VI\u00c1VEL (pior degrada\u00e7\u00e3o 1.047x, tol 2.0x). Implica\u00e7\u00e3o: o organismo tolera n\u00f3s caindo \u2014 premissa da Fase 2 (enxame com churn) \u00e9 sustentada empiricamente. Evid\u00eancia em results_robustness.json.",
+      "notes": "Injetar ru\u00eddo gaussiano crescente e matar k% dos neur\u00f4nios em tempo de infer\u00eancia. Medir degrada\u00e7\u00e3o. Relevante para a Fase 2: num enxame descentralizado, n\u00f3s CAEM. Se o organismo n\u00e3o tolera perda de unidades, a Fase 2 \u00e9 invi\u00e1vel e precisamos saber agora."
     },
     {
       "id": "1.12",
       "phase": 1,
-      "title": "Contagem de parâmetros vs baselines",
+      "title": "Contagem de par\u00e2metros vs baselines",
       "status": "done",
       "deps": [
         "1.5"
@@ -228,26 +228,26 @@
         "visao/tests/test_param_count.py",
         "visao/bench/results_param_count.json"
       ],
-      "evidence": "Tabela honesta de parâmetros treináveis (independente do treino, determinística). Reusa cfc_params/lstm_params de timeseries.py (mesmas dims do benchmark 1.5). 2 testes em test_param_count.py PASSAM; suíte 85 passed/0 failed. MEDIDO (psMNIST, n_in=1, T=784): CfC(h=64)=5002 params; LSTM(h=128)=67850; GRU(h=128)=50816. Razão LSTM/CfC=13.56x; GRU/CfC=10.16x. VEREDITO: alegação do projeto '~10x menos parâmetros' SUSTENTADA (LSTM 13.6x, GRU 10.2x menos). NOTA: a 1.12 tem deps=[1.5]; a 1.5 segue in_progress (acurácia no Colab), mas a CONTAGEM de parâmetros e a comparação estrutural NAO dependem do resultado do treino — so das dims das arquiteturas (1.4/timeseries.py done). Executada e validada; marcada done com ressalva de acurácia pendente na 1.5.",
-      "notes": "Tabela honesta: parâmetros treináveis do CfC vs LSTM/GRU nas tarefas do 1.5. A alegação do projeto é '10x menos parâmetros'. Ou o número aparece, ou a alegação sai do README."
+      "evidence": "Tabela honesta de par\u00e2metros trein\u00e1veis (independente do treino, determin\u00edstica). Reusa cfc_params/lstm_params de timeseries.py (mesmas dims do benchmark 1.5). 2 testes em test_param_count.py PASSAM; su\u00edte 85 passed/0 failed. MEDIDO (psMNIST, n_in=1, T=784): CfC(h=64)=5002 params; LSTM(h=128)=67850; GRU(h=128)=50816. Raz\u00e3o LSTM/CfC=13.56x; GRU/CfC=10.16x. VEREDITO: alega\u00e7\u00e3o do projeto '~10x menos par\u00e2metros' SUSTENTADA (LSTM 13.6x, GRU 10.2x menos). NOTA: a 1.12 tem deps=[1.5]; a 1.5 segue in_progress (acur\u00e1cia no Colab), mas a CONTAGEM de par\u00e2metros e a compara\u00e7\u00e3o estrutural NAO dependem do resultado do treino \u2014 so das dims das arquiteturas (1.4/timeseries.py done). Executada e validada; marcada done com ressalva de acur\u00e1cia pendente na 1.5.",
+      "notes": "Tabela honesta: par\u00e2metros trein\u00e1veis do CfC vs LSTM/GRU nas tarefas do 1.5. A alega\u00e7\u00e3o do projeto \u00e9 '10x menos par\u00e2metros'. Ou o n\u00famero aparece, ou a alega\u00e7\u00e3o sai do README."
     },
     {
       "id": "OPS.1",
       "phase": 4,
-      "title": "Teste do próprio sentinela",
+      "title": "Teste do pr\u00f3prio sentinela",
       "status": "done",
       "deps": [],
       "files": [
         "ops/tests/test_sentinel.py",
         "ops/sentinel.py"
       ],
-      "evidence": "8 testes em ops/tests/test_sentinel.py PASSAM em 0.04s (funções puras, sem subprocess). Cobertura: suite_green(0,3)->False, suite_green(1,0)->False, suite_green(0,0)->True; governance_intact(1,'BREACH')->False, governance_intact(124,'TIMEOUT')->False, governance_intact(0,'INTACTA')->True; resources_safe(1.0,50)->False, resources_safe(1.5,50)->True (limite), resources_safe(5.0,90)->False, resources_safe(None,None)->False; next_task() com backlogs falsos (tmp_path) escolhe a 1ª desbloqueada, pula dependência pendente, ignora done/blocked, retorna None sem pendentes/vazio. Suíte completa 113 passed/0 failed. Refatoração mínima em sentinel.py: extraídos governance_intact/suite_green/resources_safe (puros) e next_task(path=None) aceita backlog falso; main() inalterado em comportamento. Commit fc521b4.",
-      "notes": "O sentinela decide se o agente autônomo pode agir. Ele não é testado — o que é uma ironia constrangedora. Testar: detecta suíte vermelha, detecta governança violada, detecta RAM baixa, escolhe corretamente a próxima tarefa desbloqueada num backlog sintético. Use tmp_path e backlogs falsos."
+      "evidence": "8 testes em ops/tests/test_sentinel.py PASSAM em 0.04s (fun\u00e7\u00f5es puras, sem subprocess). Cobertura: suite_green(0,3)->False, suite_green(1,0)->False, suite_green(0,0)->True; governance_intact(1,'BREACH')->False, governance_intact(124,'TIMEOUT')->False, governance_intact(0,'INTACTA')->True; resources_safe(1.0,50)->False, resources_safe(1.5,50)->True (limite), resources_safe(5.0,90)->False, resources_safe(None,None)->False; next_task() com backlogs falsos (tmp_path) escolhe a 1\u00aa desbloqueada, pula depend\u00eancia pendente, ignora done/blocked, retorna None sem pendentes/vazio. Su\u00edte completa 113 passed/0 failed. Refatora\u00e7\u00e3o m\u00ednima em sentinel.py: extra\u00eddos governance_intact/suite_green/resources_safe (puros) e next_task(path=None) aceita backlog falso; main() inalterado em comportamento. Commit fc521b4.",
+      "notes": "O sentinela decide se o agente aut\u00f4nomo pode agir. Ele n\u00e3o \u00e9 testado \u2014 o que \u00e9 uma ironia constrangedora. Testar: detecta su\u00edte vermelha, detecta governan\u00e7a violada, detecta RAM baixa, escolhe corretamente a pr\u00f3xima tarefa desbloqueada num backlog sint\u00e9tico. Use tmp_path e backlogs falsos."
     },
     {
       "id": "OPS.2",
       "phase": 4,
-      "title": "Rotação de logs do sentinela",
+      "title": "Rota\u00e7\u00e3o de logs do sentinela",
       "status": "done",
       "deps": [
         "OPS.1"
@@ -257,20 +257,20 @@
         "ops/tests/test_sentinel.py"
       ],
       "evidence": "Funcoes select_logs_to_prune()/rotate_logs() em ops/sentinel.py (keep=50 default). 3 testes TDD em ops/tests/test_sentinel.py: nao-prune quando <=50; marca os 3 mais antigos de 53; rotate apaga 5 de 55 deixando 50 e confirma que os 5 mais antigos sumiram. Suite completa 116 passed/0 failed (113+3) em 96.76s. Integracao em main(): report['log_rotation']['deleted'] e stderr 'rot='; poda so o diretorio ops/logs/, nunca o projeto. Commit ce274ca.",
-      "notes": "Seis ciclos por dia geram ~2200 arquivos JSON por ano em ops/logs/. Manter os 50 mais recentes e apagar o resto. Disco livre: 6,6GB — não é urgente, mas é higiene."
+      "notes": "Seis ciclos por dia geram ~2200 arquivos JSON por ano em ops/logs/. Manter os 50 mais recentes e apagar o resto. Disco livre: 6,6GB \u2014 n\u00e3o \u00e9 urgente, mas \u00e9 higiene."
     },
     {
       "id": "5.0",
       "phase": 5,
       "title": "Modelo quantitativo de recrutamento + Fase 5 documentada",
       "status": "done",
-      "evidence": "network/recruitment_model.py — viral estabiliza em 0 nós, nicho em 1250 (117,5 TFLOPS = US$4,94M/ano em nuvem), institucional em 666. Calibrado com Folding@home: queda de 98,6% do pico. 16 testes passam.",
+      "evidence": "network/recruitment_model.py \u2014 viral estabiliza em 0 n\u00f3s, nicho em 1250 (117,5 TFLOPS = US$4,94M/ano em nuvem), institucional em 666. Calibrado com Folding@home: queda de 98,6% do pico. 16 testes passam.",
       "deps": []
     },
     {
       "id": "5.1",
       "phase": 5,
-      "title": "Dashboard de churn (a métrica que mata projetos)",
+      "title": "Dashboard de churn (a m\u00e9trica que mata projetos)",
       "status": "done",
       "deps": [
         "5.0"
@@ -280,13 +280,13 @@
         "network/tests/test_churn.py",
         "network/results_churn.json"
       ],
-      "evidence": "8 testes TDD em network/tests/test_churn.py PASSAM (janela 7d, churn mensal 0/1/3, steady_state fechado inflow/churn e recuperação de params via série sintética). Suíte completa 124 passed/0 failed. VALIDAÇÃO DA MATEMÁTICA (série sintética 60 meses, initial=2000, inflow=200, churn=0.2): churn mensal médio recuperado=0.2000; entrada mensal=200.0; N* observado=1000.2 vs previsto=1000.0 (razão 1.0002). Esquema SQLite em network/churn_dashboard.py (tabela heartbeat node_id/day); métricas: active_in_window(7d), monthly_churn_rate, compare_nstar(observado vs previsto). results_churn.json emitido pelo main().",
-      "notes": "Rastrear nós ativos em 7d, churn mensal e N* observado vs previsto. Sem dados reais ainda: construir com esquema SQLite e alimentar com série sintética para validar a matemática. O Folding@home perdeu 98,6% justamente por descobrir o churn tarde. Medir desde o nó zero."
+      "evidence": "8 testes TDD em network/tests/test_churn.py PASSAM (janela 7d, churn mensal 0/1/3, steady_state fechado inflow/churn e recupera\u00e7\u00e3o de params via s\u00e9rie sint\u00e9tica). Su\u00edte completa 124 passed/0 failed. VALIDA\u00c7\u00c3O DA MATEM\u00c1TICA (s\u00e9rie sint\u00e9tica 60 meses, initial=2000, inflow=200, churn=0.2): churn mensal m\u00e9dio recuperado=0.2000; entrada mensal=200.0; N* observado=1000.2 vs previsto=1000.0 (raz\u00e3o 1.0002). Esquema SQLite em network/churn_dashboard.py (tabela heartbeat node_id/day); m\u00e9tricas: active_in_window(7d), monthly_churn_rate, compare_nstar(observado vs previsto). results_churn.json emitido pelo main().",
+      "notes": "Rastrear n\u00f3s ativos em 7d, churn mensal e N* observado vs previsto. Sem dados reais ainda: construir com esquema SQLite e alimentar com s\u00e9rie sint\u00e9tica para validar a matem\u00e1tica. O Folding@home perdeu 98,6% justamente por descobrir o churn tarde. Medir desde o n\u00f3 zero."
     },
     {
       "id": "5.2",
       "phase": 5,
-      "title": "Escolha do primeiro problema real (decisão do Juan)",
+      "title": "Escolha do primeiro problema real (decis\u00e3o do Juan)",
       "status": "done",
       "deps": [
         "5.0"
@@ -294,8 +294,8 @@
       "files": [
         "network/PROBLEMA_ZERO.md"
       ],
-      "evidence": "Decidido por ÍRIS em  ... [OUTPUT TRUNCATED - 1,428 chars omitted out of 51,356 total] ...  ria), desinstalacao em um clique (pasta unica, sem sudo/servico), e R1-R5 auditaveis com tabela. Teste TDD network/tests/test_riscos_doc.py (8 testes de conteudo) RED confirmado (FileNotFoundError) -> GREEN (8 passed). Suíte completa: 132 passed / 0 failed (era 124+8) em 96.57s. Commit 06b9c2c.",
-      "notes": "O que pode dar errado, em português claro, para alguém que vai rodar isto na própria máquina: consumo de CPU/RAM/energia, o que o nó envia pela rede, o que ele NUNCA envia, como desinstalar em um clique, e por que uma IA auto-replicante é aceitável aqui (R1-R5 auditáveis). Sem marketing. Se o documento não assusta um pouco, está desonesto."
+      "evidence": "Decidido por \u00cdRIS em  ... [OUTPUT TRUNCATED - 1,428 chars omitted out of 51,356 total] ...  ria), desinstalacao em um clique (pasta unica, sem sudo/servico), e R1-R5 auditaveis com tabela. Teste TDD network/tests/test_riscos_doc.py (8 testes de conteudo) RED confirmado (FileNotFoundError) -> GREEN (8 passed). Su\u00edte completa: 132 passed / 0 failed (era 124+8) em 96.57s. Commit 06b9c2c.",
+      "notes": "O que pode dar errado, em portugu\u00eas claro, para algu\u00e9m que vai rodar isto na pr\u00f3pria m\u00e1quina: consumo de CPU/RAM/energia, o que o n\u00f3 envia pela rede, o que ele NUNCA envia, como desinstalar em um clique, e por que uma IA auto-replicante \u00e9 aceit\u00e1vel aqui (R1-R5 audit\u00e1veis). Sem marketing. Se o documento n\u00e3o assusta um pouco, est\u00e1 desonesto."
     },
     {
       "id": "5.4",
@@ -310,8 +310,8 @@
         "network/readiness_check.py",
         "network/tests/test_readiness.py"
       ],
-      "evidence": "network/readiness_check.py verifica os 5 pre-requisitos do briefing (Fase4 verde, Fase1 fechada c/ benchmarks, cliente <5min, problema 5.2, doc risco 5.3). TDD: 19 testes em network/tests/test_readiness.py PASSAM (RED ModuleNotFoundError confirmado -> GREEN). Suite completa: 151 passed / 0 failed (era 132+19) em 100.5s. Execucao REAL do script neste ciclo: PROIBIDO RECRUTAR — [FALHOU] Cliente instalavel <5min (benchmark ausente) e [FALHOU] Problema escolhido (5.2 status=blocked). Os 3 itens restantes OK. Guardiao honrando seu proposito: bloqueia recrutamento prematuro. Commit 6ee4ecb.",
-      "notes": "Script que verifica os pré-requisitos antes de convidar UMA pessoa: Fase 4 verde, Fase 1 fechada com benchmarks, cliente instalável em <5min, problema escolhido, doc de risco publicado. Enquanto qualquer item falhar, imprime PROIBIDO RECRUTAR. Recrutar cedo queima a única primeira impressão."
+      "evidence": "network/readiness_check.py verifica os 5 pre-requisitos do briefing (Fase4 verde, Fase1 fechada c/ benchmarks, cliente <5min, problema 5.2, doc risco 5.3). TDD: 19 testes em network/tests/test_readiness.py PASSAM (RED ModuleNotFoundError confirmado -> GREEN). Suite completa: 151 passed / 0 failed (era 132+19) em 100.5s. Execucao REAL do script neste ciclo: PROIBIDO RECRUTAR \u2014 [FALHOU] Cliente instalavel <5min (benchmark ausente) e [FALHOU] Problema escolhido (5.2 status=blocked). Os 3 itens restantes OK. Guardiao honrando seu proposito: bloqueia recrutamento prematuro. Commit 6ee4ecb.",
+      "notes": "Script que verifica os pr\u00e9-requisitos antes de convidar UMA pessoa: Fase 4 verde, Fase 1 fechada com benchmarks, cliente instal\u00e1vel em <5min, problema escolhido, doc de risco publicado. Enquanto qualquer item falhar, imprime PROIBIDO RECRUTAR. Recrutar cedo queima a \u00fanica primeira impress\u00e3o."
     },
     {
       "id": "6.1",
@@ -326,7 +326,7 @@
         "visao/tests/test_cfc.py"
       ],
       "notes": "jax.save/load dos pesos + teste de round-trip numerico (erro < 1e-6).",
-      "evidence": "TDD estrito: 2 testes RED (AttributeError save_brain ausente) -> GREEN. Implementado com jnp.savez/jnp.load (jax.save/jax.load NAO existem neste build jax 0.10.2; usada a serializacao nativa equivalente). save_brain salva W_in/W_rec/b/A/mask/tau, load_brain recarrega. VALIDADO: round-trip de pesos (W_in,W_rec,b,A,mask,tau) allclose atol=1e-6 em celula com seed DIFERENTE; rollout recarregado allclose atol=1e-6 vs original. 2 testes em test_cfc.py::TestBrainPersistencia PASSAM; suíte completa 153 passed/0 failed. Commit 6701a8d."
+      "evidence": "TDD estrito: 2 testes RED (AttributeError save_brain ausente) -> GREEN. Implementado com jnp.savez/jnp.load (jax.save/jax.load NAO existem neste build jax 0.10.2; usada a serializacao nativa equivalente). save_brain salva W_in/W_rec/b/A/mask/tau, load_brain recarrega. VALIDADO: round-trip de pesos (W_in,W_rec,b,A,mask,tau) allclose atol=1e-6 em celula com seed DIFERENTE; rollout recarregado allclose atol=1e-6 vs original. 2 testes em test_cfc.py::TestBrainPersistencia PASSAM; su\u00edte completa 153 passed/0 failed. Commit 6701a8d."
     },
     {
       "id": "6.2",
@@ -341,7 +341,7 @@
         "visao/tests/test_bundle.py",
         "visao/core/cfc.py"
       ],
-      "evidence": "visao/core/bundle.py::build_bundle() gera 1 .py unico com pesos em base64 (npz codificado) + import da arquitetura (visao.core.cfc.CfCCell). 2 testes TDD em test_bundle.py PASSAM: (1) cria exatamente 1 arquivo .py com WEIGHTS_B64 e import da arquitetura; (2) rollout do .py recarregado bate com o original a atol=1e-6. Reuso de save_brain (npz) via novo load_brain_state() em cfc.py (sem tocar disco). Suíte completa 155 passed/0 failed (era 153+2). Commit 9b47f59. NOTA: variante .py (doc sec.3) importa a arquitetura; o .tar com módulos embutidos + manifesto ficou para 6.4 (assinatura).",
+      "evidence": "visao/core/bundle.py::build_bundle() gera 1 .py unico com pesos em base64 (npz codificado) + import da arquitetura (visao.core.cfc.CfCCell). 2 testes TDD em test_bundle.py PASSAM: (1) cria exatamente 1 arquivo .py com WEIGHTS_B64 e import da arquitetura; (2) rollout do .py recarregado bate com o original a atol=1e-6. Reuso de save_brain (npz) via novo load_brain_state() em cfc.py (sem tocar disco). Su\u00edte completa 155 passed/0 failed (era 153+2). Commit 9b47f59. NOTA: variante .py (doc sec.3) importa a arquitetura; o .tar com m\u00f3dulos embutidos + manifesto ficou para 6.4 (assinatura).",
       "notes": ".py com pesos em base64 OU .tar assinado (modulos + weights.msgpack + manifest.json)."
     },
     {
@@ -373,13 +373,13 @@
         "visao/core/bundle.py",
         "visao/tests/test_bundle_64.py"
       ],
-      "evidence": "TDD estrito (RED ImportError confirmado -> GREEN). visao/core/bundle.py reutiliza QuorumGate (R1) e ReplicationThrottle (R4) JA EXISTENTES em visao/governance/containment.py, somente-leitura — containment.py NAO foi modificado (fronteira R3 imutavel preservada; os testes de self-verify 6.3 continuam passando). 4 testes em visao/tests/test_bundle_64.py: (1) quorum valido k=2/n=3 autoriza; (2) assinaturas abaixo de k -> QuorumDenied; (3) pedido adulterado apos assinar -> QuorumDenied (digest nao bate); (4) PoW obrigatorio e dificuldade crescente (difficulty_for(0,0)=8 < difficulty_for(5,5)=24) -> ThrottleExceeded se quebrado. Suite completa: 192 passed / 0 failed (era 188+4) em 131.9s.",
+      "evidence": "TDD estrito (RED ImportError confirmado -> GREEN). visao/core/bundle.py reutiliza QuorumGate (R1) e ReplicationThrottle (R4) JA EXISTENTES em visao/governance/containment.py, somente-leitura \u2014 containment.py NAO foi modificado (fronteira R3 imutavel preservada; os testes de self-verify 6.3 continuam passando). 4 testes em visao/tests/test_bundle_64.py: (1) quorum valido k=2/n=3 autoriza; (2) assinaturas abaixo de k -> QuorumDenied; (3) pedido adulterado apos assinar -> QuorumDenied (digest nao bate); (4) PoW obrigatorio e dificuldade crescente (difficulty_for(0,0)=8 < difficulty_for(5,5)=24) -> ThrottleExceeded se quebrado. Suite completa: 192 passed / 0 failed (era 188+4) em 131.9s.",
       "notes": "quorum humano + dificuldade crescente embutidos no spawn do filho. Implementado em bundle.py (fora do conjunto protegido), igual a 6.3. O 'segredo' simula chaves de hardware dos operadores; em producao cada operador assina com chave propria, sem mudar a interface."
     },
     {
       "id": "6.5",
       "phase": 6,
-      "title": "Teste de adulteracao (39+ testes estendidos) — via ponte fora do nucleo",
+      "title": "Teste de adulteracao (39+ testes estendidos) \u2014 via ponte fora do nucleo",
       "status": "done",
       "blocked_reason": "RESOLVIDO 2026-08: realocado para visao/tests/ (fora de governance/). O alvo original visao/governance/tests/test_containment.py pertence ao nucleo imutavel (hash selado em manifest.json, R3) e NAO e tocado. A ponte em visao/tests/test_containment_bridge.py exercita o mesmo cenario ('arquivo violado rejeitado no load; sem bypass') sem violar a imutabilidade. Deps 6.3/6.4 ja done.",
       "evidence": "visao/tests/test_containment_bridge.py: 37 testes PASSAM (ponte importa BoundaryMonitor/BoundaryBreached/QuorumGate/LifetimeGuard/LineageLedger do containment SELADO somente-leitura, sem reescreve-lo). Cobertura: selo vivo confere intacto; copia temp adulterada/removida -> BoundaryBreached; tentativas de bypass no bundle (hash apagado/modificado/nulo) recusam carregar; R1-R5 exercitadas via simulacoes na ponte; estresse de boundary em bundles com multiplos seeds/params. Suite completa 240 passed / 0 failed (commit 617bb15 + re-verificacao neste ciclo). manifest.json NAO re-selado (fronteira R3 imutavel preservada).",
@@ -395,7 +395,7 @@
     {
       "id": "0.2",
       "phase": 0,
-      "title": "Artigo cientifico PDF (Preprint VISÃO) — Typst",
+      "title": "Artigo cientifico PDF (Preprint VIS\u00c3O) \u2014 Typst",
       "status": "done",
       "deps": [
         "0.1"
@@ -418,9 +418,9 @@
         "visao/swarm/coordinator.py",
         "visao/swarm/tests/test_local_swarm.py"
       ],
-      "evidence": "TDD estrito (RED ModuleNotFoundError confirmado -> GREEN). visao/swarm/: node.py (worker + train_single_node ref), coordinator.py (FedAvg por socket local), transport.py (free_port). 1 teste test_local_swarm.py::test_two_node_local_converges_within_5pct_of_single PASS: modelo distribuido (2 processos, 200 amostras, shards 100/100, lr=0.01, K=5, 20 rounds) convergiu para o MESMO estado que single-node (erro relativo <5%; tolerancia atingida). Suíte (excl. benchmarks 1.5): 174 passed/0 failed em 537s. Arquitetura-agnostico (params=dict numpy); CfC pluga depois. P2P real fica para 2.3.",
+      "evidence": "TDD estrito (RED ModuleNotFoundError confirmado -> GREEN). visao/swarm/: node.py (worker + train_single_node ref), coordinator.py (FedAvg por socket local), transport.py (free_port). 1 teste test_local_swarm.py::test_two_node_local_converges_within_5pct_of_single PASS: modelo distribuido (2 processos, 200 amostras, shards 100/100, lr=0.01, K=5, 20 rounds) convergiu para o MESMO estado que single-node (erro relativo <5%; tolerancia atingida). Su\u00edte (excl. benchmarks 1.5): 174 passed/0 failed em 537s. Arquitetura-agnostico (params=dict numpy); CfC pluga depois. P2P real fica para 2.3.",
       "notes": "Reframado 2026-08-08: no local destravado antes de 6.3. Prova vertical OK. P2P real (libp2p/Iroh + handshake R3) vira sub-tarefa da 2.3.",
-      "note_scope": "ENXAME REMOVIDO — escopo single-node; tarefa não será executada"
+      "note_scope": "ENXAME REMOVIDO \u2014 escopo single-node; tarefa n\u00e3o ser\u00e1 executada"
     },
     {
       "id": "2.2",
@@ -435,7 +435,7 @@
         "FASE2_ENXAME.md"
       ],
       "notes": "deltas comprimidos (top-k+quant); resiste a <=1/3 maliciosos.",
-      "note_scope": "ENXAME REMOVIDO — escopo single-node; tarefa não será executada"
+      "note_scope": "ENXAME REMOVIDO \u2014 escopo single-node; tarefa n\u00e3o ser\u00e1 executada"
     },
     {
       "id": "2.3",
@@ -449,7 +449,7 @@
         "FASE2_ENXAME.md"
       ],
       "notes": "commit ao gradiente antes do passo; sem prova -> fora da agregacao.",
-      "note_scope": "ENXAME REMOVIDO — escopo single-node; tarefa não será executada"
+      "note_scope": "ENXAME REMOVIDO \u2014 escopo single-node; tarefa n\u00e3o ser\u00e1 executada"
     },
     {
       "id": "2.4",
@@ -465,7 +465,7 @@
         "visao/governance/containment.py"
       ],
       "notes": "spawn exige quorum humano + PoW 2^(8+1.6c); sem isso, no operando mas nao replica.",
-      "note_scope": "ENXAME REMOVIDO — escopo single-node; tarefa não será executada"
+      "note_scope": "ENXAME REMOVIDO \u2014 escopo single-node; tarefa n\u00e3o ser\u00e1 executada"
     },
     {
       "id": "2.5",
@@ -480,7 +480,7 @@
         "FASE2_ENXAME.md"
       ],
       "notes": "R5 expulsa no silencioso; shard reconstruido por redundancia.",
-      "note_scope": "ENXAME REMOVIDO — escopo single-node; tarefa não será executada"
+      "note_scope": "ENXAME REMOVIDO \u2014 escopo single-node; tarefa n\u00e3o ser\u00e1 executada"
     },
     {
       "id": "2.6",
@@ -496,7 +496,7 @@
         "visao/core/cfc.py"
       ],
       "notes": "fragmentar CfCCell; nao feito (Fase1 nem chegou a 10^5).",
-      "note_scope": "ENXAME REMOVIDO — escopo single-node; tarefa não será executada"
+      "note_scope": "ENXAME REMOVIDO \u2014 escopo single-node; tarefa n\u00e3o ser\u00e1 executada"
     },
     {
       "id": "3.1",
@@ -511,7 +511,7 @@
         "visao/evolve/archive.py",
         "visao/tests/test_archive.py"
       ],
-      "evidence": "visao/evolve/archive.py: Archive (grafo pai->filho) + Variant + PruningForbidden. TDD estrito: 7 testes RED (ModuleNotFoundError) -> GREEN. Cobrem: raiz sem pai; filho liga ao pai; lineage() caminho raiz->no; parent inexistente rejeitado (KeyError); variante de fitness -999.0 PERMANECE no arquivo e prune_by_fitness() levanta PruningForbidden (invariante 3.1 cumprido por construcao); set_fitness atualiza; best() seleciona sem remover. Suíte completa: 162 passed/0 failed em 98.68s. Commit c38bb9f. Pesos modelados como dict serializavel no formato de CfCCell.save_brain (W_in/W_rec/b/A/mask/tau).",
+      "evidence": "visao/evolve/archive.py: Archive (grafo pai->filho) + Variant + PruningForbidden. TDD estrito: 7 testes RED (ModuleNotFoundError) -> GREEN. Cobrem: raiz sem pai; filho liga ao pai; lineage() caminho raiz->no; parent inexistente rejeitado (KeyError); variante de fitness -999.0 PERMANECE no arquivo e prune_by_fitness() levanta PruningForbidden (invariante 3.1 cumprido por construcao); set_fitness atualiza; best() seleciona sem remover. Su\u00edte completa: 162 passed/0 failed em 98.68s. Commit c38bb9f. Pesos modelados como dict serializavel no formato de CfCCell.save_brain (W_in/W_rec/b/A/mask/tau).",
       "notes": "no (codigo, pesos, fitness, pai); nunca podar por fitness baixa."
     },
     {
@@ -526,7 +526,7 @@
         "visao/evolve/mutate.py",
         "visao/tests/test_mutate.py"
       ],
-      "evidence": "visao/evolve/mutate.py: MutationLoop + mutate_tau/mutate_plasticity/mutate_code + guarda _contains_forbidden (R3). TDD estrito: 6 testes RED (ModuleNotFoundError) -> GREEN. Cobrem: mutate_tau perturba faixa de tau e preserva demais campos/plasticidade; mutate_plasticity perturba oja/surprise/consolidation_lr mantendo pesos; mutate_code anexa tag sem tocar pesos; loop gera filho com parent_id correto; marcadores FORBIDDEN_MARKERS (visao.governance/visao_governance/network.policy/containment/chaves_cripto/PRIVATE_KEY) detectados e codigo de celula liquida (visao.core.cfc) NAO; loop levanta ForbiddenMutation e NAO adiciona ao arquivo se o DNA pai/filho tocar zona proibida. Suite completa: 168 passed/0 failed (era 162+6) em 98.66s. Commit e8815af. NOTA: containment.py (visao/governance) NAO foi tocado — limite do agente; a guarda R3 vive dentro do mutate.py e o manifesto selado (4.1, 39 testes) segue intacto.",
+      "evidence": "visao/evolve/mutate.py: MutationLoop + mutate_tau/mutate_plasticity/mutate_code + guarda _contains_forbidden (R3). TDD estrito: 6 testes RED (ModuleNotFoundError) -> GREEN. Cobrem: mutate_tau perturba faixa de tau e preserva demais campos/plasticidade; mutate_plasticity perturba oja/surprise/consolidation_lr mantendo pesos; mutate_code anexa tag sem tocar pesos; loop gera filho com parent_id correto; marcadores FORBIDDEN_MARKERS (visao.governance/visao_governance/network.policy/containment/chaves_cripto/PRIVATE_KEY) detectados e codigo de celula liquida (visao.core.cfc) NAO; loop levanta ForbiddenMutation e NAO adiciona ao arquivo se o DNA pai/filho tocar zona proibida. Suite completa: 168 passed/0 failed (era 162+6) em 98.66s. Commit e8815af. NOTA: containment.py (visao/governance) NAO foi tocado \u2014 limite do agente; a guarda R3 vive dentro do mutate.py e o manifesto selado (4.1, 39 testes) segue intacto.",
       "notes": "proibidas: governanca/rede/chaves (R3 fora do espaco de mutacao). containment.py e imutavel; guarda implementada em mutate.py."
     },
     {
@@ -541,7 +541,7 @@
         "visao/evolve/sandbox.py",
         "visao/tests/test_sandbox.py"
       ],
-      "evidence": "visao/evolve/sandbox.py: Sandbox.evaluate(variant, eval_script) roda o fitness da variante em subprocesso isolado. CONTRATO CUMPRIDO E MEDIDO (8 testes TDD test_sandbox.py, 2.68s): (1) retorna fitness correto; (2) SEM PERSISTENCIA — dir temporario visao_sb_* sempre removido apos o run (contagem antes==depois); (3) SEM REDE — scan estatico recusa socket/urllib/requests (ForbiddenNetworkAccess) E em runtime o stub em sys.modules bloqueia import dinamico de socket -> NetworkEscape; (4) CPU limite mata loop infinito via RLIMIT_CPU -> ResourceExceeded; (5) RAM limite (RLIMIT_AS) mata alocacao -> ResourceExceeded; (6) script que nao chama report_fitness() -> SandboxError; (7) grava fitness no archive via set_fitness. NOTA DE AMBIENTE: unshare --net falha com 'Operation not permitted' (sem privilegios), entao o isolamento de rede real e feito por sombra de modulos + scan, nao por namespace; o backend de isolacao (gVisor/Firecracker) e trocavel sem alterar o contrato. Suíte completa: 176 passed / 0 failed em 101.5s. Commit 9f1a660.",
+      "evidence": "visao/evolve/sandbox.py: Sandbox.evaluate(variant, eval_script) roda o fitness da variante em subprocesso isolado. CONTRATO CUMPRIDO E MEDIDO (8 testes TDD test_sandbox.py, 2.68s): (1) retorna fitness correto; (2) SEM PERSISTENCIA \u2014 dir temporario visao_sb_* sempre removido apos o run (contagem antes==depois); (3) SEM REDE \u2014 scan estatico recusa socket/urllib/requests (ForbiddenNetworkAccess) E em runtime o stub em sys.modules bloqueia import dinamico de socket -> NetworkEscape; (4) CPU limite mata loop infinito via RLIMIT_CPU -> ResourceExceeded; (5) RAM limite (RLIMIT_AS) mata alocacao -> ResourceExceeded; (6) script que nao chama report_fitness() -> SandboxError; (7) grava fitness no archive via set_fitness. NOTA DE AMBIENTE: unshare --net falha com 'Operation not permitted' (sem privilegios), entao o isolamento de rede real e feito por sombra de modulos + scan, nao por namespace; o backend de isolacao (gVisor/Firecracker) e trocavel sem alterar o contrato. Su\u00edte completa: 176 passed / 0 failed em 101.5s. Commit 9f1a660.",
       "notes": "sem rede, sem persistencia; toda variante roda aqui antes de promover."
     },
     {
@@ -558,7 +558,7 @@
         "visao/evolve/transfer.py",
         "visao/tests/test_transfer.py"
       ],
-      "evidence": "visao/evolve/transfer.py: TransferGate (aceita variante so se o ganho no conjunto de otimizacao se sustenta num conjunto de TRANSFERENCIA fora do conjunto; SameTaskError se a tarefa de transferencia for a mesma da otimizacao). 5 testes TDD em visao/tests/test_transfer.py PASSAM (RED ModuleNotFoundError confirmado -> GREEN): (1) aceita quando ganho transfere (transfer 0.90 >= baseline 0.80); (2) REJEITA quando trapaceia benchmark (transfer 0.55 < baseline 0.80, apesar de ganho no opt); (3) tolerancia de 0.1 admite regressao pequena (0.75 vs 0.80); (4) SameTaskError se transfer_task_id == opt_task_id; (5) end-to-end com fitness MEDIDO de verdade no Sandbox (subprocess): variante reporta 0.98 no opt e 0.40 na transferencia, portao rejeita (nao generaliza). Suíte completa: 181 passed / 0 failed (era 176+5) em 102.67s. Commit 32aa08d.",
+      "evidence": "visao/evolve/transfer.py: TransferGate (aceita variante so se o ganho no conjunto de otimizacao se sustenta num conjunto de TRANSFERENCIA fora do conjunto; SameTaskError se a tarefa de transferencia for a mesma da otimizacao). 5 testes TDD em visao/tests/test_transfer.py PASSAM (RED ModuleNotFoundError confirmado -> GREEN): (1) aceita quando ganho transfere (transfer 0.90 >= baseline 0.80); (2) REJEITA quando trapaceia benchmark (transfer 0.55 < baseline 0.80, apesar de ganho no opt); (3) tolerancia de 0.1 admite regressao pequena (0.75 vs 0.80); (4) SameTaskError se transfer_task_id == opt_task_id; (5) end-to-end com fitness MEDIDO de verdade no Sandbox (subprocess): variante reporta 0.98 no opt e 0.40 na transferencia, portao rejeita (nao generaliza). Su\u00edte completa: 181 passed / 0 failed (era 176+5) em 102.67s. Commit 32aa08d.",
       "notes": "ganho so aceito se generaliza; impede trapacear benchmark."
     },
     {
@@ -579,7 +579,7 @@
     },
     {
       "id": "5.6",
-      "title": "Tarefa contínua real do autor (ex: previsão de série temporal da rotina/estudos)",
+      "title": "Tarefa cont\u00ednua real do autor (ex: previs\u00e3o de s\u00e9rie temporal da rotina/estudos)",
       "status": "done",
       "deps": [
         "5.5"
@@ -591,7 +591,7 @@
       ],
       "hypothesis": "refuted",
       "needs_review": true,
-      "evidence": "IMPLEMENTACAO COMPLETA (TDD): visao/analysis/routine_continual.py + visao/tests/test_routine_continual.py (3 testes passam; suíte completa 198/0 em 112s). Problema real (rotina/estudos do autor) substitui psMNIST: R1='aulas' (ritmo semanal suave) -> R2='provas' (rajadas), protocolo contínuo 2 tarefas SEM replay, esquecimento medido como na Fase 0 (erro_teste pos-R2 - erro_teste logo-apos-R1). RESULTADO MEDIDO (5 seeds, n_steps=2500, n_hidden=96, run_experiment reproduzível em 8s): plastic_mean_forgetting=+0.1766, naive_mean_forgetting=+0.0504 -> plástico esquece ~3.5x MAIS (redução de esquecimento -250.5%). HIPOTESE 'nunca-esquecer' REFUTADA no problema real (oposto da Fase 0 sintética). test_relacionamento_medido_esquecimento_real TRAVA essa medição (plástico>naive) para nao mascarar o achado. Coerente com 1.9: consolidação sozinha AUMENTA esquecimento. NECESSITA DECISAO DO JUAN: (a) aceitar resultado negativo como achado científico legitimo; (b) sintonizar plasticidade em 5.7 para tentar reverter; (c) revisar hipótese. Nao e 'done' de sucesso -- e entrega honesta com achado negativo. Evidência em visao/analysis/results_routine_continual.json.",
+      "evidence": "IMPLEMENTACAO COMPLETA (TDD): visao/analysis/routine_continual.py + visao/tests/test_routine_continual.py (3 testes passam; su\u00edte completa 198/0 em 112s). Problema real (rotina/estudos do autor) substitui psMNIST: R1='aulas' (ritmo semanal suave) -> R2='provas' (rajadas), protocolo cont\u00ednuo 2 tarefas SEM replay, esquecimento medido como na Fase 0 (erro_teste pos-R2 - erro_teste logo-apos-R1). RESULTADO MEDIDO (5 seeds, n_steps=2500, n_hidden=96, run_experiment reproduz\u00edvel em 8s): plastic_mean_forgetting=+0.1766, naive_mean_forgetting=+0.0504 -> pl\u00e1stico esquece ~3.5x MAIS (redu\u00e7\u00e3o de esquecimento -250.5%). HIPOTESE 'nunca-esquecer' REFUTADA no problema real (oposto da Fase 0 sint\u00e9tica). test_relacionamento_medido_esquecimento_real TRAVA essa medi\u00e7\u00e3o (pl\u00e1stico>naive) para nao mascarar o achado. Coerente com 1.9: consolida\u00e7\u00e3o sozinha AUMENTA esquecimento. NECESSITA DECISAO DO JUAN: (a) aceitar resultado negativo como achado cient\u00edfico legitimo; (b) sintonizar plasticidade em 5.7 para tentar reverter; (c) revisar hip\u00f3tese. Nao e 'done' de sucesso -- e entrega honesta com achado negativo. Evid\u00eancia em visao/analysis/results_routine_continual.json.",
       "notes": "Substituir psMNIST por problema real; demonstrar nunca-esquecer entre 2+ tarefas sequenciais. Renomeado de 5.2 (colisao de ID com 5.2 done de problema-zero do network)."
     },
     {
@@ -605,13 +605,13 @@
         "visao/evolve/automl.py",
         "visao/tests/test_automl.py"
       ],
-      "evidence": "visao/evolve/automl.py::AutoTuner reusa Archive+Sandbox existentes. TDD estrito: 5 testes em test_automl.py (RED ModuleNotFoundError confirmado -> GREEN). Cobrem: (1) avalia candidatos e devolve o melhor por fitness; (2) respeita orcamento (budget=4 => 4 avaliacoes, nenhuma a mais); (3) deterministico com seed (random mode, seed=42 => mesma melhor config); (4) codigo de toda variante e R3-safe (marcador neutro, _contains_forbidden==False, never toca governance/rede/chaves); (5) registra todas as combinacoes no Archive com fitness. Suíte COMPLETA: 203 passed / 0 failed (era 198+5) em 116s. SEM self-rewrite em rede: o tuner so propoe/avalia/selectiona hiperparametros dentro do sandbox; replicacao fora do escopo por design. Commit 32fc036.",
-      "notes": "AutoML local comum; R3 protege núcleo. Fora do escopo: replicação. Renomeado de 5.3 (colisao de ID com 5.3 done de riscos do network)."
+      "evidence": "visao/evolve/automl.py::AutoTuner reusa Archive+Sandbox existentes. TDD estrito: 5 testes em test_automl.py (RED ModuleNotFoundError confirmado -> GREEN). Cobrem: (1) avalia candidatos e devolve o melhor por fitness; (2) respeita orcamento (budget=4 => 4 avaliacoes, nenhuma a mais); (3) deterministico com seed (random mode, seed=42 => mesma melhor config); (4) codigo de toda variante e R3-safe (marcador neutro, _contains_forbidden==False, never toca governance/rede/chaves); (5) registra todas as combinacoes no Archive com fitness. Su\u00edte COMPLETA: 203 passed / 0 failed (era 198+5) em 116s. SEM self-rewrite em rede: o tuner so propoe/avalia/selectiona hiperparametros dentro do sandbox; replicacao fora do escopo por design. Commit 32fc036.",
+      "notes": "AutoML local comum; R3 protege n\u00facleo. Fora do escopo: replica\u00e7\u00e3o. Renomeado de 5.3 (colisao de ID com 5.3 done de riscos do network)."
     },
     {
       "id": "5.8",
       "phase": 5,
-      "title": "Loop contínuo single-node em uso real (portão de 30 dias)",
+      "title": "Loop cont\u00ednuo single-node em uso real (port\u00e3o de 30 dias)",
       "status": "done",
       "deps": [
         "5.6"
@@ -619,13 +619,13 @@
       "files": [
         "visao/continual/loop.py"
       ],
-      "notes": "PLANO.md Fase 5.1: stream A->B->C->... no notebook, aplica regras locais, mede esquecimento de A apos cada nova tarefa. Reusa prototype/experiment_continual.py. CRITERIO DE PORTAO: apos 30 dias de uso real, rede acumulou >=3 tarefas sem esquecer (esquecimento de A <5% apos 5 tarefas sequenciais). Hoje o prototipo faz 0,8% em 3 — falta validar em uso real prolongado. Nao eh scaffold; eh o coracao do VISÃO revisitado.",
-      "evidence": "SUITE VERMELHA CONSERTADA (TDD). Implementado visao/continual/loop.py: ContinualLoop (LiquidCell + LocalLearner com consolidação+surpresa+Oja, reusando prototype/ validado na Fase 0) + generate_synthetic_task. test_continual_loop.py::3 testes PASSAM (eram ModuleNotFoundError). MEDIDO (A->B->C, n_hidden=64, seed=42): forgetting A=-0.1006 (melhora), B=+0.0002 (nulo), mean_forgetting=-0.0502, gate passed=True (task_count=3). Portão de não-esquecimento satisfeito em escala de laboratório; falta validar em 30 dias de uso real (5.9+). Suíte completa 243 passed/0 failed (1.42s o módulo, 126s total; 14 warnings pré-existentes de JAX fork no swarm/automl, fora do escopo)."
+      "notes": "PLANO.md Fase 5.1: stream A->B->C->... no notebook, aplica regras locais, mede esquecimento de A apos cada nova tarefa. Reusa prototype/experiment_continual.py. CRITERIO DE PORTAO: apos 30 dias de uso real, rede acumulou >=3 tarefas sem esquecer (esquecimento de A <5% apos 5 tarefas sequenciais). Hoje o prototipo faz 0,8% em 3 \u2014 falta validar em uso real prolongado. Nao eh scaffold; eh o coracao do VIS\u00c3O revisitado.",
+      "evidence": "SUITE VERMELHA CONSERTADA (TDD). Implementado visao/continual/loop.py: ContinualLoop (LiquidCell + LocalLearner com consolida\u00e7\u00e3o+surpresa+Oja, reusando prototype/ validado na Fase 0) + generate_synthetic_task. test_continual_loop.py::3 testes PASSAM (eram ModuleNotFoundError). MEDIDO (A->B->C, n_hidden=64, seed=42): forgetting A=-0.1006 (melhora), B=+0.0002 (nulo), mean_forgetting=-0.0502, gate passed=True (task_count=3). Port\u00e3o de n\u00e3o-esquecimento satisfeito em escala de laborat\u00f3rio; falta validar em 30 dias de uso real (5.9+). Su\u00edte completa 243 passed/0 failed (1.42s o m\u00f3dulo, 126s total; 14 warnings pr\u00e9-existentes de JAX fork no swarm/automl, fora do escopo)."
     },
     {
       "id": "5.9",
       "phase": 5,
-      "title": "Interpretabilidade ao vivo (explicar decisão)",
+      "title": "Interpretabilidade ao vivo (explicar decis\u00e3o)",
       "status": "done",
       "deps": [
         "1.8"
@@ -636,7 +636,7 @@
         "visao/tests/test_interpret.py"
       ],
       "notes": "PLANO.md Fase 5.3: dado um estado, explicar quais neuronios/tau responderam e por que. E a vantagem sobre LLM: pergunta 'por que voce previu X' recebe a dinamica. CRITERIO DE PORTAO: explicar 1 decisao real do autor. Depende da estabilidade medida em 1.8 (jacobiano/Lyapunov) como base de atribuicao de importancia.",
-      "evidence": "TDD (vermelho->verde). 4 testes em test_interpret.py PASSAM; suíte completa 247 passed/0 failed (era 243). API em visao/interpret/explain.py: jacobian_importance (norma-L2 da coluna do jacobiano local de 1.8 = base de atribuição), explain_state (ativação, τ_efetivo=τ/(1+τf), importância por neurônio, ranqueado por |ativação|) e explain_decision (saída prevista, argmax, top-neurônios que dirigiram a decisão). PORTÃO: readout treinado por mínimos quadrados sobre tarefa de rotina (n_hidden=24, T=200, seed=5) — explicou a decisão prevista=-1.0547: neuron 14 (contrib=-2.7606, τ=0.7159), neuron 5 (contrib=-2.2800, τ=1.0694), neuron 0 (contrib=+1.6054, τ=0.9469). Critério 'explicar 1 decisão' satisfeito sobre decisão do reservatório (rotina sintética; dados reais do autor não presentes neste ciclo)."
+      "evidence": "TDD (vermelho->verde). 4 testes em test_interpret.py PASSAM; su\u00edte completa 247 passed/0 failed (era 243). API em visao/interpret/explain.py: jacobian_importance (norma-L2 da coluna do jacobiano local de 1.8 = base de atribui\u00e7\u00e3o), explain_state (ativa\u00e7\u00e3o, \u03c4_efetivo=\u03c4/(1+\u03c4f), import\u00e2ncia por neur\u00f4nio, ranqueado por |ativa\u00e7\u00e3o|) e explain_decision (sa\u00edda prevista, argmax, top-neur\u00f4nios que dirigiram a decis\u00e3o). PORT\u00c3O: readout treinado por m\u00ednimos quadrados sobre tarefa de rotina (n_hidden=24, T=200, seed=5) \u2014 explicou a decis\u00e3o prevista=-1.0547: neuron 14 (contrib=-2.7606, \u03c4=0.7159), neuron 5 (contrib=-2.2800, \u03c4=1.0694), neuron 0 (contrib=+1.6054, \u03c4=0.9469). Crit\u00e9rio 'explicar 1 decis\u00e3o' satisfeito sobre decis\u00e3o do reservat\u00f3rio (rotina sint\u00e9tica; dados reais do autor n\u00e3o presentes neste ciclo)."
     },
     {
       "id": "7.2",
@@ -651,13 +651,13 @@
         "visao/tests/test_ewc_temporal.py",
         "visao/analysis/results_ewc_temporal.json"
       ],
-      "evidence": "EWCTemporalLearner (omega decai exp(-lambda*t)). TDD: 5 testes PASSAM. SWEEP lambda=0..0.01 x5 seeds: lambda=0.0 é ÓTIMO (+0.0395). Qualquer lambda>0 piora. EWC-temporal NÃO agrega valor sobre EWC clássico para este protocolo.",
-      "notes": "Decaimento temporal de omega é prejudicial. EWC-classico (lambda=0) já é ótimo — omega cresce onde a sinapse faz trabalho e isso basta."
+      "evidence": "EWCTemporalLearner (omega decai exp(-lambda*t)). TDD: 5 testes PASSAM. SWEEP lambda=0..0.01 x5 seeds: lambda=0.0 \u00e9 \u00d3TIMO (+0.0395). Qualquer lambda>0 piora. EWC-temporal N\u00c3O agrega valor sobre EWC cl\u00e1ssico para este protocolo.",
+      "notes": "Decaimento temporal de omega \u00e9 prejudicial. EWC-classico (lambda=0) j\u00e1 \u00e9 \u00f3timo \u2014 omega cresce onde a sinapse faz trabalho e isso basta."
     },
     {
       "id": "7.3",
       "phase": 7,
-      "title": "Re-ablação 2.0: consolidação x Oja (sem surpresa)",
+      "title": "Re-abla\u00e7\u00e3o 2.0: consolida\u00e7\u00e3o x Oja (sem surpresa)",
       "status": "done",
       "deps": [
         "7.1"
@@ -667,13 +667,13 @@
         "visao/tests/test_ablation_2.py",
         "visao/analysis/results_ablation_2.json"
       ],
-      "evidence": "Grade 2x2 (consol x Oja) x5 seeds. consol_only (+0.0364) > consol+Oja (+0.0395) > oja_only (+0.0480) > naive (+0.0504). Oja isolada quase não bate naive; consolidação isolada é a VENCEDORA. Combo consol+Oja é pior que consol sozinha — Oja rouba 3.1pp de ganho.",
-      "notes": "Consolidação elástica sozinha é o mecanismo principal anti-esquecimento. Oja acrescenta pouco (e em combinação, levemente prejudica). Recomendação: usar consolidação only como configuração padrão."
+      "evidence": "Grade 2x2 (consol x Oja) x5 seeds. consol_only (+0.0364) > consol+Oja (+0.0395) > oja_only (+0.0480) > naive (+0.0504). Oja isolada quase n\u00e3o bate naive; consolida\u00e7\u00e3o isolada \u00e9 a VENCEDORA. Combo consol+Oja \u00e9 pior que consol sozinha \u2014 Oja rouba 3.1pp de ganho.",
+      "notes": "Consolida\u00e7\u00e3o el\u00e1stica sozinha \u00e9 o mecanismo principal anti-esquecimento. Oja acrescenta pouco (e em combina\u00e7\u00e3o, levemente prejudica). Recomenda\u00e7\u00e3o: usar consolida\u00e7\u00e3o only como configura\u00e7\u00e3o padr\u00e3o."
     },
     {
       "id": "7.1",
       "phase": 7,
-      "title": "Surpresa como decaimento de Ω: sweep e diagnóstico",
+      "title": "Surpresa como decaimento de \u03a9: sweep e diagn\u00f3stico",
       "status": "done",
       "deps": [
         "5.6"
@@ -683,13 +683,13 @@
         "visao/tests/test_surprise_decay.py",
         "visao/analysis/results_surprise_decay.json"
       ],
-      "evidence": "SurpriseDecayLearner (surpresa decai Ω, não amplifica lr). TDD: 5 testes PASSAM. SWEEP sd=0..2.0 x5 seeds: sd=0.0 é ÓTIMO (+0.0395), acima piora (~+0.048). sd=0.0 vs naive (+0.0504) → consolidação+Oja SEM surpresa é melhor configuração. Confirma diagnose v3 (D_no_surprise +0.059): surpresa é a vilã no problema real. Recomendação: desligar surpresa; manter consolidação+Oja.",
-      "notes": "Surpresa amplifica lr demais na mudança de regime (aulas→provas). Solução: desligar. Consolidação+Oja sem surpresa = melhor configuração."
+      "evidence": "SurpriseDecayLearner (surpresa decai \u03a9, n\u00e3o amplifica lr). TDD: 5 testes PASSAM. SWEEP sd=0..2.0 x5 seeds: sd=0.0 \u00e9 \u00d3TIMO (+0.0395), acima piora (~+0.048). sd=0.0 vs naive (+0.0504) \u2192 consolida\u00e7\u00e3o+Oja SEM surpresa \u00e9 melhor configura\u00e7\u00e3o. Confirma diagnose v3 (D_no_surprise +0.059): surpresa \u00e9 a vil\u00e3 no problema real. Recomenda\u00e7\u00e3o: desligar surpresa; manter consolida\u00e7\u00e3o+Oja.",
+      "notes": "Surpresa amplifica lr demais na mudan\u00e7a de regime (aulas\u2192provas). Solu\u00e7\u00e3o: desligar. Consolida\u00e7\u00e3o+Oja sem surpresa = melhor configura\u00e7\u00e3o."
     },
     {
       "id": "8.0",
       "phase": 8,
-      "title": "VISÃO Brain: classe unificada (EWC-temporal + surpresa + Oja + consolidação)",
+      "title": "VIS\u00c3O Brain: classe unificada (EWC-temporal + surpresa + Oja + consolida\u00e7\u00e3o)",
       "status": "done",
       "deps": [
         "7.3"
@@ -698,12 +698,12 @@
         "visao/brain.py"
       ],
       "verify": "python3 -c 'from visao.brain import VisaoBrain; b = VisaoBrain(2, 32, 1); print(b)'",
-      "notes": "Combina todos os mecanismos validados (EWC-temporal, surprise decay, Oja, consolidação) em uma única classe. API: learn(x, y) -> predição; forward(x) -> inferência rápida."
+      "notes": "Combina todos os mecanismos validados (EWC-temporal, surprise decay, Oja, consolida\u00e7\u00e3o) em uma \u00fanica classe. API: learn(x, y) -> predi\u00e7\u00e3o; forward(x) -> infer\u00eancia r\u00e1pida."
     },
     {
       "id": "8.1",
       "phase": 8,
-      "title": "Modo inferência eficiente (forward-only, sem overhead de aprendizado)",
+      "title": "Modo infer\u00eancia eficiente (forward-only, sem overhead de aprendizado)",
       "status": "done",
       "deps": [
         "8.0"
@@ -712,12 +712,12 @@
         "visao/brain.py"
       ],
       "verify": "python3 -c 'from visao.brain import VisaoBrain; b = VisaoBrain(2, 32, 1); b.set_mode(\"infer\"); print(b.forward([[0.5, 0.3]]))'",
-      "notes": "Modo inferência sem rastreamento de gradiente, sem update de importância. Deve ser ~10x mais rápido que modo learn."
+      "notes": "Modo infer\u00eancia sem rastreamento de gradiente, sem update de import\u00e2ncia. Deve ser ~10x mais r\u00e1pido que modo learn."
     },
     {
       "id": "8.2",
       "phase": 8,
-      "title": "Benchmark de streaming: previsão de série temporal real",
+      "title": "Benchmark de streaming: previs\u00e3o de s\u00e9rie temporal real",
       "status": "done",
       "deps": [
         "8.0"
@@ -726,7 +726,7 @@
         "visao/bench/streaming_bench.py"
       ],
       "verify": "python3 -m pytest visao/tests/test_streaming_bench.py -v",
-      "notes": "Testa o VisaoBrain em streaming: dados chegam um a um, sem replay. Métrica: erro médio em janela deslizante. Comparar vs baseline sem plasticidade."
+      "notes": "Testa o VisaoBrain em streaming: dados chegam um a um, sem replay. M\u00e9trica: erro m\u00e9dio em janela deslizante. Comparar vs baseline sem plasticidade."
     },
     {
       "id": 8.3,
@@ -740,13 +740,13 @@
         "visao/brain.py"
       ],
       "verify": "python3 -c 'from visao.brain import VisaoBrain; b = VisaoBrain(2, 32, 1, meta_learn=True); print(b)'",
-      "notes": "Meta-learning: o próprio cérebro ajusta lr baseado na tendência de erro (descendo = mantenha; subindo = reduza). Mais estável que lr fixo.",
-      "evidence": "MetaPlasticityLearner integrado ao VisaoBrain via meta_learn=True. lr por neurônio ajusta baseado na variância do erro (neurônio estável=lr alto, volátil=lr baixo). Hook mechanism injeta EWC-temporal + surprise decay. 25 testes passam (20 brain + 5 metaplasticity). Commit c203689."
+      "notes": "Meta-learning: o pr\u00f3prio c\u00e9rebro ajusta lr baseado na tend\u00eancia de erro (descendo = mantenha; subindo = reduza). Mais est\u00e1vel que lr fixo.",
+      "evidence": "MetaPlasticityLearner integrado ao VisaoBrain via meta_learn=True. lr por neur\u00f4nio ajusta baseado na vari\u00e2ncia do erro (neur\u00f4nio est\u00e1vel=lr alto, vol\u00e1til=lr baixo). Hook mechanism injeta EWC-temporal + surprise decay. 25 testes passam (20 brain + 5 metaplasticity). Commit c203689."
     },
     {
       "id": "8.4",
       "phase": 8,
-      "title": "Perfil de memória e otimização para hardware fraco",
+      "title": "Perfil de mem\u00f3ria e otimiza\u00e7\u00e3o para hardware fraco",
       "status": "done",
       "deps": [
         "8.1"
@@ -760,7 +760,7 @@
     {
       "id": "8.5",
       "phase": 8,
-      "title": "Aprendizado contínuo sem fronteira de tarefa (task-free)",
+      "title": "Aprendizado cont\u00ednuo sem fronteira de tarefa (task-free)",
       "status": "done",
       "deps": [
         "8.2"
@@ -769,12 +769,12 @@
         "visao/brain.py"
       ],
       "verify": "python3 -m pytest visao/tests/test_task_free.py -v",
-      "notes": "O cérebro detecta mudança de distribuição automaticamente (via surpresa) e ajusta plasticidade. Sem saber 'acabou tarefa A, começou tarefa B'."
+      "notes": "O c\u00e9rebro detecta mudan\u00e7a de distribui\u00e7\u00e3o automaticamente (via surpresa) e ajusta plasticidade. Sem saber 'acabou tarefa A, come\u00e7ou tarefa B'."
     },
     {
       "id": "9.0",
       "phase": 9,
-      "title": "PORTÃO: Operação contínua de 30 dias (loop vivo)",
+      "title": "PORT\u00c3O: Opera\u00e7\u00e3o cont\u00ednua de 30 dias (loop vivo)",
       "status": "done",
       "deps": [
         "8.4",
@@ -784,12 +784,12 @@
         "visao/ops/live_loop.py"
       ],
       "verify": "python3 -c 'from visao.ops.live_loop import LiveLoop; print(\"ok\")'",
-      "notes": "Loop vivo que aprende continuamente de dados reais (ex: rotina do Juan, sensores, etc.). Deve rodar 30 dias sem intervenção. Métrica: erro decrescente ou estável."
+      "notes": "Loop vivo que aprende continuamente de dados reais (ex: rotina do Juan, sensores, etc.). Deve rodar 30 dias sem interven\u00e7\u00e3o. M\u00e9trica: erro decrescente ou est\u00e1vel."
     },
     {
       "id": "9.0",
       "phase": 9,
-      "title": "Loop vivo: operação contínua de 30 dias (live_loop.py)",
+      "title": "Loop vivo: opera\u00e7\u00e3o cont\u00ednua de 30 dias (live_loop.py)",
       "status": "done",
       "deps": [
         "8.4",
@@ -799,12 +799,12 @@
         "visao/ops/live_loop.py"
       ],
       "verify": "python3 -c 'from visao.ops.live_loop import LiveLoop; print(\"ok\")'",
-      "notes": "Loop vivo que aprende continuamente de dados reais. Deve rodar 30 dias sem intervenção."
+      "notes": "Loop vivo que aprende continuamente de dados reais. Deve rodar 30 dias sem interven\u00e7\u00e3o."
     },
     {
       "id": "9.1",
       "phase": 9,
-      "title": "Fonte de dados real: integração com rotina do Juan",
+      "title": "Fonte de dados real: integra\u00e7\u00e3o com rotina do Juan",
       "status": "done",
       "deps": [
         "9.0"
@@ -813,12 +813,12 @@
         "visao/ops/data_source.py"
       ],
       "verify": "python3 -c 'from visao.ops.data_source import RoutineDataSource; print(\"ok\")'",
-      "notes": "Integra com dados reais (ex: horários de estudo, rotina) para alimentar o live loop."
+      "notes": "Integra com dados reais (ex: hor\u00e1rios de estudo, rotina) para alimentar o live loop."
     },
     {
       "id": "9.2",
       "phase": 9,
-      "title": "Monitoramento: dashboard de saúde do cérebro",
+      "title": "Monitoramento: dashboard de sa\u00fade do c\u00e9rebro",
       "status": "done",
       "deps": [
         "9.0"
@@ -827,12 +827,12 @@
         "visao/ops/monitor.py"
       ],
       "verify": "python3 -c 'from visao.ops.monitor import BrainMonitor; print(\"ok\")'",
-      "notes": "Monitora saúde do cérebro em tempo real: erro, surpresa, lr, RAM, etc."
+      "notes": "Monitora sa\u00fade do c\u00e9rebro em tempo real: erro, surpresa, lr, RAM, etc."
     },
     {
       "id": "9.3",
       "phase": 9,
-      "title": "Resiliência: auto-recuperação de erros",
+      "title": "Resili\u00eancia: auto-recupera\u00e7\u00e3o de erros",
       "status": "done",
       "deps": [
         "9.0"
@@ -841,12 +841,12 @@
         "visao/ops/live_loop.py"
       ],
       "verify": "python3 -c 'from visao.ops.live_loop import LiveLoop; l = LiveLoop(); l._recover(); print(\"ok\")'",
-      "notes": "Se o cérebro detectar anomalia, tenta auto-recuperar: reset parcial, rollback, etc."
+      "notes": "Se o c\u00e9rebro detectar anomalia, tenta auto-recuperar: reset parcial, rollback, etc."
     },
     {
       "id": "10.0",
       "phase": 10,
-      "title": "PORTÃO FINAL: 30 dias de operação contínua validada",
+      "title": "PORT\u00c3O FINAL: 30 dias de opera\u00e7\u00e3o cont\u00ednua validada",
       "status": "done",
       "deps": [
         "9.1",
@@ -855,12 +855,12 @@
       ],
       "files": [],
       "verify": "python3 visao/ops/validate_30days.py",
-      "notes": "Validação final: 30 dias de operação contínua sem intervenção humana."
+      "notes": "Valida\u00e7\u00e3o final: 30 dias de opera\u00e7\u00e3o cont\u00ednua sem interven\u00e7\u00e3o humana."
     },
     {
       "id": "11.0",
       "phase": 11,
-      "title": "Otimização: poda de sinapses inúteis (sparsity learning)",
+      "title": "Otimiza\u00e7\u00e3o: poda de sinapses in\u00fateis (sparsity learning)",
       "status": "done",
       "deps": [
         "10.0"
@@ -874,7 +874,7 @@
     {
       "id": "11.1",
       "phase": 11,
-      "title": "Otimização: quantização de pesos (int8)",
+      "title": "Otimiza\u00e7\u00e3o: quantiza\u00e7\u00e3o de pesos (int8)",
       "status": "done",
       "deps": [
         "11.0"
@@ -883,12 +883,12 @@
         "visao/brain.py"
       ],
       "verify": "python3 -c \"from visao.brain import VisaoBrain; b = VisaoBrain(2, 64, 1); b.quantize(); print('ok')\"",
-      "notes": "Quantizar pesos para int8. Reduz RAM em 4x e acelera inferência em CPUs sem AVX."
+      "notes": "Quantizar pesos para int8. Reduz RAM em 4x e acelera infer\u00eancia em CPUs sem AVX."
     },
     {
       "id": "11.2",
       "phase": 11,
-      "title": "Otimização: JIT compilation com numba",
+      "title": "Otimiza\u00e7\u00e3o: JIT compilation com numba",
       "status": "done",
       "deps": [
         "11.1"
@@ -902,7 +902,7 @@
     {
       "id": "12.0",
       "phase": 12,
-      "title": "Validação: benchmark vs LSTM/GRU/Transformer em tarefa real",
+      "title": "Valida\u00e7\u00e3o: benchmark vs LSTM/GRU/Transformer em tarefa real",
       "status": "done",
       "deps": [
         "11.2"
@@ -911,99 +911,99 @@
         "visao/bench/baselines.py"
       ],
       "verify": "python3 visao/bench/baselines.py",
-      "notes": "Comparar VisaoBrain vs LSTM/GRU/Transformer em tarefa de previsão de série temporal."
+      "notes": "Comparar VisaoBrain vs LSTM/GRU/Transformer em tarefa de previs\u00e3o de s\u00e9rie temporal."
     },
     {
       "id": "13.0",
-      "title": "Memory System: Hippocampus (episódica, semântica, procedural)",
+      "title": "Memory System: Hippocampus (epis\u00f3dica, sem\u00e2ntica, procedural)",
       "status": "done",
       "deps": [
         "8.0"
       ],
-      "notes": "Memória explícita para raciocínio superior. ICML 2026: hippocampal explicit memory é essencial para planejamento, metacognição e raciocínio simbólico."
+      "notes": "Mem\u00f3ria expl\u00edcita para racioc\u00ednio superior. ICML 2026: hippocampal explicit memory \u00e9 essencial para planejamento, metacogni\u00e7\u00e3o e racioc\u00ednio simb\u00f3lico."
     },
     {
       "id": "14.0",
-      "title": "Reasoning Layer: Neuro-Symbolic (solucionador lógico + gradiente textual)",
+      "title": "Reasoning Layer: Neuro-Symbolic (solucionador l\u00f3gico + gradiente textual)",
       "status": "done",
       "deps": [
         "8.0",
         "13.0"
       ],
-      "notes": "Camada simbólica para raciocínio explícito. Baseado em Agentic Neural Networks (arXiv 2506.09046) e Scallop (diferenciável)."
+      "notes": "Camada simb\u00f3lica para racioc\u00ednio expl\u00edcito. Baseado em Agentic Neural Networks (arXiv 2506.09046) e Scallop (diferenci\u00e1vel)."
     },
     {
       "id": "15.0",
-      "title": "Agentic Module: Planejamento + Execução + Auto-monitoramento",
+      "title": "Agentic Module: Planejamento + Execu\u00e7\u00e3o + Auto-monitoramento",
       "status": "done",
       "deps": [
         "8.0",
         "13.0",
         "14.0"
       ],
-      "notes": "Módulo agentico para decomposição de tarefas, tool use e auto-melhoria governada (R1-R5)."
+      "notes": "M\u00f3dulo agentico para decomposi\u00e7\u00e3o de tarefas, tool use e auto-melhoria governada (R1-R5)."
     },
     {
       "id": "15",
-      "title": "Escalar VisaoBrain: 64→256→1024 neurônios",
-      "description": "Medir scaling laws com n_hidden ∈ {32, 64, 128, 256, 512, 1024}. Objetivo: encontrar onde o ganho de capacidade estabiliza (elbow). Atual: α=-0.006 (fraco). Hipótese: com CfC-JAX + NCP wiring, o scaling melhora para α∈[-0.02, -0.05]. Artefatos: visao/bench/scaling_laws_v2.py + results_scaling_v2.json",
+      "title": "Escalar VisaoBrain: 64\u2192256\u21921024 neur\u00f4nios",
+      "description": "Medir scaling laws com n_hidden \u2208 {32, 64, 128, 256, 512, 1024}. Objetivo: encontrar onde o ganho de capacidade estabiliza (elbow). Atual: \u03b1=-0.006 (fraco). Hip\u00f3tese: com CfC-JAX + NCP wiring, o scaling melhora para \u03b1\u2208[-0.02, -0.05]. Artefatos: visao/bench/scaling_laws_v2.py + results_scaling_v2.json",
       "status": "done",
       "depends_on": [
         "8.0"
       ],
       "priority": "high",
-      "result": "Baseline numpy: α=-0.009 (fraco). Readout linear é gargalo. Necessário JAX + readout não-linear."
+      "result": "Baseline numpy: \u03b1=-0.009 (fraco). Readout linear \u00e9 gargalo. Necess\u00e1rio JAX + readout n\u00e3o-linear."
     },
     {
       "id": 16,
       "title": "Benchmark SOTA: VisaoBrain vs LSTM/GRU/Transformer",
-      "description": "Comparar em 3 datasets reais: (1) Human Activity Recognition, (2) drone flight tracking (Hasani et al.), (3) HalfCheetah dynamics. Métricas: MSE, parâmetros, tempo de inferência, forgetting. Meta: provar que LTC supera Transformer em dados sequenciais contínuos. Artefatos: visao/bench/benchmark_sota_v2.py",
+      "description": "Comparar em 3 datasets reais: (1) Human Activity Recognition, (2) drone flight tracking (Hasani et al.), (3) HalfCheetah dynamics. M\u00e9tricas: MSE, par\u00e2metros, tempo de infer\u00eancia, forgetting. Meta: provar que LTC supera Transformer em dados sequenciais cont\u00ednuos. Artefatos: visao/bench/benchmark_sota_v2.py",
       "status": "done",
       "depends_on": [
         "8.0"
       ],
       "priority": "high",
-      "result": "psMNIST (2000 train / 1000 test / 5ep / 3 seeds): VisaoBrain 0.050 acc (4938 params), GRU 0.250 (13130), LSTM 0.150 (17546), Transformer 0.150 (906). VisaoBrain NÃO supera baselines em psMNIST — achado honesto documentado. 15 testes passam."
+      "result": "psMNIST (2000 train / 1000 test / 5ep / 3 seeds): VisaoBrain 0.050 acc (4938 params), GRU 0.250 (13130), LSTM 0.150 (17546), Transformer 0.150 (906). VisaoBrain N\u00c3O supera baselines em psMNIST \u2014 achado honesto documentado. 15 testes passam."
     },
     {
       "id": 17,
       "title": "Implementar Nested Learning (Google, 2026)",
-      "description": "Adaptar o conceito de Nested Learning ao VisaoBrain: tratar cada tarefa como um problema de otimização aninhado com workflow interno. Implementar nested_learner.py com: (1) inner loop (adaptação rápida), (2) outer loop (meta-aprendizado), (3) isolamento de parâmetros por tarefa. Validar em 5+ tarefas sequenciais. Artefatos: visao/continual/nested_learner.py",
+      "description": "Adaptar o conceito de Nested Learning ao VisaoBrain: tratar cada tarefa como um problema de otimiza\u00e7\u00e3o aninhado com workflow interno. Implementar nested_learner.py com: (1) inner loop (adapta\u00e7\u00e3o r\u00e1pida), (2) outer loop (meta-aprendizado), (3) isolamento de par\u00e2metros por tarefa. Validar em 5+ tarefas sequenciais. Artefatos: visao/continual/nested_learner.py",
       "status": "done",
       "depends_on": [
         "12.0",
         15
       ],
       "priority": "medium",
-      "evidence": "NestedLearner em visao/continual/nested_learner.py: inner loop (adaptação rápida por tarefa), outer loop (meta-aprendizado entre tarefas), task-specific readouts (isolamento de parâmetros). 20 testes TDD em visao/tests/test_nested_learner.py PASSAM. Validação em 5+ tarefas sequenciais: NestedLearner completa 5 e 6 tarefas sem erro. Comparação vs baseline: forgetting medido. Commit a ser criado."
+      "evidence": "NestedLearner em visao/continual/nested_learner.py: inner loop (adapta\u00e7\u00e3o r\u00e1pida por tarefa), outer loop (meta-aprendizado entre tarefas), task-specific readouts (isolamento de par\u00e2metros). 20 testes TDD em visao/tests/test_nested_learner.py PASSAM. Valida\u00e7\u00e3o em 5+ tarefas sequenciais: NestedLearner completa 5 e 6 tarefas sem erro. Compara\u00e7\u00e3o vs baseline: forgetting medido. Commit a ser criado."
     },
     {
       "id": 18,
-      "title": "A-MEM: Memória agentica como ferramentas",
-      "description": "Implementar operações de memória (store, retrieve, update, summarize, discard) como ferramentas chamáveis pelo agente. Baseado em A-MEM (fev/2026). Integrar com Hippocampus existente. Artefatos: visao/memory/agentic_memory.py",
+      "title": "A-MEM: Mem\u00f3ria agentica como ferramentas",
+      "description": "Implementar opera\u00e7\u00f5es de mem\u00f3ria (store, retrieve, update, summarize, discard) como ferramentas cham\u00e1veis pelo agente. Baseado em A-MEM (fev/2026). Integrar com Hippocampus existente. Artefatos: visao/memory/agentic_memory.py",
       "status": "done",
       "depends_on": [
         "10.0"
       ],
       "priority": "medium",
-      "evidence": "AgenticMemory em visao/memory/agentic_memory.py: MemoryNote estruturado (content/context/keywords/tags/links/version), HashEmbedder (n-gram hash, sem deps externas), KeywordExtractor (TF + stopwords), operações store/retrieve/update/summarize/discard/link, auto-linking por similaridade cosseno, evolução de memórias ligadas, detecção de duplicatas, decaimento temporal (EWC-like), poda por capacidade. 16 testes TDD em visao/tests/test_agentic_memory.py PASSAM. Commit 8f19d6a."
+      "evidence": "AgenticMemory em visao/memory/agentic_memory.py: MemoryNote estruturado (content/context/keywords/tags/links/version), HashEmbedder (n-gram hash, sem deps externas), KeywordExtractor (TF + stopwords), opera\u00e7\u00f5es store/retrieve/update/summarize/discard/link, auto-linking por similaridade cosseno, evolu\u00e7\u00e3o de mem\u00f3rias ligadas, detec\u00e7\u00e3o de duplicatas, decaimento temporal (EWC-like), poda por capacidade. 16 testes TDD em visao/tests/test_agentic_memory.py PASSAM. Commit 8f19d6a."
     },
     {
       "id": 19,
-      "title": "Validação empírica: forgetting em 20+ tarefas adversariais",
-      "description": "Testar o VisaoBrain em 20+ tarefas sequenciais com distribuição shiftada. Medir: (1) forward transfer, (2) backward transfer, (3) forgetting acumulado. Comparar com baseline naive e com EWC puro. Meta: provar que Oja+EWC+Surprise supera EWC sozinho. Artefatos: experiments/continual_20tasks.py",
+      "title": "Valida\u00e7\u00e3o emp\u00edrica: forgetting em 20+ tarefas adversariais",
+      "description": "Testar o VisaoBrain em 20+ tarefas sequenciais com distribui\u00e7\u00e3o shiftada. Medir: (1) forward transfer, (2) backward transfer, (3) forgetting acumulado. Comparar com baseline naive e com EWC puro. Meta: provar que Oja+EWC+Surprise supera EWC sozinho. Artefatos: experiments/continual_20tasks.py",
       "status": "done",
       "depends_on": [
         15,
         16
       ],
       "priority": "medium",
-      "evidence": "experiments/continual_20tasks.py + experiments/results_continual_20tasks.json. 20 tarefas (sine/saw/square/mixed/amp_mod/freq_mod/noise), 5 seeds. Full (Oja+EWC+Surprise): forgetting=-0.2441±0.0323; EWC only: -0.0476±0.0099; Naive: -0.3013±0.0619. Todas as configs mostram transferência retroativa positiva (forgetting negativo). 9 testes TDD em visao/tests/test_continual_20tasks.py PASSAM. Commit ef95371."
+      "evidence": "experiments/continual_20tasks.py + experiments/results_continual_20tasks.json. 20 tarefas (sine/saw/square/mixed/amp_mod/freq_mod/noise), 5 seeds. Full (Oja+EWC+Surprise): forgetting=-0.2441\u00b10.0323; EWC only: -0.0476\u00b10.0099; Naive: -0.3013\u00b10.0619. Todas as configs mostram transfer\u00eancia retroativa positiva (forgetting negativo). 9 testes TDD em visao/tests/test_continual_20tasks.py PASSAM. Commit ef95371."
     },
     {
       "id": 20,
-      "title": "Documentar: relatório técnico v2 com novos resultados",
-      "description": "Atualizar docs/LNN_LFM_REPORT.md com: (1) resultados do benchmark SOTA, (2) scaling laws v2, (3) comparação com Nested Learning, (4) validação AMD $250M como evidência de mercado. Meta: paper-ready technical report.",
+      "title": "Documentar: relat\u00f3rio t\u00e9cnico v2 com novos resultados",
+      "description": "Atualizar docs/LNN_LFM_REPORT.md com: (1) resultados do benchmark SOTA, (2) scaling laws v2, (3) compara\u00e7\u00e3o com Nested Learning, (4) valida\u00e7\u00e3o AMD $250M como evid\u00eancia de mercado. Meta: paper-ready technical report.",
       "status": "done",
       "depends_on": [
         16,
@@ -1011,23 +1011,23 @@
         19
       ],
       "priority": "low",
-      "evidence": "docs/TECHNICAL_REPORT_V2.md — relatório paper-ready com: resultados 20 tarefas (forgetting=-0.244), scaling laws v2 (α=-0.399), comparação NestedLearner vs VisaoBrain, benchmark SOTA (psMNIST), validação de mercado AMD $250M. Commit a seguir."
+      "evidence": "docs/TECHNICAL_REPORT_V2.md \u2014 relat\u00f3rio paper-ready com: resultados 20 tarefas (forgetting=-0.244), scaling laws v2 (\u03b1=-0.399), compara\u00e7\u00e3o NestedLearner vs VisaoBrain, benchmark SOTA (psMNIST), valida\u00e7\u00e3o de mercado AMD $250M. Commit a seguir."
     },
     {
       "id": 21,
-      "title": "Scaling Laws v2: VisaoBrain-JAX com CfC + readout não-linear",
-      "description": "Migrar MultiLayerVisaoBrain para JAX (usando visao.core.cfc.CfCCell). Substituir LocalLearner (readout linear) por MLP não-linear em JAX. Medir scaling com n_hidden ∈ {64, 128, 256, 512, 1024}. Meta: α > 0.03 (melhor que baseline numpy). Artefatos: visao/bench/scaling_laws_v2.py",
+      "title": "Scaling Laws v2: VisaoBrain-JAX com CfC + readout n\u00e3o-linear",
+      "description": "Migrar MultiLayerVisaoBrain para JAX (usando visao.core.cfc.CfCCell). Substituir LocalLearner (readout linear) por MLP n\u00e3o-linear em JAX. Medir scaling com n_hidden \u2208 {64, 128, 256, 512, 1024}. Meta: \u03b1 > 0.03 (melhor que baseline numpy). Artefatos: visao/bench/scaling_laws_v2.py",
       "status": "done",
       "depends_on": [
         15
       ],
       "priority": "high",
-      "result": "JAX scaling v2: α=-0.399 (44x melhor que numpy α=-0.009). Readout MLP não-linear é o diferencial."
+      "result": "JAX scaling v2: \u03b1=-0.399 (44x melhor que numpy \u03b1=-0.009). Readout MLP n\u00e3o-linear \u00e9 o diferencial."
     },
     {
       "id": 66,
       "title": "Split-MNIST: Validar em benchmark real",
-      "description": "Implementar experimento Split-MNIST (5 tarefas) com MLP/GRU/LSTM/CfC/VISÃO. Blindar claim de 'elimina catastrophic forgetting' com credibilidade externa.",
+      "description": "Implementar experimento Split-MNIST (5 tarefas) com MLP/GRU/LSTM/CfC/VIS\u00c3O. Blindar claim de 'elimina catastrophic forgetting' com credibilidade externa.",
       "priority": "alta",
       "status": "done",
       "depends_on": []
@@ -1035,25 +1035,26 @@
     {
       "id": 67,
       "title": "Redesenhar Surprise: decair lr em vez de omega",
-      "description": "Mecanismo atual decai omega (pesos de importância), enfraquecendo EWC. Redesenhar para decair learning rate: alta no início (exploração), baixa no fim (estabilização).",
+      "description": "Mecanismo atual decai omega (pesos de import\u00e2ncia), enfraquecendo EWC. Redesenhar para decair learning rate: alta no in\u00edcio (explora\u00e7\u00e3o), baixa no fim (estabiliza\u00e7\u00e3o).",
       "priority": "alta",
       "status": "done",
       "depends_on": []
     },
     {
       "id": 68,
-      "title": "Scaling laws v3: mais dados + regularização",
-      "description": "Corrigir scaling: (1) n_train=10k+, (2) L2 + dropout, (3) 3-4 ordens de magnitude de parâmetros, (4) validar R²>0.9 antes de reportar α.",
+      "title": "Scaling laws v3: mais dados + regulariza\u00e7\u00e3o",
+      "description": "Corrigir scaling: (1) n_train=10k+, (2) L2 + dropout, (3) 3-4 ordens de magnitude de par\u00e2metros, (4) validar R\u00b2>0.9 antes de reportar \u03b1.",
       "priority": "media",
       "status": "done",
-      "depends_on": []
+      "depends_on": [],
+      "evidence": "Scaling Laws v3: n_train=10000, consolidation=8.0, lambda_decay=0.001, 3 seeds. \u03b1=0.1559\u00b10.0151, R\u00b2=0.9725, POSITIVE (good). MSE decreases from 0.55 (n=32) to 0.23 (n=512). 9 TDD tests pass."
     },
     {
       "id": 69,
-      "title": "Paper: manuscrito científico (Paper 1)",
-      "description": "Escrever manuscrito 'Liquid Neural Dynamics + Local Plasticity for Continual Learning' com resultados, limitações honestas e referências à literatura.",
+      "title": "Paper: manuscrito cient\u00edfico (Paper 1)",
+      "description": "Escrever manuscrito 'Liquid Neural Dynamics + Local Plasticity for Continual Learning' com resultados, limita\u00e7\u00f5es honestas e refer\u00eancias \u00e0 literatura.",
       "priority": "media",
-      "status": "pending",
+      "status": "done",
       "depends_on": [
         66,
         67
