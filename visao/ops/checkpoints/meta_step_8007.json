@@ -1,1 +1,0 @@
-{"step": 8007, "timestamp": 1789024040.8838208, "state": "RUNNING", "metrics": {"total_steps": 8007, "total_errors": 1, "total_recoveries": 1}, "health": {"status": "running", "mse": 3.009265538105056e-36, "mae": 1.734723475976807e-18, "surprise_mean": 1.0, "surprise_std": 0.0, "lr": 0.02, "steps_per_sec": 153.9, "window_size": 200}, "emergency": false}
