@@ -4,7 +4,7 @@ brain.py — Tarefa 8.0: VISÃO Brain — classe unificada.
 Combina TODOS os mecanismos validados do Projeto VISÃO em uma única classe:
   - LiquidCell (LTC/CfC): reservatório com tau dependente da entrada
   - EWC-temporal: consolidação com decaimento exponencial de importância
-  - Surprise decay: surpresa decai omega (não amplifica lr)
+  - Surprise: modula lr OU decai omega (surprise_mode)
   - Oja: auto-organização do recorrente
   - Meta-learning: ajuste adaptativo de lr
 
@@ -12,6 +12,7 @@ Referências dos mecanismos:
   - Fase 0 / 0.1: prototype/liquid.py + plasticity.py (esquecimento 97.2% menor)
   - 7.1: surprise_decay.py (surpresa como decaimento de omega)
   - 7.2: ewc_temporal.py (decaimento temporal de importancia)
+  - 8.4: surprise_lr.py (surpresa modula lr, não omega)
 """
 
 from __future__ import annotations
@@ -65,6 +66,8 @@ class VisaoBrain:
     consolidation : força da consolidação (EWC)
     surprise_gain : sensibilidade do gate de surpresa
     lambda_decay : decaimento temporal de importância
+    surprise_mode : 'lr' (surpresa modula lr, padrão) ou 'omega' (surpresa decai omega)
+    lr_decay : taxa de decaimento temporal de lr (exp(-lr_decay * t))
     meta_learn : se True, ajusta lr baseado na tendência de erro
     dt : passo de integração do reservatório
     seed : semente para reprodutibilidade
@@ -83,6 +86,8 @@ class VisaoBrain:
         consolidation: float = 8.0,
         surprise_gain: float = 3.0,
         lambda_decay: float = 0.0005,
+        surprise_mode: str = 'lr',
+        lr_decay: float = 0.0001,
         meta_learn: bool = False,
         adaptive_consolidation: bool = False,
         c_min: float = 0.0,
@@ -96,12 +101,15 @@ class VisaoBrain:
         self.n_out = n_out
         self.lr_base = lr
         self.lambda_decay = lambda_decay
+        self.surprise_mode = surprise_mode
+        self.lr_decay = lr_decay
         self.meta_learn = meta_learn
         self._mode = "learn"
 
         # Estado interno
         self._rng = np.random.default_rng(seed)
         self._step = 0
+        self._t = 0  # contador temporal para decaimento de lr
 
         # --- Sub-módulos ---
         self.cell = LiquidCell(
@@ -201,6 +209,7 @@ class VisaoBrain:
             # + surpresa + Oja internamente. O hook cuida de EWC-temporal e
             # surprise decay.
             err_sq, surprise = self.learner.update(self.x, y)
+            # Modulação de lr já aplicada em _local_update
         else:
             err_sq, surprise = self._local_update(self.x, x_prev, y)
 
@@ -209,6 +218,7 @@ class VisaoBrain:
             self._meta_update(float(np.abs(y - pred).mean()))
 
         self._step += 1
+        self._t += 1
 
         return {
             "pred": pred,
@@ -399,9 +409,17 @@ class VisaoBrain:
                 normalized = np.clip((mean_s - 1.0) / 1.0, 0.0, 1.0)
                 learner.consolidation = self.c_min + (self.c_max - self.c_min) * normalized
 
-        # 4. lr efetivo: EWC fecha pela importancia; surpresa NÃO amplifica
-        #    (conforme 7.1: surpresa decai omega, não amplifica lr)
-        eff = learner.lr / (1.0 + learner.consolidation * learner.omega)
+        # 4. lr efetivo
+        if self.surprise_mode == 'lr':
+            # Modo lr: surpresa modula lr diretamente, omega PROTEGIDO
+            # lr(t) = lr_0 * exp(-lr_decay * t) * (1 + surprise_gain * normalized_error)
+            normalized_error = np.tanh(s - 1.0)  # ~0 quando erro esperado, >0 quando alto
+            time_decay = np.exp(-self.lr_decay * self._t)
+            surprise_boost = 1.0 + self.learner.surprise_gain * normalized_error
+            eff = (self.lr_base * time_decay * surprise_boost) / (1.0 + learner.consolidation * learner.omega)
+        else:
+            # Modo omega (legado): surpresa decai omega (afrouxa consolidacao)
+            eff = learner.lr / (1.0 + learner.consolidation * learner.omega)
 
         # 5. Delta rule
         delta = np.outer(err, x)

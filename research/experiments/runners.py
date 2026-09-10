@@ -291,11 +291,21 @@ class ContinualLearningExperiment(Experiment):
 
                 # Generate tasks
                 generator = get_generator(self.dataset_name)
-                X, Y, _, _ = generator(seed=seed, **self.dataset_params)
-                tasks = split_continual_tasks(X, Y, n_tasks=self.n_tasks, seed=seed)
-
-                n_in = X.shape[-1]
-                n_out = Y.shape[-1] if Y.ndim > 1 else 1
+                if self.dataset_name == "split_mnist":
+                    # Split-MNIST returns pre-defined binary tasks
+                    from research.datasets.generators import split_mnist_continual
+                    tasks = split_mnist_continual(
+                        seed=seed,
+                        **self.dataset_params,
+                    )
+                    # Use first task dimensions for model creation
+                    n_in = tasks[0][0].shape[-1]
+                    n_out = tasks[0][1].shape[-1] if tasks[0][1].ndim > 1 else 1
+                else:
+                    X, Y, _, _ = generator(seed=seed, **self.dataset_params)
+                    tasks = split_continual_tasks(X, Y, n_tasks=self.n_tasks, seed=seed)
+                    n_in = X.shape[-1]
+                    n_out = Y.shape[-1] if Y.ndim > 1 else 1
 
                 # Create model
                 model = create_model(

@@ -25,17 +25,20 @@ def rmse(y_true: np.ndarray, y_pred: np.ndarray) -> float:
 
 
 def accuracy(y_true: np.ndarray, y_pred: np.ndarray, tolerance: float = 0.1) -> float:
-    """Accuracy for regression: fraction of predictions within tolerance.
+    """Accuracy for classification or regression tasks.
     
-    For classification tasks, use tolerance=0 (exact match).
-    For regression tasks, tolerance is relative to the target range.
+    For classification: if targets are integer labels, threshold predictions at 0.5.
+    For regression: fraction of predictions within tolerance.
     """
     y_true = y_true.ravel().astype(float)
     y_pred = y_pred.ravel().astype(float)
     
-    # If looks like classification (integer labels), use exact match
-    if np.all(y_true == y_true.astype(int)) and np.all(y_pred == y_pred.astype(int)):
-        return float(np.mean(y_true == y_pred))
+    # Classification: integer labels (binary or one-hot)
+    if np.all(y_true == y_true.astype(int)):
+        # Threshold continuous predictions at 0.5
+        pred_labels = (y_pred >= 0.5).astype(int)
+        true_labels = y_true.astype(int)
+        return float(np.mean(pred_labels == true_labels))
     
     # Regression: accuracy = fraction within tolerance
     target_range = max(np.max(y_true) - np.min(y_true), 1e-10)

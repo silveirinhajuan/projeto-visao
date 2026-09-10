@@ -1,0 +1,53 @@
+name: benchmark_split_mnist
+type: continual
+seed: 42
+n_seeds: 3
+task_type: classification
+output_dir: results/benchmark_split_mnist
+save_checkpoints: true
+save_plots: true
+verbose: true
+
+dataset:
+  name: split_mnist
+  params:
+    n_train_per_task: 500
+    n_test_per_task: 200
+
+n_tasks: 5
+
+models:
+  - name: MLP
+    params:
+      n_hidden: 64
+      lr: 0.005
+      epochs: 30
+
+  - name: GRU
+    params:
+      n_hidden: 64
+      lr: 0.005
+      epochs: 30
+
+  - name: LSTM
+    params:
+      n_hidden: 64
+      lr: 0.005
+      epochs: 30
+
+  - name: CfC
+    params:
+      n_hidden: 64
+      lr: 0.005
+      epochs: 30
+      tau: 1.0
+
+  - name: VISÃO
+    params:
+      n_hidden: 64
+      lr: 0.02
+      epochs: 1
+      sparsity: 0.6
+      consolidation: 8.0
+      surprise_gain: 3.0
+      lambda_decay: 0.0005

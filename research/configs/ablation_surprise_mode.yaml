@@ -1,0 +1,65 @@
+name: ablation_surprise_mode
+type: continual
+seed: 42
+n_seeds: 5
+task_type: regression
+output_dir: results
+save_checkpoints: true
+save_plots: false
+verbose: true
+
+# Mackey-Glass (mesmo dataset do benchmark principal)
+dataset:
+  name: mackey_glass
+  params:
+    n_train: 2000
+    n_test: 500
+    tau: 17.0
+    horizon: 1
+    noise: 0.0
+
+n_tasks: 5
+
+metrics:
+  - mse
+  - mae
+  - forgetting
+  - backward_transfer
+  - average_accuracy
+
+models:
+  - name: VISÃO-lr_mode
+    params:
+      n_hidden: 64
+      lr: 0.02
+      sparsity: 0.6
+      consolidation: 8.0
+      surprise_gain: 3.0
+      lambda_decay: 0.0005
+      surprise_mode: lr
+      lr_decay: 0.0001
+      meta_learn: false
+
+  - name: VISÃO-omega_mode
+    params:
+      n_hidden: 64
+      lr: 0.02
+      sparsity: 0.6
+      consolidation: 8.0
+      surprise_gain: 3.0
+      lambda_decay: 0.0005
+      surprise_mode: omega
+      lr_decay: 0.0001
+      meta_learn: false
+
+  - name: VISÃO-lr_no_decay
+    params:
+      n_hidden: 64
+      lr: 0.02
+      sparsity: 0.6
+      consolidation: 8.0
+      surprise_gain: 1.0
+      lambda_decay: 0.0005
+      surprise_mode: lr
+      lr_decay: 0.0
+      meta_learn: false

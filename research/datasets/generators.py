@@ -117,6 +117,57 @@ def classification_task(
     return X[:n_train], Y[:n_train], X[n_train:], Y[n_train:]
 
 
+def split_mnist(
+    n_train_per_task: int = 500,
+    n_test_per_task: int = 200,
+    seed: int = 0,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Split-MNIST benchmark: 5 binary classification tasks.
+
+    Downloads MNIST via sklearn.datasets.fetch_openml and returns
+    concatenated data for use in standard benchmark mode.
+
+    Returns:
+        X_train, Y_train, X_test, Y_test (concatenated across all 5 tasks)
+    """
+    from research.datasets.split_mnist import get_split_mnist_tasks
+
+    tasks = get_split_mnist_tasks(
+        n_train_per_task=n_train_per_task,
+        n_test_per_task=n_test_per_task,
+        seed=seed,
+    )
+
+    X_train = np.concatenate([t[0] for t in tasks], axis=0)
+    Y_train = np.concatenate([t[1] for t in tasks], axis=0)
+    X_test = np.concatenate([t[2] for t in tasks], axis=0)
+    Y_test = np.concatenate([t[3] for t in tasks], axis=0)
+
+    return X_train, Y_train, X_test, Y_test
+
+
+def split_mnist_continual(
+    n_train_per_task: int = 500,
+    n_test_per_task: int = 200,
+    seed: int = 0,
+) -> list[tuple[np.ndarray, np.ndarray]]:
+    """Split-MNIST benchmark for continual learning.
+
+    Returns:
+        List of 5 tuples (X_train, Y_train) per task.
+        Compatible with the continual learning runner's task format.
+    """
+    from research.datasets.split_mnist import get_split_mnist_tasks
+
+    tasks = get_split_mnist_tasks(
+        n_train_per_task=n_train_per_task,
+        n_test_per_task=n_test_per_task,
+        seed=seed,
+    )
+    # Return only (X_train, Y_train) to match the runner's expected format
+    return [(t[0], t[1]) for t in tasks]
+
+
 def split_continual_tasks(
     X: np.ndarray,
     Y: np.ndarray,
@@ -147,6 +198,7 @@ def get_generator(name: str) -> Callable:
         "sine_regression": sine_regression,
         "mackey_glass": mackey_glass,
         "classification": classification_task,
+        "split_mnist": split_mnist,
     }
     if name not in generators:
         raise ValueError(f"Unknown dataset generator: {name}. Available: {list(generators)}")
