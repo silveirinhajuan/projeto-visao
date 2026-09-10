@@ -981,11 +981,12 @@
       "id": 18,
       "title": "A-MEM: Memória agentica como ferramentas",
       "description": "Implementar operações de memória (store, retrieve, update, summarize, discard) como ferramentas chamáveis pelo agente. Baseado em A-MEM (fev/2026). Integrar com Hippocampus existente. Artefatos: visao/memory/agentic_memory.py",
-      "status": "pending",
+      "status": "done",
       "depends_on": [
         "10.0"
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "evidence": "AgenticMemory em visao/memory/agentic_memory.py: MemoryNote estruturado (content/context/keywords/tags/links/version), HashEmbedder (n-gram hash, sem deps externas), KeywordExtractor (TF + stopwords), operações store/retrieve/update/summarize/discard/link, auto-linking por similaridade cosseno, evolução de memórias ligadas, detecção de duplicatas, decaimento temporal (EWC-like), poda por capacidade. 16 testes TDD em visao/tests/test_agentic_memory.py PASSAM. Commit 8f19d6a."
     },
     {
       "id": 19,
