@@ -24,20 +24,23 @@ def rmse(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     return float(np.sqrt(np.mean((y_true - y_pred) ** 2)))
 
 
-def accuracy(y_true: np.ndarray, y_pred: np.ndarray) -> float:
-    """Classification accuracy (works for one-hot or integer labels)."""
-    if y_true.ndim > 1 and y_true.shape[-1] > 1:
-        # One-hot encoded
-        true_labels = np.argmax(y_true, axis=-1)
-    else:
-        true_labels = y_true.ravel().astype(int)
-
-    if y_pred.ndim > 1 and y_pred.shape[-1] > 1:
-        pred_labels = np.argmax(y_pred, axis=-1)
-    else:
-        pred_labels = y_pred.ravel().astype(int)
-
-    return float(np.mean(true_labels == pred_labels))
+def accuracy(y_true: np.ndarray, y_pred: np.ndarray, tolerance: float = 0.1) -> float:
+    """Accuracy for regression: fraction of predictions within tolerance.
+    
+    For classification tasks, use tolerance=0 (exact match).
+    For regression tasks, tolerance is relative to the target range.
+    """
+    y_true = y_true.ravel().astype(float)
+    y_pred = y_pred.ravel().astype(float)
+    
+    # If looks like classification (integer labels), use exact match
+    if np.all(y_true == y_true.astype(int)) and np.all(y_pred == y_pred.astype(int)):
+        return float(np.mean(y_true == y_pred))
+    
+    # Regression: accuracy = fraction within tolerance
+    target_range = max(np.max(y_true) - np.min(y_true), 1e-10)
+    abs_err = np.abs(y_true - y_pred)
+    return float(np.mean(abs_err <= tolerance * target_range))
 
 
 def r2_score(y_true: np.ndarray, y_pred: np.ndarray) -> float:

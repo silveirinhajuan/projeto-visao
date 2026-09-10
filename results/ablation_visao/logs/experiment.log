@@ -5,53 +5,253 @@ Continual Learning: 5 tasks
 Models: ['VISÃO-full', 'VISÃO-no_meta', 'VISÃO-no_consolidation', 'VISÃO-no_surprise', 'VISÃO-baseline']
 
 --- VISÃO-full (seed=42) ---
-  Training on task 0 (80 samples)
-  Training on task 1 (80 samples)
-  Training on task 2 (80 samples)
-  Training on task 3 (80 samples)
-  Training on task 4 (80 samples)
-  Forgetting: -0.0060
-  BWT: 0.0075
-  Avg performance: 0.5263
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0661
+  BWT: 0.0827
+  Avg performance: 0.8789
+
+--- VISÃO-full (seed=43) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: 0.0068
+  BWT: -0.0085
+  Avg performance: 0.9158
+
+--- VISÃO-full (seed=44) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: 0.0817
+  BWT: -0.1021
+  Avg performance: 1.0238
+
+--- VISÃO-full (seed=45) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0801
+  BWT: 0.1001
+  Avg performance: 0.8054
+
+--- VISÃO-full (seed=46) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.1094
+  BWT: 0.1367
+  Avg performance: 0.8193
 
 --- VISÃO-no_meta (seed=42) ---
-  Training on task 0 (80 samples)
-  Training on task 1 (80 samples)
-  Training on task 2 (80 samples)
-  Training on task 3 (80 samples)
-  Training on task 4 (80 samples)
-  Forgetting: 0.0141
-  BWT: -0.0176
-  Avg performance: 0.5391
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0384
+  BWT: 0.0480
+  Avg performance: 0.9203
+
+--- VISÃO-no_meta (seed=43) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: 0.0467
+  BWT: -0.0584
+  Avg performance: 0.9616
+
+--- VISÃO-no_meta (seed=44) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0157
+  BWT: 0.0197
+  Avg performance: 0.9832
+
+--- VISÃO-no_meta (seed=45) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0959
+  BWT: 0.1199
+  Avg performance: 0.9137
+
+--- VISÃO-no_meta (seed=46) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.1229
+  BWT: 0.1536
+  Avg performance: 0.9065
 
 --- VISÃO-no_consolidation (seed=42) ---
-  Training on task 0 (80 samples)
-  Training on task 1 (80 samples)
-  Training on task 2 (80 samples)
-  Training on task 3 (80 samples)
-  Training on task 4 (80 samples)
-  Forgetting: 0.0162
-  BWT: -0.0202
-  Avg performance: 0.5432
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0382
+  BWT: 0.0478
+  Avg performance: 0.9293
+
+--- VISÃO-no_consolidation (seed=43) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: 0.0527
+  BWT: -0.0658
+  Avg performance: 0.9807
+
+--- VISÃO-no_consolidation (seed=44) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0328
+  BWT: 0.0411
+  Avg performance: 0.9818
+
+--- VISÃO-no_consolidation (seed=45) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.1050
+  BWT: 0.1312
+  Avg performance: 0.9258
+
+--- VISÃO-no_consolidation (seed=46) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.1321
+  BWT: 0.1651
+  Avg performance: 0.9093
 
 --- VISÃO-no_surprise (seed=42) ---
-  Training on task 0 (80 samples)
-  Training on task 1 (80 samples)
-  Training on task 2 (80 samples)
-  Training on task 3 (80 samples)
-  Training on task 4 (80 samples)
-  Forgetting: 0.0014
-  BWT: -0.0017
-  Avg performance: 0.5233
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: 0.0016
+  BWT: -0.0020
+  Avg performance: 0.9770
+
+--- VISÃO-no_surprise (seed=43) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0146
+  BWT: 0.0182
+  Avg performance: 0.9710
+
+--- VISÃO-no_surprise (seed=44) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: 0.0066
+  BWT: -0.0083
+  Avg performance: 0.9773
+
+--- VISÃO-no_surprise (seed=45) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: 0.0036
+  BWT: -0.0045
+  Avg performance: 0.9663
+
+--- VISÃO-no_surprise (seed=46) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: 0.0116
+  BWT: -0.0145
+  Avg performance: 1.0027
 
 --- VISÃO-baseline (seed=42) ---
-  Training on task 0 (80 samples)
-  Training on task 1 (80 samples)
-  Training on task 2 (80 samples)
-  Training on task 3 (80 samples)
-  Training on task 4 (80 samples)
-  Forgetting: 0.0162
-  BWT: -0.0202
-  Avg performance: 0.5428
-Completed in 0.58s
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0135
+  BWT: 0.0169
+  Avg performance: 0.9909
+
+--- VISÃO-baseline (seed=43) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: 0.1041
+  BWT: -0.1301
+  Avg performance: 1.1390
+
+--- VISÃO-baseline (seed=44) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0582
+  BWT: 0.0727
+  Avg performance: 1.0316
+
+--- VISÃO-baseline (seed=45) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0747
+  BWT: 0.0934
+  Avg performance: 1.0177
+
+--- VISÃO-baseline (seed=46) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.1334
+  BWT: 0.1667
+  Avg performance: 0.9769
+Completed in 12.66s
 Metrics saved: results/ablation_visao/metrics.json

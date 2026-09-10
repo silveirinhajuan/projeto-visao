@@ -308,16 +308,39 @@ def main():
             results.append(r)
             print(f"  n_hidden={n_hidden:>3}, seed={seed}: params={r.n_params:>7}, MSE_test={r.mse_test:.5f}, time={r.wall_time:.1f}s")
     
-    # Fit scaling law
+    # Fit scaling law: L(N) = (N_c/N)^α = C * N^(-α)
+    # Standard convention (Kaplan et al.): α > 0 means loss decreases with scale
     params_list = [r.n_params for r in results]
     mse_list = [r.mse_test for r in results]
     
     log_p = np.log(params_list)
     log_m = np.log(mse_list)
+    
+    # Fit: log(MSE) = -alpha * log(N) + log(C)
     A = np.vstack([-log_p, np.ones_like(log_p)]).T
     alpha, log_C = np.linalg.lstsq(A, log_m, rcond=None)[0]
     
+    # R² calculation
+    ss_res = np.sum((log_m - (-alpha * log_p + log_C)) ** 2)
+    ss_tot = np.sum((log_m - np.mean(log_m)) ** 2)
+    r_squared = 1 - ss_res / ss_tot if ss_tot > 0 else 0.0
+    
+    # Interpretation
+    if alpha > 0.05:
+        interpretation = "POSITIVE: loss decreases with scale (good scaling)"
+    elif alpha < -0.05:
+        interpretation = "NEGATIVE: loss increases with scale (poor scaling)"
+    else:
+        interpretation = "NEUTRAL: no clear scaling trend"
+    
     print(f"\nScaling law: MSE = {np.exp(log_C):.4f} × params^(-{alpha:.3f})")
+    print(f"  α = {alpha:.3f} (standard convention: α>0 = good)")
+    print(f"  R² = {r_squared:.4f}")
+    print(f"  Interpretation: {interpretation}")
+    
+    # Warning if R² is low
+    if r_squared < 0.3:
+        print(f"  ⚠️  WARNING: Low R² — scaling fit unreliable with few points")
     
     # Salvar
     data_path = Path(__file__).parent / "results_scaling_v2.json"

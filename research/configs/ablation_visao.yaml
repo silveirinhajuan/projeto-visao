@@ -11,14 +11,15 @@ save_checkpoints: true
 save_plots: true
 verbose: true
 
+# SAME dataset as continual_5tasks for fair comparison
 dataset:
-  name: sine_regression
+  name: mackey_glass
   params:
-    n_train: 400
-    n_test: 150
-    n_inputs: 1
-    noise: 0.1
-    freq: 1.0
+    n_train: 2000
+    n_test: 500
+    tau: 17.0
+    horizon: 1
+    noise: 0.0
 
 n_tasks: 5
 
