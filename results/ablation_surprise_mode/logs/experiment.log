@@ -1,0 +1,157 @@
+Experiment: ablation_surprise_mode
+Output: results/ablation_surprise_mode
+Seed: 42
+Continual Learning: 5 tasks
+Models: ['VISÃO-lr_mode', 'VISÃO-omega_mode', 'VISÃO-lr_no_decay']
+
+--- VISÃO-lr_mode (seed=42) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.1103
+  BWT: 0.1379
+  Avg performance: 0.9028
+
+--- VISÃO-lr_mode (seed=43) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: 0.1641
+  BWT: -0.2051
+  Avg performance: 1.2493
+
+--- VISÃO-lr_mode (seed=44) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.1307
+  BWT: 0.1634
+  Avg performance: 0.9448
+
+--- VISÃO-lr_mode (seed=45) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.3054
+  BWT: 0.3818
+  Avg performance: 0.9096
+
+--- VISÃO-lr_mode (seed=46) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.3627
+  BWT: 0.4534
+  Avg performance: 0.9060
+
+--- VISÃO-omega_mode (seed=42) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0384
+  BWT: 0.0480
+  Avg performance: 0.9203
+
+--- VISÃO-omega_mode (seed=43) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: 0.0467
+  BWT: -0.0584
+  Avg performance: 0.9616
+
+--- VISÃO-omega_mode (seed=44) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0157
+  BWT: 0.0197
+  Avg performance: 0.9832
+
+--- VISÃO-omega_mode (seed=45) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0959
+  BWT: 0.1199
+  Avg performance: 0.9137
+
+--- VISÃO-omega_mode (seed=46) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.1229
+  BWT: 0.1536
+  Avg performance: 0.9065
+
+--- VISÃO-lr_no_decay (seed=42) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0430
+  BWT: 0.0537
+  Avg performance: 0.9069
+
+--- VISÃO-lr_no_decay (seed=43) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: 0.0736
+  BWT: -0.0920
+  Avg performance: 0.9935
+
+--- VISÃO-lr_no_decay (seed=44) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: 0.0182
+  BWT: -0.0228
+  Avg performance: 1.0178
+
+--- VISÃO-lr_no_decay (seed=45) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.0884
+  BWT: 0.1105
+  Avg performance: 0.9091
+
+--- VISÃO-lr_no_decay (seed=46) ---
+  Training on task 0 (400 samples)
+  Training on task 1 (400 samples)
+  Training on task 2 (400 samples)
+  Training on task 3 (400 samples)
+  Training on task 4 (400 samples)
+  Forgetting: -0.1150
+  BWT: 0.1438
+  Avg performance: 0.8878
+Completed in 7.85s
+Metrics saved: results/ablation_surprise_mode/metrics.json
