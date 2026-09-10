@@ -417,12 +417,18 @@ class VisaoBrain:
 
         Retorna {"mse": ..., "mae": ..., "n": ...}
         """
-        self.reset_state()
-        preds = []
-        for i, (xi, yi) in enumerate(zip(X, Y)):
-            pred = self.forward(xi)
-            if i >= warmup:
-                preds.append((pred, yi))
+        # Salva modo atual e muda para infer para usar forward() eficiente
+        prev_mode = self._mode
+        self._mode = "infer"
+        try:
+            self.reset_state()
+            preds = []
+            for i, (xi, yi) in enumerate(zip(X, Y)):
+                pred = self.forward(xi)
+                if i >= warmup:
+                    preds.append((pred, yi))
+        finally:
+            self._mode = prev_mode
 
         if not preds:
             return {"mse": float("inf"), "mae": float("inf"), "n": 0}

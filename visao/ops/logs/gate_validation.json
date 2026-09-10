@@ -1,0 +1,64 @@
+{
+  "gate_passed": true,
+  "criteria": {
+    "operated_without_intervention": true,
+    "recovery_rate_ok": true,
+    "no_critical_failure": true,
+    "checkpoints_created": true,
+    "final_health_ok": true,
+    "steps_executed": true
+  },
+  "summary": {
+    "state": "STOPPED",
+    "total_steps": 4480,
+    "total_errors": 5,
+    "total_recoveries": 5,
+    "total_checkpoints": 5,
+    "uptime_seconds": 60.00064563751221,
+    "error_rate": 0.0011160714285714285,
+    "recovery_rate": 1.0,
+    "final_health": "healthy",
+    "recovery_log": [
+      {
+        "step": 700,
+        "timestamp": 1789015638.7001507,
+        "error_type": "ValueError",
+        "error_msg": "Injected error #1 for testing recovery",
+        "recovery_action": "checkpoint_restore",
+        "success": true
+      },
+      {
+        "step": 700,
+        "timestamp": 1789015646.844511,
+        "error_type": "ValueError",
+        "error_msg": "Injected error #2 for testing recovery",
+        "recovery_action": "checkpoint_restore",
+        "success": true
+      },
+      {
+        "step": 700,
+        "timestamp": 1789015654.878964,
+        "error_type": "ValueError",
+        "error_msg": "Injected error #3 for testing recovery",
+        "recovery_action": "checkpoint_restore",
+        "success": true
+      },
+      {
+        "step": 700,
+        "timestamp": 1789015663.0251951,
+        "error_type": "ValueError",
+        "error_msg": "Injected error #4 for testing recovery",
+        "recovery_action": "checkpoint_restore",
+        "success": true
+      },
+      {
+        "step": 700,
+        "timestamp": 1789015671.077803,
+        "error_type": "ValueError",
+        "error_msg": "Injected error #5 for testing recovery",
+        "recovery_action": "checkpoint_restore",
+        "success": true
+      }
+    ]
+  }
+}

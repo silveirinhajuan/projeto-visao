@@ -16,3 +16,76 @@
 {"event": "emergency_checkpoint", "timestamp": 1789015552.8285959, "step": 500, "state": "DEGRADED", "path": "/home/juan/projeto-visao/visao/ops/checkpoints/brain_step_500.json"}
 {"event": "health_critical", "timestamp": 1789015562.9056494, "step": 600, "state": "DEGRADED"}
 {"event": "emergency_checkpoint", "timestamp": 1789015562.91313, "step": 600, "state": "DEGRADED", "path": "/home/juan/projeto-visao/visao/ops/checkpoints/brain_step_600.json"}
+{"event": "health_critical", "timestamp": 1789015572.974565, "step": 700, "state": "DEGRADED"}
+{"event": "emergency_checkpoint", "timestamp": 1789015572.9812837, "step": 700, "state": "DEGRADED", "path": "/home/juan/projeto-visao/visao/ops/checkpoints/brain_step_700.json"}
+{"event": "health_critical", "timestamp": 1789015587.3024895, "step": 3700, "state": "RUNNING"}
+{"event": "emergency_checkpoint", "timestamp": 1789015587.3092818, "step": 3700, "state": "DEGRADED", "path": "/home/juan/projeto-visao/visao/ops/checkpoints/brain_step_3700.json"}
+{"event": "health_critical", "timestamp": 1789015597.37136, "step": 3800, "state": "DEGRADED"}
+{"event": "emergency_checkpoint", "timestamp": 1789015597.379019, "step": 3800, "state": "DEGRADED", "path": "/home/juan/projeto-visao/visao/ops/checkpoints/brain_step_3800.json"}
+{"event": "duration_reached", "timestamp": 1789015606.9368682, "step": 3894, "state": "DEGRADED", "elapsed": 60.001078367233276}
+{"event": "loop_finished", "timestamp": 1789015606.9487507, "step": 3894, "state": "STOPPING", "total_steps": 3894, "total_errors": 0, "total_recoveries": 0, "total_checkpoints": 7, "uptime_seconds": 60.00131416320801}
+{"event": "loop_started", "timestamp": 1789015626.6732583, "step": 0, "state": "RUNNING", "duration_seconds": 60, "brain": "VisaoBrain(n_in=2, n_hidden=64, n_out=1, params=4417, step=0, mode='learn')", "checkpoint_interval": 2000}
+{"event": "health_critical", "timestamp": 1789015632.5517118, "step": 500, "state": "RUNNING"}
+{"event": "emergency_checkpoint", "timestamp": 1789015632.5646946, "step": 500, "state": "DEGRADED", "path": "/home/juan/projeto-visao/visao/ops/checkpoints/brain_step_500.json"}
+{"event": "error", "timestamp": 1789015637.697349, "step": 550, "state": "DEGRADED", "error_type": "ValueError", "error_msg": "Injected error #1 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789015637.6975248, "step": 550, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 1}
+{"event": "error", "timestamp": 1789015645.8415358, "step": 770, "state": "RUNNING", "error_type": "ValueError", "error_msg": "Injected error #2 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789015645.84179, "step": 770, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 2}
+{"event": "error", "timestamp": 1789015653.8745956, "step": 3591, "state": "RUNNING", "error_type": "ValueError", "error_msg": "Injected error #3 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789015653.8748176, "step": 3591, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 3}
+{"event": "error", "timestamp": 1789015662.021972, "step": 771, "state": "RUNNING", "error_type": "ValueError", "error_msg": "Injected error #4 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789015662.0221536, "step": 771, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 4}
+{"event": "error", "timestamp": 1789015670.0748103, "step": 3465, "state": "RUNNING", "error_type": "ValueError", "error_msg": "Injected error #5 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789015670.0750034, "step": 3465, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 5}
+{"event": "health_critical", "timestamp": 1789015681.0434725, "step": 800, "state": "RUNNING"}
+{"event": "emergency_checkpoint", "timestamp": 1789015681.056737, "step": 800, "state": "DEGRADED", "path": "/home/juan/projeto-visao/visao/ops/checkpoints/brain_step_800.json"}
+{"event": "duration_reached", "timestamp": 1789015686.6736298, "step": 4480, "state": "RUNNING", "elapsed": 60.00038933753967}
+{"event": "loop_finished", "timestamp": 1789015686.6872034, "step": 4480, "state": "STOPPING", "total_steps": 4480, "total_errors": 5, "total_recoveries": 5, "total_checkpoints": 5, "uptime_seconds": 60.00064563751221}
+{"event": "stop_requested", "timestamp": 1789015743.1402082, "step": 0, "state": "STOPPING"}
+{"event": "loop_started", "timestamp": 1789015743.1424003, "step": 0, "state": "RUNNING", "duration_seconds": 1, "brain": "VisaoBrain(n_in=2, n_hidden=16, n_out=1, params=337, step=0, mode='learn')", "checkpoint_interval": 100}
+{"event": "duration_reached", "timestamp": 1789015744.1439514, "step": 700, "state": "RUNNING", "elapsed": 1.0015556812286377}
+{"event": "loop_finished", "timestamp": 1789015744.1455948, "step": 700, "state": "STOPPING", "total_steps": 700, "total_errors": 0, "total_recoveries": 0, "total_checkpoints": 8, "uptime_seconds": 1.0017099380493164}
+{"event": "loop_started", "timestamp": 1789015744.1486385, "step": 0, "state": "RUNNING", "duration_seconds": 2, "brain": "VisaoBrain(n_in=2, n_hidden=16, n_out=1, params=337, step=0, mode='learn')", "checkpoint_interval": 50}
+{"event": "duration_reached", "timestamp": 1789015746.1492453, "step": 1354, "state": "RUNNING", "elapsed": 2.0006229877471924}
+{"event": "loop_finished", "timestamp": 1789015746.1518002, "step": 1354, "state": "STOPPING", "total_steps": 1354, "total_errors": 0, "total_recoveries": 0, "total_checkpoints": 28, "uptime_seconds": 2.0008912086486816}
+{"event": "loop_started", "timestamp": 1789015746.4294198, "step": 0, "state": "RUNNING", "duration_seconds": 60, "brain": "VisaoBrain(n_in=2, n_hidden=64, n_out=1, params=4417, step=0, mode='learn')", "checkpoint_interval": 2000}
+{"event": "health_critical", "timestamp": 1789015752.3405704, "step": 500, "state": "RUNNING"}
+{"event": "emergency_checkpoint", "timestamp": 1789015752.347782, "step": 500, "state": "DEGRADED", "path": "/home/juan/projeto-visao/visao/ops/checkpoints/brain_step_500.json"}
+{"event": "health_critical", "timestamp": 1789015762.4144237, "step": 600, "state": "DEGRADED"}
+{"event": "emergency_checkpoint", "timestamp": 1789015762.4215074, "step": 600, "state": "DEGRADED", "path": "/home/juan/projeto-visao/visao/ops/checkpoints/brain_step_600.json"}
+{"event": "health_critical", "timestamp": 1789015772.4869022, "step": 700, "state": "DEGRADED"}
+{"event": "emergency_checkpoint", "timestamp": 1789015772.4952703, "step": 700, "state": "DEGRADED", "path": "/home/juan/projeto-visao/visao/ops/checkpoints/brain_step_700.json"}
+{"event": "health_critical", "timestamp": 1789015786.8542924, "step": 3700, "state": "RUNNING"}
+{"event": "emergency_checkpoint", "timestamp": 1789015786.8662663, "step": 3700, "state": "DEGRADED", "path": "/home/juan/projeto-visao/visao/ops/checkpoints/brain_step_3700.json"}
+{"event": "health_critical", "timestamp": 1789015796.9314117, "step": 3800, "state": "DEGRADED"}
+{"event": "emergency_checkpoint", "timestamp": 1789015796.9387069, "step": 3800, "state": "DEGRADED", "path": "/home/juan/projeto-visao/visao/ops/checkpoints/brain_step_3800.json"}
+{"event": "duration_reached", "timestamp": 1789015806.4929123, "step": 3894, "state": "DEGRADED", "elapsed": 60.06350064277649}
+{"event": "loop_finished", "timestamp": 1789015806.5004978, "step": 3894, "state": "STOPPING", "total_steps": 3894, "total_errors": 0, "total_recoveries": 0, "total_checkpoints": 7, "uptime_seconds": 60.06375336647034}
+{"event": "loop_started", "timestamp": 1789015806.5035436, "step": 0, "state": "RUNNING", "duration_seconds": 60, "brain": "VisaoBrain(n_in=2, n_hidden=64, n_out=1, params=4417, step=0, mode='learn')", "checkpoint_interval": 2000}
+{"event": "health_critical", "timestamp": 1789015812.3871734, "step": 500, "state": "RUNNING"}
+{"event": "emergency_checkpoint", "timestamp": 1789015812.398973, "step": 500, "state": "DEGRADED", "path": "/home/juan/projeto-visao/visao/ops/checkpoints/brain_step_500.json"}
+{"event": "error", "timestamp": 1789015817.5337029, "step": 550, "state": "DEGRADED", "error_type": "ValueError", "error_msg": "Injected error #1 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789015817.5338974, "step": 550, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 1}
+{"event": "error", "timestamp": 1789015825.6042132, "step": 1360, "state": "RUNNING", "error_type": "ValueError", "error_msg": "Injected error #2 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789015825.604402, "step": 1360, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 2}
+{"event": "error", "timestamp": 1789015833.70457, "step": 1036, "state": "RUNNING", "error_type": "ValueError", "error_msg": "Injected error #3 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789015833.7047606, "step": 1036, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 3}
+{"event": "signal_received", "timestamp": 1789015838.0509202, "step": 3036, "state": "RUNNING", "signal": "SIGTERM"}
+{"event": "stop_requested", "timestamp": 1789015838.0511503, "step": 3036, "state": "STOPPING"}
+{"event": "loop_finished", "timestamp": 1789015838.0648718, "step": 3036, "state": "STOPPING", "total_steps": 3036, "total_errors": 3, "total_recoveries": 3, "total_checkpoints": 3, "uptime_seconds": 31.54771399497986}
+{"event": "loop_started", "timestamp": 1789015889.8080359, "step": 0, "state": "RUNNING", "duration_seconds": 60, "brain": "VisaoBrain(n_in=2, n_hidden=64, n_out=1, params=4417, step=0, mode='learn')", "checkpoint_interval": 2000}
+{"event": "health_critical", "timestamp": 1789015895.7253122, "step": 500, "state": "RUNNING"}
+{"event": "emergency_checkpoint", "timestamp": 1789015895.7330508, "step": 500, "state": "DEGRADED", "path": "/home/juan/projeto-visao/visao/ops/checkpoints/brain_step_500.json"}
+{"event": "error", "timestamp": 1789015900.8627305, "step": 550, "state": "DEGRADED", "error_type": "ValueError", "error_msg": "Injected error #1 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789015900.8629453, "step": 550, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 1}
+{"event": "error", "timestamp": 1789015908.9089186, "step": 1327, "state": "RUNNING", "error_type": "ValueError", "error_msg": "Injected error #2 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789015908.90916, "step": 1327, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 2}
+{"event": "error", "timestamp": 1789015917.0094593, "step": 1039, "state": "RUNNING", "error_type": "ValueError", "error_msg": "Injected error #3 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789015917.00962, "step": 1039, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 3}
+{"event": "error", "timestamp": 1789015925.1095386, "step": 5502, "state": "RUNNING", "error_type": "ValueError", "error_msg": "Injected error #4 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789015925.1096954, "step": 5502, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 4}
+{"event": "error", "timestamp": 1789015933.2090995, "step": 972, "state": "RUNNING", "error_type": "ValueError", "error_msg": "Injected error #5 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789015933.209286, "step": 972, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 5}
+{"event": "signal_received", "timestamp": 1789015949.7558246, "step": 7160, "state": "RUNNING", "signal": "SIGTERM"}
+{"event": "stop_requested", "timestamp": 1789015949.7559993, "step": 7160, "state": "STOPPING"}
+{"event": "loop_finished", "timestamp": 1789015949.7828674, "step": 7160, "state": "STOPPING", "total_steps": 7160, "total_errors": 5, "total_recoveries": 5, "total_checkpoints": 5, "uptime_seconds": 59.96526646614075}

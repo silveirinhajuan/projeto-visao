@@ -912,19 +912,21 @@ def simulate_24h(
 
 def _inject_errors(loop: LiveLoop) -> None:
     """Injeta erros periódicos para testar recuperação."""
-    time.sleep(5)  # espera loop começar
+    time.sleep(3)  # espera loop começar
     error_count = 0
-    while loop.is_running and error_count < 3:
-        time.sleep(15)  # a cada 15s
-        if loop.is_running and loop._step > 100:
-            # Simula erro forçando estado inválido
-            try:
-                # Força um erro de dados (shape inválido)
-                x_invalid = np.array([1.0])  # shape errado
-                y_invalid = np.array([1.0])
-                loop.brain.learn(x_invalid, y_invalid)
-            except Exception:
-                error_count += 1
+    while loop.is_running and error_count < 5:
+        time.sleep(8)  # a cada 8s
+        if loop.is_running and loop._step > 50:
+            # Força um erro corrompendo o data source original
+            original_get = loop.data_source.get
+            def bad_get():
+                # Retorna dados com shape inválido para forçar erro
+                raise ValueError(f"Injected error #{error_count} for testing recovery")
+            loop.data_source.get = bad_get
+            error_count += 1
+            # Restaura após um passo
+            time.sleep(0.1)
+            loop.data_source.get = original_get
 
 
 # ==============================================================

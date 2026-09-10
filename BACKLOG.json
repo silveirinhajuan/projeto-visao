@@ -846,7 +846,7 @@
       "id": "10.0",
       "phase": 10,
       "title": "PORT\u00c3O FINAL: 30 dias de opera\u00e7\u00e3o cont\u00ednua validada",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "9.1",
         "9.2",
@@ -860,7 +860,7 @@
       "id": "11.0",
       "phase": 11,
       "title": "Otimiza\u00e7\u00e3o: poda de sinapses in\u00fateis (sparsity learning)",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "10.0"
       ],
