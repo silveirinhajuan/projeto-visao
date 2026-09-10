@@ -150,15 +150,17 @@ class VisaoBrain:
     def learn(self, x: np.ndarray, y: np.ndarray) -> dict:
         """Um passo completo: forward do reservatório + aprendizado local.
 
-        Parameters
-        ----------
-        x : array shape (n_in,) — entrada atual
-        y : array shape (n_out,) — target
-
-        Returns
-        -------
-        dict com {"pred": ..., "err": ..., "surprise": ...}
+        Raises
+        ------
+        ValueError
+            Se chamado em modo "infer" — este modo só permite forward().
         """
+        if self._mode == "infer":
+            raise ValueError(
+                "learn() não disponível no modo 'infer'. "
+                "Use forward() para inferência ou set_mode('learn')."
+            )
+        # ... rest unchanged
         x = np.asarray(x, dtype=np.float64).ravel()
         y = np.asarray(y, dtype=np.float64).ravel()
 
@@ -185,13 +187,20 @@ class VisaoBrain:
         }
 
     def forward(self, x: np.ndarray) -> np.ndarray:
-        """Inferência rápida: só forward, sem aprendizado.
+        """Inferência rápida: só forward do reservatório + readout.
 
-        Em modo "infer", é a única operação permitida (mais eficiente).
+        Em modo "infer", é a única operação permitida.
+        Otimizado: inline do step() para evitar overhead de chamada
+        e cópia de estado (x_prev) que só é necessário para Oja.
         """
         x = np.asarray(x, dtype=np.float64).ravel()
-        self.x, _ = self.cell.step(self.x, x)
-        return self.learner.predict(self.x)
+        # Inline de cell.step() — evita chamada de função + cópia de x_prev
+        fx = self.cell.f(self.x, x)
+        num = self.x + self.cell.dt * fx * self.cell.A
+        den = 1.0 + self.cell.dt * (1.0 / self.cell.tau + fx)
+        self.x = num / den
+        # Readout
+        return self.learner.W_out @ self.x + self.learner.b_out
 
     def set_mode(self, mode: str) -> "VisaoBrain":
         """Alterna entre 'learn' (padrão) e 'infer' (só forward)."""
