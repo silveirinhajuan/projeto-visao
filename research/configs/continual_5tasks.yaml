@@ -1,0 +1,59 @@
+# VISÃO Research Harness — Continual Learning: 5 Sequential Tasks
+# Evaluate how models learn sequential tasks without forgetting
+
+name: continual_5tasks
+type: continual
+seed: 42
+n_seeds: 3
+task_type: regression
+output_dir: results
+save_checkpoints: true
+save_plots: true
+verbose: true
+
+dataset:
+  name: mackey_glass
+  params:
+    n_train: 2000
+    n_test: 500
+    tau: 17.0
+    horizon: 1
+    noise: 0.0
+
+n_tasks: 5
+
+models:
+  - name: MLP
+    params:
+      n_hidden: 64
+      lr: 0.005
+      epochs: 30
+
+  - name: GRU
+    params:
+      n_hidden: 64
+      lr: 0.005
+      epochs: 30
+
+  - name: LSTM
+    params:
+      n_hidden: 64
+      lr: 0.005
+      epochs: 30
+
+  - name: CfC
+    params:
+      n_hidden: 64
+      lr: 0.005
+      epochs: 30
+      tau: 1.0
+
+  - name: VISÃO
+    params:
+      n_hidden: 64
+      lr: 0.02
+      epochs: 1
+      sparsity: 0.6
+      consolidation: 8.0
+      surprise_gain: 3.0
+      lambda_decay: 0.0005

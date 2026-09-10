@@ -501,6 +501,17 @@ class VisaoBrain:
         mae = float(np.mean(np.abs(preds_arr - targets_arr)))
         return {"mse": mse, "mae": mae, "n": len(preds)}
 
+    def n_params(self) -> int:
+        """Total number of trainable parameters."""
+        return (
+            self.cell.W_in.size
+            + self.cell.W_rec.size
+            + self.cell.b.size
+            + self.cell.A.size
+            + self.learner.W_out.size
+            + self.learner.b_out.size
+        )
+
     def __repr__(self) -> str:
         n_params = (
             self.cell.W_in.size

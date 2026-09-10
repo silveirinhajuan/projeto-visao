@@ -1,0 +1,84 @@
+# ── research/configs/benchmark_matrix.yaml ───────────────────────────────────
+name: "benchmark_matrix"
+description: "Standardized benchmark: MLP, GRU, LSTM, CfC, VISÃO on non-stationary stream"
+
+# ── Dataset ──────────────────────────────────────────────────────────────────
+dataset:
+  name: "non_stationary_stream"
+  seq_length: 200          # timesteps per sample
+  n_train_steps: 3000      # total training steps
+  n_test: 500              # test samples
+  tasks:
+    - type: "sine"
+      frequency: 1.0
+      n_samples: 1000
+    - type: "sawtooth"
+      frequency: 2.0
+      n_samples: 1000
+    - type: "mixed"
+      frequencies: [1.0, 3.0]
+      n_samples: 1000
+
+# ── Seeds ────────────────────────────────────────────────────────────────────
+seeds: [0, 1, 2, 3, 4]
+
+# ── Models ───────────────────────────────────────────────────────────────────
+models:
+  MLP:
+    type: "mlp"
+    n_hidden: 64
+    lr: 0.01
+  GRU:
+    type: "gru"
+    n_hidden: 64
+    lr: 0.01
+  LSTM:
+    type: "lstm"
+    n_hidden: 64
+    lr: 0.01
+  CfC:
+    type: "cfc"
+    n_hidden: 64
+    lr: 0.02
+    sparsity: 0.6
+    tau_min: 0.4
+    tau_max: 4.0
+    dt: 0.15
+  VISÃO:
+    type: "visao"
+    n_hidden: 64
+    lr: 0.02
+    oja_lr: 0.0015
+    consolidation: 8.0
+    surprise_gain: 3.0
+    lambda_decay: 0.0005
+    sparsity: 0.6
+    tau_min: 0.4
+    tau_max: 4.0
+    dt: 0.15
+    meta_learn: false
+
+# ── Metrics ──────────────────────────────────────────────────────────────────
+metrics:
+  - mse_total
+  - mse_final
+  - forgetting
+  - backward_transfer
+  - forward_transfer
+  - wall_time
+  - n_params
+
+# ── Statistics ───────────────────────────────────────────────────────────────
+statistics:
+  confidence_level: 0.95
+  effect_size: "cohens_d"
+
+# ── Output ───────────────────────────────────────────────────────────────────
+output:
+  dir: "results/benchmark_matrix"
+  files:
+    - metrics.json
+    - summary.md
+    - mse_comparison.png
+    - forgetting_comparison.png
+    - timing_comparison.png

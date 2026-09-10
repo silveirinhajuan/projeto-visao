@@ -1,0 +1,68 @@
+Experiment: benchmark_5models
+Output: results/benchmark_5models
+Seed: 42
+Dataset: sine_regression
+Models: ['MLP', 'GRU', 'LSTM', 'CfC', 'VISÃO']
+Seeds: 3
+
+--- MLP (seed=42) ---
+  Training loss: 0.1833
+  Test metrics: {'mse': 0.19041129314199826, 'mae': 0.3797867431678832, 'rmse': 0.43636142490142077, 'r2': 0.6166215574322184}
+
+--- MLP (seed=43) ---
+  Training loss: 0.2015
+  Test metrics: {'mse': 0.18232437584250785, 'mae': 0.3746203430285257, 'rmse': 0.4269945852613448, 'r2': 0.6329039412566957}
+
+--- MLP (seed=44) ---
+  Training loss: 0.1902
+  Test metrics: {'mse': 0.1990076664694427, 'mae': 0.38630468459422995, 'rmse': 0.4461027532636878, 'r2': 0.5993134232158872}
+
+--- GRU (seed=42) ---
+  Training loss: 0.2222
+  Test metrics: {'mse': 0.20184235075132867, 'mae': 0.3933863731261548, 'rmse': 0.44926868436530126, 'r2': 0.5936060051986671}
+
+--- GRU (seed=43) ---
+  Training loss: 0.2458
+  Test metrics: {'mse': 0.20196423776233932, 'mae': 0.3982396391475992, 'rmse': 0.4494043143566151, 'r2': 0.593360595109384}
+
+--- GRU (seed=44) ---
+  Training loss: 0.2227
+  Test metrics: {'mse': 0.20240484906693368, 'mae': 0.3962657253920495, 'rmse': 0.4498942643187771, 'r2': 0.592473458254496}
+
+--- LSTM (seed=42) ---
+  Training loss: 0.2812
+  Test metrics: {'mse': 0.20999112149208726, 'mae': 0.3894689986424232, 'rmse': 0.4582478821468652, 'r2': 0.5771990842441197}
+
+--- LSTM (seed=43) ---
+  Training loss: 0.2774
+  Test metrics: {'mse': 0.20474181721742576, 'mae': 0.39136677619449395, 'rmse': 0.4524840518929101, 'r2': 0.5877681532535053}
+
+--- LSTM (seed=44) ---
+  Training loss: 0.2720
+  Test metrics: {'mse': 0.21626622392971692, 'mae': 0.39044453939486545, 'rmse': 0.46504432469358975, 'r2': 0.5645646498059391}
+
+--- CfC (seed=42) ---
+  Training loss: 0.4967
+  Test metrics: {'mse': 0.20666442543820202, 'mae': 0.40360064037894433, 'rmse': 0.45460359153684876, 'r2': 0.5838971299901974}
+
+--- CfC (seed=43) ---
+  Training loss: 0.4720
+  Test metrics: {'mse': 0.20582035741583002, 'mae': 0.40232143437384577, 'rmse': 0.4536742856012781, 'r2': 0.5855965958070537}
+
+--- CfC (seed=44) ---
+  Training loss: 0.5047
+  Test metrics: {'mse': 0.21065870179370844, 'mae': 0.3997912278320129, 'rmse': 0.45897570937219373, 'r2': 0.5758549628314596}
+
+--- VISÃO (seed=42) ---
+  Training loss: 0.5754
+  Test metrics: {'mse': 0.5006723494198696, 'mae': 0.6318721268563234, 'rmse': 0.707582044302899, 'r2': -0.008065133060140006}
+
+--- VISÃO (seed=43) ---
+  Training loss: 0.5405
+  Test metrics: {'mse': 0.49029463624494346, 'mae': 0.6273088784854521, 'rmse': 0.7002104228336961, 'r2': 0.012829591453134226}
+
+--- VISÃO (seed=44) ---
+  Training loss: 0.6109
+  Test metrics: {'mse': 0.5626591897298994, 'mae': 0.662762374830956, 'rmse': 0.7501061189791077, 'r2': -0.13287085180516622}
+Completed in 27.31s
+Metrics saved: results/benchmark_5models/metrics.json

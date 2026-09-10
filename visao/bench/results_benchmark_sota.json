@@ -1,19 +1,19 @@
 {
   "visao": {
-    "mse_total": 0.3830526732811905,
+    "mse_total": 0.2173349301217371,
     "mse_total_std": 0.0,
-    "mse_final": 0.38662149725843087,
+    "mse_final": 0.17809202515504688,
     "mse_final_std": 0.0,
     "regime_mses": {
-      "sine": 0.38663209715421537,
-      "saw": 0.23281690143912592,
-      "mixed": 0.5297090212502304
+      "sine": 0.36608747195759234,
+      "saw": 0.1359866633538114,
+      "mixed": 0.1499306550538077
     },
     "forgetting": 0.0,
     "forgetting_std": 0.0,
-    "wall_time": 0.10941648483276367,
+    "wall_time": 0.07068467140197754,
     "params": 4288,
-    "ram_mb": 0.1796875
+    "ram_mb": 0.09375
   },
   "lstm": {
     "mse_total": 0.22887236719063292,
@@ -27,9 +27,9 @@
     },
     "forgetting": 0.0,
     "forgetting_std": 0.0,
-    "wall_time": 0.33428168296813965,
+    "wall_time": 0.34404635429382324,
     "params": 17217,
-    "ram_mb": 0.9375
+    "ram_mb": 0.99609375
   },
   "gru": {
     "mse_total": 0.12572471492174106,
@@ -43,9 +43,9 @@
     },
     "forgetting": 0.0,
     "forgetting_std": 0.0,
-    "wall_time": 0.3134622573852539,
+    "wall_time": 0.30701303482055664,
     "params": 12929,
-    "ram_mb": 0.0
+    "ram_mb": 0.00390625
   },
   "transformer": {
     "mse_total": 0.048918244248862944,
@@ -59,8 +59,8 @@
     },
     "forgetting": 0.0,
     "forgetting_std": 0.0,
-    "wall_time": 0.24474835395812988,
+    "wall_time": 0.23129701614379883,
     "params": 49665,
-    "ram_mb": 1.26953125
+    "ram_mb": 1.30859375
   }
 }

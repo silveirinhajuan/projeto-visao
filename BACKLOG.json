@@ -944,12 +944,12 @@
       "notes": "Módulo agentico para decomposição de tarefas, tool use e auto-melhoria governada (R1-R5)."
     },
     {
-      "id": 15,
+      "id": "15",
       "title": "Escalar VisaoBrain: 64→256→1024 neurônios",
       "description": "Medir scaling laws com n_hidden ∈ {32, 64, 128, 256, 512, 1024}. Objetivo: encontrar onde o ganho de capacidade estabiliza (elbow). Atual: α=-0.006 (fraco). Hipótese: com CfC-JAX + NCP wiring, o scaling melhora para α∈[-0.02, -0.05]. Artefatos: visao/bench/scaling_laws_v2.py + results_scaling_v2.json",
       "status": "done",
       "depends_on": [
-        8
+        "8.0"
       ],
       "priority": "high",
       "result": "Baseline numpy: α=-0.009 (fraco). Readout linear é gargalo. Necessário JAX + readout não-linear."
@@ -960,7 +960,7 @@
       "description": "Comparar em 3 datasets reais: (1) Human Activity Recognition, (2) drone flight tracking (Hasani et al.), (3) HalfCheetah dynamics. Métricas: MSE, parâmetros, tempo de inferência, forgetting. Meta: provar que LTC supera Transformer em dados sequenciais contínuos. Artefatos: visao/bench/benchmark_sota_v2.py",
       "status": "pending",
       "depends_on": [
-        8
+        "8.0"
       ],
       "priority": "high"
     },
@@ -970,7 +970,7 @@
       "description": "Adaptar o conceito de Nested Learning ao VisaoBrain: tratar cada tarefa como um problema de otimização aninhado com workflow interno. Implementar nested_learner.py com: (1) inner loop (adaptação rápida), (2) outer loop (meta-aprendizado), (3) isolamento de parâmetros por tarefa. Validar em 5+ tarefas sequenciais. Artefatos: visao/continual/nested_learner.py",
       "status": "pending",
       "depends_on": [
-        12,
+        "12.0",
         15
       ],
       "priority": "medium"
@@ -981,7 +981,7 @@
       "description": "Implementar operações de memória (store, retrieve, update, summarize, discard) como ferramentas chamáveis pelo agente. Baseado em A-MEM (fev/2026). Integrar com Hippocampus existente. Artefatos: visao/memory/agentic_memory.py",
       "status": "pending",
       "depends_on": [
-        10
+        "10.0"
       ],
       "priority": "medium"
     },

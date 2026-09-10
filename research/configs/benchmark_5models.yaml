@@ -1,0 +1,61 @@
+# VISÃO Research Harness — Benchmark: 5 Models
+# Compare MLP, GRU, LSTM, CfC, and VISÃO on sine regression
+
+name: benchmark_5models
+type: benchmark
+seed: 42
+n_seeds: 3
+task_type: regression
+output_dir: results
+save_checkpoints: true
+save_plots: true
+verbose: true
+
+dataset:
+  name: sine_regression
+  params:
+    n_train: 400
+    n_test: 150
+    n_inputs: 1
+    noise: 0.1
+    freq: 1.0
+
+metrics:
+  - mse
+  - mae
+  - rmse
+
+models:
+  - name: MLP
+    params:
+      n_hidden: 64
+      lr: 0.01
+      epochs: 100
+
+  - name: GRU
+    params:
+      n_hidden: 64
+      lr: 0.01
+      epochs: 100
+
+  - name: LSTM
+    params:
+      n_hidden: 64
+      lr: 0.01
+      epochs: 100
+
+  - name: CfC
+    params:
+      n_hidden: 64
+      lr: 0.01
+      epochs: 100
+      tau: 1.0
+
+  - name: VISÃO
+    params:
+      n_hidden: 64
+      lr: 0.02
+      epochs: 1
+      sparsity: 0.6
+      consolidation: 8.0
+      surprise_gain: 3.0
