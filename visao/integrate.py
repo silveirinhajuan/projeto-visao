@@ -196,11 +196,20 @@ class VisaoCognitiveBrain(VisaoBrain):
     def remember(self, event: dict):
         """Armazena um evento na memória."""
         if HAS_MEMORY:
+            state = event.get('input', np.zeros(self.n_in))
+            next_state = event.get('output', np.zeros(self.n_out))
+            
+            # Garantir que next_state tem mesma dimensão que state
+            if len(next_state) < len(state):
+                next_state = np.pad(next_state, (0, len(state) - len(next_state)))
+            elif len(next_state) > len(state):
+                next_state = next_state[:len(state)]
+            
             self.memory.store(
-                state=event.get('input', np.zeros(self.n_in)),
+                state=state,
                 action=int(event.get('action', 0)),
                 reward=float(event.get('reward', 0.0)),
-                next_state=event.get('output', np.zeros(self.n_out)),
+                next_state=next_state,
             )
     
     def recall(self, query: np.ndarray, top_k: int = 5) -> dict:
