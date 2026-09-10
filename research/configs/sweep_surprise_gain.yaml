@@ -1,0 +1,41 @@
+# VISÃO Research Harness — Surprise Gain Sweep
+# Sweep over surprise_gain values to find optimal setting
+
+name: sweep_surprise_gain
+type: continual
+seed: 42
+n_seeds: 5
+task_type: regression
+output_dir: results/sweep_surprise_gain
+save_checkpoints: false
+save_plots: false
+verbose: true
+
+dataset:
+  name: sine_regression
+  params:
+    n_train: 400
+    n_test: 150
+    n_inputs: 1
+    noise: 0.1
+    freq: 1.0
+
+n_tasks: 5
+
+metrics:
+  - mse
+  - mae
+  - forgetting
+  - backward_transfer
+  - average_accuracy
+
+models:
+  - name: VISÃO
+    params:
+      n_hidden: 64
+      lr: 0.02
+      sparsity: 0.6
+      consolidation: 8.0
+      surprise_gain: 3.0
+      lambda_decay: 0.0005
+      meta_learn: true

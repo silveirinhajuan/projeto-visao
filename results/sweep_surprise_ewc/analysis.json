@@ -1,0 +1,148 @@
+{
+  "experiment": "sweep_surprise_ewc",
+  "design": {
+    "surprise_gains": [
+      0.0,
+      1.0,
+      2.0,
+      3.0
+    ],
+    "ewc_lambdas": [
+      0.0,
+      2.0,
+      8.0,
+      20.0
+    ],
+    "n_tasks": 5,
+    "n_seeds": 5,
+    "seed_range": "42-46"
+  },
+  "results": [
+    {
+      "surprise_gain": 0.0,
+      "ewc_lambda": 0.0,
+      "forgetting": 0.08937162278736142,
+      "avg_mse": 0.6539229278790276,
+      "bwt": -0.11171452848420176
+    },
+    {
+      "surprise_gain": 0.0,
+      "ewc_lambda": 2.0,
+      "forgetting": 0.02396878000812818,
+      "avg_mse": 0.5550950901963898,
+      "bwt": -0.029960975010160217
+    },
+    {
+      "surprise_gain": 0.0,
+      "ewc_lambda": 8.0,
+      "forgetting": 0.012889409680759837,
+      "avg_mse": 0.5328422204638966,
+      "bwt": -0.0161117621009498
+    },
+    {
+      "surprise_gain": 0.0,
+      "ewc_lambda": 20.0,
+      "forgetting": 0.010678033592541047,
+      "avg_mse": 0.5275088313820702,
+      "bwt": -0.01334754199067631
+    },
+    {
+      "surprise_gain": 1.0,
+      "ewc_lambda": 0.0,
+      "forgetting": 0.08937162278736142,
+      "avg_mse": 0.6539229278790276,
+      "bwt": -0.11171452848420176
+    },
+    {
+      "surprise_gain": 1.0,
+      "ewc_lambda": 2.0,
+      "forgetting": 0.08668614070571543,
+      "avg_mse": 0.6475522445554789,
+      "bwt": -0.10835767588214429
+    },
+    {
+      "surprise_gain": 1.0,
+      "ewc_lambda": 8.0,
+      "forgetting": 0.07859171896152406,
+      "avg_mse": 0.631989977393378,
+      "bwt": -0.09823964870190506
+    },
+    {
+      "surprise_gain": 1.0,
+      "ewc_lambda": 20.0,
+      "forgetting": 0.06611465450670628,
+      "avg_mse": 0.611469423556699,
+      "bwt": -0.08264331813338285
+    },
+    {
+      "surprise_gain": 2.0,
+      "ewc_lambda": 0.0,
+      "forgetting": 0.08937162278736142,
+      "avg_mse": 0.6539229278790276,
+      "bwt": -0.11171452848420176
+    },
+    {
+      "surprise_gain": 2.0,
+      "ewc_lambda": 2.0,
+      "forgetting": 0.08833339923002659,
+      "avg_mse": 0.6511015419779479,
+      "bwt": -0.11041674903753322
+    },
+    {
+      "surprise_gain": 2.0,
+      "ewc_lambda": 8.0,
+      "forgetting": 0.08485923366620979,
+      "avg_mse": 0.6433616872837782,
+      "bwt": -0.10607404208276223
+    },
+    {
+      "surprise_gain": 2.0,
+      "ewc_lambda": 20.0,
+      "forgetting": 0.07824430761439623,
+      "avg_mse": 0.6310568611871159,
+      "bwt": -0.09780538451799528
+    },
+    {
+      "surprise_gain": 3.0,
+      "ewc_lambda": 0.0,
+      "forgetting": 0.08937162278736142,
+      "avg_mse": 0.6539229278790276,
+      "bwt": -0.11171452848420176
+    },
+    {
+      "surprise_gain": 3.0,
+      "ewc_lambda": 2.0,
+      "forgetting": 0.08889313151875955,
+      "avg_mse": 0.6523698214961038,
+      "bwt": -0.11111641439844941
+    },
+    {
+      "surprise_gain": 3.0,
+      "ewc_lambda": 8.0,
+      "forgetting": 0.08710283898966734,
+      "avg_mse": 0.6478150737956113,
+      "bwt": -0.10887854873708418
+    },
+    {
+      "surprise_gain": 3.0,
+      "ewc_lambda": 20.0,
+      "forgetting": 0.08315155972579368,
+      "avg_mse": 0.6397118070711033,
+      "bwt": -0.10393944965724211
+    }
+  ],
+  "optimal_combination": {
+    "surprise_gain": 0.0,
+    "ewc_lambda": 20.0,
+    "forgetting": 0.010678033592541047,
+    "avg_mse": 0.5275088313820702,
+    "bwt": -0.01334754199067631
+  },
+  "key_findings": [
+    "Surprise has no effect when EWC=0 (mechanism only interacts with consolidation)",
+    "When surprise=0, higher EWC monotonically improves both forgetting and MSE",
+    "Surprise and EWC interact antagonistically: surprise decays omega, weakening consolidation",
+    "Without meta-learning, surprise is detrimental to performance"
+  ],
+  "recommendation": "Use surprise_gain=0.0 with ewc_lambda=8.0 for optimal balance of low forgetting (0.013) and low MSE (0.533). If meta-learning is enabled, re-evaluate as surprise may provide benefits in that context."
+}

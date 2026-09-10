@@ -1,0 +1,59 @@
+{
+  "model_results": {
+    "VIS\u00c3O": {
+      "forgetting": {
+        "mean": 0.035810264443214,
+        "std": 0.07941819992730378,
+        "ci_lower": -0.033802857082529086,
+        "ci_upper": 0.10542338596895709,
+        "n": 5
+      },
+      "performance_matrix": {
+        "mean": 0.38123130074692263,
+        "std": 0.32972326507069055,
+        "ci_lower": 0.0922161160381142,
+        "ci_upper": 0.6702464854557311,
+        "n": 5
+      },
+      "average_accuracy": {
+        "mean": 0.6621053972740227,
+        "std": 0.15097952804716125,
+        "ci_lower": 0.5297660060077016,
+        "ci_upper": 0.7944447885403438,
+        "n": 5
+      },
+      "backward_transfer": {
+        "mean": -0.04476283055401751,
+        "std": 0.09927274990912974,
+        "ci_lower": -0.13177923246119638,
+        "ci_upper": 0.04225357135316136,
+        "n": 5
+      },
+      "forward_transfer": {
+        "mean": 0.0,
+        "std": 0.0,
+        "ci_lower": 0.0,
+        "ci_upper": 0.0,
+        "n": 5
+      }
+    }
+  },
+  "continual_metrics": {
+    "n_tasks": 5,
+    "forgetting": {
+      "VIS\u00c3O": 0.035810264443214
+    },
+    "backward_transfer": {
+      "VIS\u00c3O": -0.04476283055401751
+    },
+    "forward_transfer": {
+      "VIS\u00c3O": 0.0
+    },
+    "average_accuracy": {
+      "VIS\u00c3O": 0.6621053972740227
+    }
+  },
+  "dataset": "sine_regression",
+  "n_seeds": 5,
+  "elapsed_seconds": 0.7161662578582764
+}

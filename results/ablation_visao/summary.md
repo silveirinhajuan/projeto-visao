@@ -10,36 +10,36 @@
 
 | Model | Metric | Mean | Std | CI |
 |-------|--------|------|-----|-----|
-| VISÃO-full | backward_transfer | -0.0669 | 0.0591 | [-0.1187, -0.0150] |
-| VISÃO-full | average_accuracy | 0.6070 | 0.0810 | [0.5360, 0.6781] |
-| VISÃO-full | forgetting | 0.0535 | 0.0473 | [0.0120, 0.0949] |
-| VISÃO-full | forward_transfer | 0.0000 | 0.0000 | [0.0000, 0.0000] |
-| VISÃO-full | performance_matrix | 0.3393 | 0.2837 | [0.0907, 0.5880] |
-| VISÃO-no_meta | backward_transfer | -0.1089 | 0.1012 | [-0.1976, -0.0201] |
-| VISÃO-no_meta | average_accuracy | 0.6478 | 0.1066 | [0.5544, 0.7413] |
-| VISÃO-no_meta | forgetting | 0.0871 | 0.0810 | [0.0161, 0.1581] |
-| VISÃO-no_meta | forward_transfer | 0.0000 | 0.0000 | [0.0000, 0.0000] |
-| VISÃO-no_meta | performance_matrix | 0.3476 | 0.2945 | [0.0895, 0.6057] |
-| VISÃO-no_consolidation | backward_transfer | -0.1117 | 0.1078 | [-0.2062, -0.0172] |
-| VISÃO-no_consolidation | average_accuracy | 0.6539 | 0.1173 | [0.5511, 0.7567] |
-| VISÃO-no_consolidation | forgetting | 0.0894 | 0.0863 | [0.0138, 0.1650] |
-| VISÃO-no_consolidation | forward_transfer | 0.0000 | 0.0000 | [0.0000, 0.0000] |
-| VISÃO-no_consolidation | performance_matrix | 0.3500 | 0.2972 | [0.0895, 0.6104] |
-| VISÃO-no_surprise | backward_transfer | -0.0161 | 0.0255 | [-0.0384, 0.0062] |
-| VISÃO-no_surprise | average_accuracy | 0.5328 | 0.0291 | [0.5074, 0.5583] |
-| VISÃO-no_surprise | forgetting | 0.0129 | 0.0204 | [-0.0050, 0.0307] |
-| VISÃO-no_surprise | forward_transfer | 0.0000 | 0.0000 | [0.0000, 0.0000] |
-| VISÃO-no_surprise | performance_matrix | 0.3134 | 0.2595 | [0.0859, 0.5409] |
-| VISÃO-baseline | backward_transfer | -0.1052 | 0.1032 | [-0.1957, -0.0148] |
-| VISÃO-baseline | average_accuracy | 0.6461 | 0.1055 | [0.5536, 0.7386] |
-| VISÃO-baseline | forgetting | 0.0842 | 0.0825 | [0.0118, 0.1565] |
-| VISÃO-baseline | forward_transfer | 0.0000 | 0.0000 | [0.0000, 0.0000] |
-| VISÃO-baseline | performance_matrix | 0.3479 | 0.2947 | [0.0896, 0.6061] |
+| VISÃO-full | backward_transfer | 0.0075 | nan | [nan, nan] |
+| VISÃO-full | performance_matrix | 0.3242 | 0.2718 | [-0.2085, 0.8568] |
+| VISÃO-full | forward_transfer | 0.0000 | nan | [nan, nan] |
+| VISÃO-full | average_accuracy | 0.5263 | nan | [nan, nan] |
+| VISÃO-full | forgetting | -0.0060 | nan | [nan, nan] |
+| VISÃO-no_meta | backward_transfer | -0.0176 | nan | [nan, nan] |
+| VISÃO-no_meta | performance_matrix | 0.3210 | 0.2686 | [-0.2054, 0.8475] |
+| VISÃO-no_meta | forward_transfer | 0.0000 | nan | [nan, nan] |
+| VISÃO-no_meta | average_accuracy | 0.5391 | nan | [nan, nan] |
+| VISÃO-no_meta | forgetting | 0.0141 | nan | [nan, nan] |
+| VISÃO-no_consolidation | backward_transfer | -0.0202 | nan | [nan, nan] |
+| VISÃO-no_consolidation | performance_matrix | 0.3226 | 0.2700 | [-0.2065, 0.8518] |
+| VISÃO-no_consolidation | forward_transfer | 0.0000 | nan | [nan, nan] |
+| VISÃO-no_consolidation | average_accuracy | 0.5432 | nan | [nan, nan] |
+| VISÃO-no_consolidation | forgetting | 0.0162 | nan | [nan, nan] |
+| VISÃO-no_surprise | backward_transfer | -0.0017 | nan | [nan, nan] |
+| VISÃO-no_surprise | performance_matrix | 0.3172 | 0.2653 | [-0.2028, 0.8372] |
+| VISÃO-no_surprise | forward_transfer | 0.0000 | nan | [nan, nan] |
+| VISÃO-no_surprise | average_accuracy | 0.5233 | nan | [nan, nan] |
+| VISÃO-no_surprise | forgetting | 0.0014 | nan | [nan, nan] |
+| VISÃO-baseline | backward_transfer | -0.0202 | nan | [nan, nan] |
+| VISÃO-baseline | performance_matrix | 0.3228 | 0.2701 | [-0.2066, 0.8522] |
+| VISÃO-baseline | forward_transfer | 0.0000 | nan | [nan, nan] |
+| VISÃO-baseline | average_accuracy | 0.5428 | nan | [nan, nan] |
+| VISÃO-baseline | forgetting | 0.0162 | nan | [nan, nan] |
 
 ### Continual Learning Metrics
-- Average Accuracy: {'VISÃO-full': np.float64(0.6070320105566873), 'VISÃO-no_meta': np.float64(0.6478150737956113), 'VISÃO-no_consolidation': np.float64(0.6539229278790276), 'VISÃO-no_surprise': np.float64(0.5328422204638966), 'VISÃO-baseline': np.float64(0.6460854962657939)}
-- Forgetting: {'VISÃO-full': np.float64(0.05348200261505898), 'VISÃO-no_meta': np.float64(0.08710283898966734), 'VISÃO-no_consolidation': np.float64(0.08937162278736142), 'VISÃO-no_surprise': np.float64(0.012889409680759837), 'VISÃO-baseline': np.float64(0.08419062152848585)}
-- Backward Transfer: {'VISÃO-full': np.float64(-0.06685250326882372), 'VISÃO-no_meta': np.float64(-0.10887854873708418), 'VISÃO-no_consolidation': np.float64(-0.11171452848420176), 'VISÃO-no_surprise': np.float64(-0.0161117621009498), 'VISÃO-baseline': np.float64(-0.10523827691060728)}
+- Average Accuracy: {'VISÃO-full': np.float64(0.5263191030120457), 'VISÃO-no_meta': np.float64(0.5390968894508187), 'VISÃO-no_consolidation': np.float64(0.5431564884711415), 'VISÃO-no_surprise': np.float64(0.523327284880023), 'VISÃO-baseline': np.float64(0.5427564455849346)}
+- Forgetting: {'VISÃO-full': np.float64(-0.00597768281589095), 'VISÃO-no_meta': np.float64(0.01407466709185643), 'VISÃO-no_consolidation': np.float64(0.016180214803860803), 'VISÃO-no_surprise': np.float64(0.0013742671571470133), 'VISÃO-baseline': np.float64(0.01619080393025709)}
+- Backward Transfer: {'VISÃO-full': np.float64(0.007472103519863688), 'VISÃO-no_meta': np.float64(-0.017593333864820537), 'VISÃO-no_consolidation': np.float64(-0.020225268504826005), 'VISÃO-no_surprise': np.float64(-0.0017178339464337666), 'VISÃO-baseline': np.float64(-0.020238504912821365)}
 - Forward Transfer: {'VISÃO-full': np.float64(0.0), 'VISÃO-no_meta': np.float64(0.0), 'VISÃO-no_consolidation': np.float64(0.0), 'VISÃO-no_surprise': np.float64(0.0), 'VISÃO-baseline': np.float64(0.0)}
 
 ---

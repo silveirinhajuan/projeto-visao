@@ -1,10 +1,10 @@
-Experiment: ablation_visao
-Output: results/ablation_visao
+Experiment: sweep_gain_3.0
+Output: results/sweep_surprise_gain/sweep_gain_3.0
 Seed: 42
 Continual Learning: 5 tasks
-Models: ['VISÃO-full', 'VISÃO-no_meta', 'VISÃO-no_consolidation', 'VISÃO-no_surprise', 'VISÃO-baseline']
+Models: ['VISÃO']
 
---- VISÃO-full (seed=42) ---
+--- VISÃO (seed=42) ---
   Training on task 0 (80 samples)
   Training on task 1 (80 samples)
   Training on task 2 (80 samples)
@@ -14,44 +14,43 @@ Models: ['VISÃO-full', 'VISÃO-no_meta', 'VISÃO-no_consolidation', 'VISÃO-no_
   BWT: 0.0075
   Avg performance: 0.5263
 
---- VISÃO-no_meta (seed=42) ---
+--- VISÃO (seed=43) ---
   Training on task 0 (80 samples)
   Training on task 1 (80 samples)
   Training on task 2 (80 samples)
   Training on task 3 (80 samples)
   Training on task 4 (80 samples)
-  Forgetting: 0.0141
-  BWT: -0.0176
-  Avg performance: 0.5391
+  Forgetting: 0.0898
+  BWT: -0.1123
+  Avg performance: 0.6353
 
---- VISÃO-no_consolidation (seed=42) ---
+--- VISÃO (seed=44) ---
   Training on task 0 (80 samples)
   Training on task 1 (80 samples)
   Training on task 2 (80 samples)
   Training on task 3 (80 samples)
   Training on task 4 (80 samples)
-  Forgetting: 0.0162
-  BWT: -0.0202
-  Avg performance: 0.5432
+  Forgetting: 0.0745
+  BWT: -0.0931
+  Avg performance: 0.6264
 
---- VISÃO-no_surprise (seed=42) ---
+--- VISÃO (seed=45) ---
   Training on task 0 (80 samples)
   Training on task 1 (80 samples)
   Training on task 2 (80 samples)
   Training on task 3 (80 samples)
   Training on task 4 (80 samples)
-  Forgetting: 0.0014
-  BWT: -0.0017
-  Avg performance: 0.5233
+  Forgetting: 0.0973
+  BWT: -0.1216
+  Avg performance: 0.7185
 
---- VISÃO-baseline (seed=42) ---
+--- VISÃO (seed=46) ---
   Training on task 0 (80 samples)
   Training on task 1 (80 samples)
   Training on task 2 (80 samples)
   Training on task 3 (80 samples)
   Training on task 4 (80 samples)
-  Forgetting: 0.0162
-  BWT: -0.0202
-  Avg performance: 0.5428
-Completed in 0.58s
-Metrics saved: results/ablation_visao/metrics.json
+  Forgetting: 0.0118
+  BWT: -0.0148
+  Avg performance: 0.5286
+Metrics saved: results/sweep_surprise_gain/sweep_gain_3.0/metrics.json
