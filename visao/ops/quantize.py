@@ -105,7 +105,8 @@ def quantize_weight(w: np.ndarray) -> QuantizedTensor:
         )
 
     scale = (wmax - wmin) / 255.0
-    q = np.round((w - wmin) / scale).astype(np.int8)
+    # Clip to int8 range [-128, 127] to avoid overflow at boundaries
+    q = np.clip(np.round((w - wmin) / scale), -128, 127).astype(np.int8)
     return QuantizedTensor(q=q, scale=scale, wmin=wmin, shape=w.shape)
 
 
@@ -221,7 +222,11 @@ class QuantizedBrain:
 # ==============================================================
 
 def quantize_brain(brain: VisaoBrain) -> QuantizedBrain:
-    """Quantiza todos os pesos de um VisaoBrain para int8.
+    """Quantiza pesos de um VisaoBrain para int8.
+
+    Estratégia: quantiza apenas as matrizes de pesos grandes (W_in, W_rec, W_out).
+    Mantém vetores pequenos e sensíveis (b, A, tau, b_out) em float64 para
+    minimizar perda de precisão no sistema dinâmico.
 
     Parameters
     ----------
@@ -232,23 +237,20 @@ def quantize_brain(brain: VisaoBrain) -> QuantizedBrain:
     -------
     QuantizedBrain com pesos em int8.
     """
-    # Pesos do cell
-    cell_weights = {
-        "W_in": brain.cell.W_in,
-        "W_rec": brain.cell.W_rec,
-        "b": brain.cell.b,
-        "A": brain.cell.A,
-        "tau": brain.cell.tau,
+    # Pesos quantizados: apenas matrizes grandes
+    quantized_weights = {
+        "W_in": quantize_weight(brain.cell.W_in),
+        "W_rec": quantize_weight(brain.cell.W_rec),
+        "W_out": quantize_weight(brain.learner.W_out),
     }
 
-    # Pesos do learner
-    learner_weights = {
-        "W_out": brain.learner.W_out,
-        "b_out": brain.learner.b_out,
+    # Pesos mantidos em float64 (pequenos e sensíveis)
+    float_weights = {
+        "b": brain.cell.b.copy(),
+        "A": brain.cell.A.copy(),
+        "tau": brain.cell.tau.copy(),
+        "b_out": brain.learner.b_out.copy(),
     }
-
-    all_weights = {**cell_weights, **learner_weights}
-    quantized = {name: quantize_weight(w) for name, w in all_weights.items()}
 
     config = {
         "n_in": brain.n_in,
@@ -267,7 +269,8 @@ def quantize_brain(brain: VisaoBrain) -> QuantizedBrain:
 
     return QuantizedBrain(
         config=config,
-        quantized_weights=quantized,
+        quantized_weights=quantized_weights,
+        float_weights=float_weights,
         state=state,
     )
 
