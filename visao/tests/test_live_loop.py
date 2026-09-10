@@ -167,8 +167,9 @@ class TestBrainHealthMonitor:
 
     def test_critical_after_high_error(self):
         monitor = BrainHealthMonitor()
-        for _ in range(50):
-            monitor.update({"err": 5.0, "surprise": 3.0}, lr=0.02)
+        # Erro alto e variável → CRITICAL (não DEAD, pois DEAD exige std≈0)
+        for i in range(50):
+            monitor.update({"err": 5.0 + (i % 3), "surprise": 3.0}, lr=0.02)
         assert monitor.get_health_status() == HealthStatus.CRITICAL
 
     def test_trends(self):

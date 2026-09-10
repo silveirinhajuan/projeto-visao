@@ -1,9 +1,0 @@
-{
-  "serie_sintetica_meses": 60,
-  "ativos_7d_exemplo": 1086,
-  "churn_mensal_medio": 0.2,
-  "entrada_mensal_media": 200.0,
-  "nstar_observado": 1000.2,
-  "nstar_previsto": 1000.0,
-  "razao_observado_sobre_previsto": 1.0002
-}

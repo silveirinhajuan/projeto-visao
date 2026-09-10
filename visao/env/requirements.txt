@@ -1,8 +1,0 @@
-# Ambiente JAX — Projeto VISÃO (Tarefa 1.1)
-# jax[cpu] é o núcleo; ncps/diffrax/optax entram nas tarefas seguintes da Fase 1.
-# Instalar: env -u PYTHONPATH python3 -m pip install -r visao/env/requirements.txt
-jax[cpu]
-ncps
-diffrax
-optax
-pytest
