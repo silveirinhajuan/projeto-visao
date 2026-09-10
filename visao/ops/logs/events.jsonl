@@ -222,3 +222,40 @@
 {"event": "signal_received", "timestamp": 1789023567.8101304, "step": 15538, "state": "RUNNING", "signal": "SIGTERM"}
 {"event": "stop_requested", "timestamp": 1789023567.8102963, "step": 15538, "state": "STOPPING"}
 {"event": "loop_finished", "timestamp": 1789023567.8174322, "step": 15538, "state": "STOPPING", "total_steps": 15538, "total_errors": 5, "total_recoveries": 5, "total_checkpoints": 8, "uptime_seconds": 55.6724796295166}
+{"event": "stop_requested", "timestamp": 1789023965.6679304, "step": 0, "state": "STOPPING"}
+{"event": "loop_started", "timestamp": 1789023965.6696334, "step": 0, "state": "RUNNING", "duration_seconds": 1, "brain": "VisaoBrain(n_in=2, n_hidden=16, n_out=1, params=337, step=0, mode='learn')", "checkpoint_interval": 100}
+{"event": "duration_reached", "timestamp": 1789023966.6704807, "step": 662, "state": "RUNNING", "elapsed": 1.0008628368377686}
+{"event": "loop_finished", "timestamp": 1789023966.6736333, "step": 662, "state": "STOPPING", "total_steps": 662, "total_errors": 0, "total_recoveries": 0, "total_checkpoints": 7, "uptime_seconds": 1.001140832901001}
+{"event": "loop_started", "timestamp": 1789023966.6761057, "step": 0, "state": "RUNNING", "duration_seconds": 2, "brain": "VisaoBrain(n_in=2, n_hidden=16, n_out=1, params=337, step=0, mode='learn')", "checkpoint_interval": 50}
+{"event": "duration_reached", "timestamp": 1789023968.6773045, "step": 1323, "state": "RUNNING", "elapsed": 2.001214027404785}
+{"event": "loop_finished", "timestamp": 1789023968.6793718, "step": 1323, "state": "STOPPING", "total_steps": 1323, "total_errors": 0, "total_recoveries": 0, "total_checkpoints": 27, "uptime_seconds": 2.0014865398406982}
+{"event": "loop_started", "timestamp": 1789023968.8662984, "step": 0, "state": "RUNNING", "duration_seconds": 60, "brain": "VisaoBrain(n_in=2, n_hidden=64, n_out=1, params=4417, step=0, mode='learn')", "checkpoint_interval": 2000}
+{"event": "duration_reached", "timestamp": 1789024028.8676023, "step": 39927, "state": "RUNNING", "elapsed": 60.00130915641785}
+{"event": "loop_finished", "timestamp": 1789024028.8748949, "step": 39927, "state": "STOPPING", "total_steps": 39927, "total_errors": 0, "total_recoveries": 0, "total_checkpoints": 20, "uptime_seconds": 60.001601696014404}
+{"event": "loop_started", "timestamp": 1789024028.8778355, "step": 0, "state": "RUNNING", "duration_seconds": 60, "brain": "VisaoBrain(n_in=2, n_hidden=64, n_out=1, params=4417, step=0, mode='learn')", "checkpoint_interval": 2000}
+{"event": "error", "timestamp": 1789024039.8787725, "step": 7371, "state": "RUNNING", "error_type": "ValueError", "error_msg": "Injected error #1 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789024039.8789988, "step": 7371, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 1}
+{"event": "error", "timestamp": 1789024047.978286, "step": 12725, "state": "RUNNING", "error_type": "ValueError", "error_msg": "Injected error #2 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789024047.978468, "step": 12725, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 2}
+{"event": "error", "timestamp": 1789024056.0790102, "step": 12739, "state": "RUNNING", "error_type": "ValueError", "error_msg": "Injected error #3 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789024056.0791655, "step": 12739, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 3}
+{"event": "error", "timestamp": 1789024064.1789062, "step": 12746, "state": "RUNNING", "error_type": "ValueError", "error_msg": "Injected error #4 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789024064.1791058, "step": 12746, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 4}
+{"event": "error", "timestamp": 1789024072.2797034, "step": 12752, "state": "RUNNING", "error_type": "ValueError", "error_msg": "Injected error #5 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789024072.2798767, "step": 12752, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 5}
+{"event": "duration_reached", "timestamp": 1789024088.8782198, "step": 18345, "state": "RUNNING", "elapsed": 60.00038933753967}
+{"event": "loop_finished", "timestamp": 1789024088.8855178, "step": 18345, "state": "STOPPING", "total_steps": 18345, "total_errors": 5, "total_recoveries": 5, "total_checkpoints": 10, "uptime_seconds": 60.000608921051025}
+{"event": "loop_started", "timestamp": 1789024088.8885458, "step": 0, "state": "RUNNING", "duration_seconds": 60, "brain": "VisaoBrain(n_in=2, n_hidden=64, n_out=1, params=4417, step=0, mode='learn')", "checkpoint_interval": 2000}
+{"event": "error", "timestamp": 1789024099.8888464, "step": 7340, "state": "RUNNING", "error_type": "ValueError", "error_msg": "Injected error #1 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789024099.8890293, "step": 7340, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 1}
+{"event": "error", "timestamp": 1789024107.9903228, "step": 12751, "state": "RUNNING", "error_type": "ValueError", "error_msg": "Injected error #2 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789024107.9905128, "step": 12751, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 2}
+{"event": "error", "timestamp": 1789024116.0911267, "step": 12700, "state": "RUNNING", "error_type": "ValueError", "error_msg": "Injected error #3 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789024116.0912426, "step": 12700, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 3}
+{"event": "error", "timestamp": 1789024124.1899123, "step": 12728, "state": "RUNNING", "error_type": "ValueError", "error_msg": "Injected error #4 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789024124.190099, "step": 12728, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 4}
+{"event": "error", "timestamp": 1789024132.2909086, "step": 12764, "state": "RUNNING", "error_type": "ValueError", "error_msg": "Injected error #5 for testing recovery", "consecutive_errors": 1}
+{"event": "recovery_attempt", "timestamp": 1789024132.291096, "step": 12764, "state": "RECOVERING", "error_type": "ValueError", "recovery_count": 5}
+{"event": "signal_received", "timestamp": 1789024144.607713, "step": 15521, "state": "RUNNING", "signal": "SIGTERM"}
+{"event": "stop_requested", "timestamp": 1789024144.6078782, "step": 15521, "state": "STOPPING"}
+{"event": "loop_finished", "timestamp": 1789024144.6160097, "step": 15521, "state": "STOPPING", "total_steps": 15521, "total_errors": 5, "total_recoveries": 5, "total_checkpoints": 8, "uptime_seconds": 55.72063493728638}
