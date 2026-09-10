@@ -1,6 +1,6 @@
 {
   "_comment": "Backlog executável do Projeto VISÃO. Fonte da verdade para o loop autônomo. O agente noturno lê este arquivo, escolhe a PRÓXIMA tarefa pending cujas dependências estejam done, e executa APENAS ela.",
-  "version": 2,
+  "version": "3.0.0",
   "gates": {
     "phase0": "done",
     "phase1_substrate": "done",
@@ -1023,6 +1023,41 @@
       ],
       "priority": "high",
       "result": "JAX scaling v2: α=-0.399 (44x melhor que numpy α=-0.009). Readout MLP não-linear é o diferencial."
+    },
+    {
+      "id": 66,
+      "title": "Split-MNIST: Validar em benchmark real",
+      "description": "Implementar experimento Split-MNIST (5 tarefas) com MLP/GRU/LSTM/CfC/VISÃO. Blindar claim de 'elimina catastrophic forgetting' com credibilidade externa.",
+      "priority": "alta",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "id": 67,
+      "title": "Redesenhar Surprise: decair lr em vez de omega",
+      "description": "Mecanismo atual decai omega (pesos de importância), enfraquecendo EWC. Redesenhar para decair learning rate: alta no início (exploração), baixa no fim (estabilização).",
+      "priority": "alta",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "id": 68,
+      "title": "Scaling laws v3: mais dados + regularização",
+      "description": "Corrigir scaling: (1) n_train=10k+, (2) L2 + dropout, (3) 3-4 ordens de magnitude de parâmetros, (4) validar R²>0.9 antes de reportar α.",
+      "priority": "media",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "id": 69,
+      "title": "Paper: manuscrito científico (Paper 1)",
+      "description": "Escrever manuscrito 'Liquid Neural Dynamics + Local Plasticity for Continual Learning' com resultados, limitações honestas e referências à literatura.",
+      "priority": "media",
+      "status": "pending",
+      "depends_on": [
+        66,
+        67
+      ]
     }
   ]
 }
