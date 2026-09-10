@@ -1045,7 +1045,7 @@
       "title": "Scaling laws v3: mais dados + regularização",
       "description": "Corrigir scaling: (1) n_train=10k+, (2) L2 + dropout, (3) 3-4 ordens de magnitude de parâmetros, (4) validar R²>0.9 antes de reportar α.",
       "priority": "media",
-      "status": "pending",
+      "status": "done",
       "depends_on": []
     },
     {
