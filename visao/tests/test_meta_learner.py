@@ -87,7 +87,7 @@ class TestTaskSignature:
             sig.update(0.3, rng.normal(0, 1, 8))
         vec = sig.vector()
         # 4 + 2*8 = 20
-        assert vec.shape == (7,)
+        assert vec.shape == (5,)
 
     def test_signature_reset(self):
         sig = TaskSignature(n_hidden=8, buffer_size=10)

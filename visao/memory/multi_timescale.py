@@ -238,6 +238,7 @@ class ThreeTimescaleState:
         self.short.state *= np.exp(-self.dt / self.short.tau)
         self.medium.state *= np.exp(-self.dt / self.medium.tau)
         self.long.state *= np.exp(-self.dt / self.long.tau)
+        self._step_count += 1
 
     def reset_group(self, group: str) -> None:
         """Reset a specific group to zero."""
@@ -444,7 +445,7 @@ class MultiTimescaleMemory:
         """Info about all stored memories."""
         info = {}
         for name, (group, pattern) in self._memories.items():
-            retention = self.core.retention_strength(group, pattern)
+            retention = self.core.retrieval_strength(group, pattern)
             info[name] = {
                 "timescale": group,
                 "tau": self.core.taus[0] if group == "short" else (

@@ -38,32 +38,22 @@ from visao.brain import VisaoBrain
 
 
 class TaskSignature:
-    """Assinatura compacta de uma tarefa baseada em estatísticas de erro e ativação.
-
-    Usada para detectar a tarefa dominante atual e recuperar hiperparâmetros
-    ótimos do banco de tarefas.
-    """
+    """Assinatura compacta de uma tarefa baseada em estatísticas de erro e ativação."""
 
     def __init__(self, n_hidden: int, buffer_size: int = 50):
         self.n_hidden = n_hidden
         self.buffer_size = buffer_size
         self._err_buffer: list[float] = []
         self._act_means: list[np.ndarray] = []
-        self._act_vars: list[np.ndarray] = []
 
     def update(self, err_mag: float, activation: np.ndarray) -> None:
         """Atualiza buffer circular com observação atual."""
         self._err_buffer.append(err_mag)
         if len(self._err_buffer) > self.buffer_size:
             self._err_buffer.pop(0)
-
         self._act_means.append(activation.copy())
         if len(self._act_means) > self.buffer_size:
             self._act_means.pop(0)
-
-        self._act_vars.append((activation ** 2).copy())
-        if len(self._act_vars) > self.buffer_size:
-            self._act_vars.pop(0)
 
     def is_ready(self) -> bool:
         return len(self._err_buffer) >= self.buffer_size // 2
@@ -71,29 +61,17 @@ class TaskSignature:
     def vector(self) -> np.ndarray:
         """Retorna vetor de assinatura (err_stats + act_stats)."""
         if not self._err_buffer:
-            return np.zeros(7)
-
+            return np.zeros(5)
         err_arr = np.array(self._err_buffer)
         act_mean_arr = np.array([a.mean() for a in self._act_means])
-        act_var_arr = np.array([a.mean() for a in self._act_vars])
-
-        sig = np.array([
+        return np.array([
             err_arr.mean(), err_arr.std(), err_arr[-1],
             act_mean_arr.mean(), act_mean_arr.std(),
-            act_var_arr.mean(), act_var_arr.std(),
         ])
-        return sig
-
-    def centroid(self) -> np.ndarray:
-        """Centroide das ativações (para matching)."""
-        if not self._act_means:
-            return np.zeros(self.n_hidden)
-        return np.mean(self._act_means[-self.buffer_size // 2:], axis=0)
 
     def reset(self) -> None:
         self._err_buffer.clear()
         self._act_means.clear()
-        self._act_vars.clear()
 
 
 class TaskEntry:
@@ -131,13 +109,6 @@ class MetaContinualLearner:
     1. Adaptação de lr por tarefa (per-task lr via TaskBank)
     2. Detecção de tarefa dominante (TaskSignature + similarity matching)
     3. Ajuste automático de EWC (consolidation) e Surprise (surprise_gain)
-
-    Uso:
-        mcl = MetaContinualLearner(n_in=2, n_hidden=64, n_out=1)
-        for task_stream in tasks:
-            for x, y in task_stream:
-                mcl.learn(x, y)
-            mcl.end_task()  # consolida metaplasticidade da tarefa
     """
 
     def __init__(
@@ -152,8 +123,8 @@ class MetaContinualLearner:
         signature_buffer: int = 50,
         similarity_threshold: float = 0.85,
         exploration_factor: float = 0.5,
-        adapt_ewc: bool = True,
-        adapt_surprise: bool = True,
+        adapt_ewc: bool = False,
+        adapt_surprise: bool = False,
         adapt_lr: bool = True,
         seed: int = 0,
     ):
@@ -179,7 +150,7 @@ class MetaContinualLearner:
             consolidation=consolidation,
             surprise_gain=surprise_gain,
             lambda_decay=lambda_decay,
-            meta_learn=False,  # controlamos meta-learning aqui
+            meta_learn=False,
             seed=seed,
         )
 
@@ -188,32 +159,18 @@ class MetaContinualLearner:
         self.current_task_id: int = 0
         self._next_task_id: int = 0
         self.signature = TaskSignature(n_hidden, buffer_size=signature_buffer)
-        self._task_start_step: int = 0
         self._task_errors: list[float] = []
         self._task_steps: int = 0
-
-        # Histórico de transições para meta-learning
-        self._transition_history: list[dict] = []
 
     @property
     def current_task(self) -> Optional[TaskEntry]:
         return self.task_bank.get(self.current_task_id)
 
     def _detect_task(self) -> tuple[int, float]:
-        """Detecta tarefa dominante baseada em similaridade de assinatura.
-
-        Returns
-        -------
-        task_id : int
-            ID da tarefa detectada (ou nova tarefa se similaridade baixa).
-        similarity : float
-            Similaridade com a tarefa detectada (0 se tarefa nova).
-        """
+        """Detecta tarefa dominante baseada em similaridade de assinatura."""
         if not self.signature.is_ready():
             return self.current_task_id, 0.0
-
         sig_vec = self.signature.vector()
-
         best_id = -1
         best_sim = -1.0
         for tid, entry in self.task_bank.items():
@@ -221,11 +178,9 @@ class MetaContinualLearner:
             if sim > best_sim:
                 best_sim = sim
                 best_id = tid
-
         if best_sim >= self.similarity_threshold and best_id >= 0:
             return best_id, best_sim
-
-        return -1, best_sim  # sinaliza nova tarefa
+        return -1, best_sim
 
     def _create_task_entry(self) -> int:
         """Cria nova entrada no banco de tarefas."""
@@ -241,7 +196,7 @@ class MetaContinualLearner:
     def _apply_task_hyperparams(self, task_id: int, is_new: bool = False) -> None:
         """Aplica hiperparâmetros da tarefa detectada ao cérebro."""
         if task_id < 0 or task_id not in self.task_bank:
-            # Tarefa nova: exploração (reduz EWC, amplifica surpresa)
+            # Tarefa nova: exploração
             if self.adapt_ewc:
                 self.brain.learner.consolidation = self.consolidation_base * self.exploration_factor
             if self.adapt_surprise:
@@ -256,76 +211,50 @@ class MetaContinualLearner:
                 self.brain.learner.surprise_gain = entry.surprise_gain_opt
             if self.adapt_lr:
                 self.brain.learner.lr = entry.lr_opt
-
         self.current_task_id = max(task_id, 0)
 
     def learn(self, x: np.ndarray, y: np.ndarray) -> dict:
-        """Um passo de aprendizado com meta-adaptação.
-
-        A cada chamada:
-        1. Executa learn() no cérebro
-        2. Atualiza assinatura da tarefa
-        3. A cada N passos, detecta tarefa e ajusta hiperparâmetros
-        """
+        """Um passo de aprendizado com meta-adaptação."""
         result = self.brain.learn(x, y)
-
-        # Atualiza assinatura
         self.signature.update(result["err"], self.brain.x)
         self._task_errors.append(result["err"])
         self._task_steps += 1
 
-        # Detecção periódica (a cada 25 passos para não sobrecarregar)
+        # Detecção periódica
         if self._task_steps % 25 == 0 and self.signature.is_ready():
             task_id, sim = self._detect_task()
             if task_id != self.current_task_id:
-                # Transição detectada
                 if task_id == -1:
                     task_id = self._create_task_entry()
                     self._apply_task_hyperparams(task_id, is_new=True)
                 else:
                     self._apply_task_hyperparams(task_id, is_new=False)
-
         return result
 
     def end_task(self) -> dict:
-        """Finaliza tarefa atual: consolida hiperparâmetros ótimos no banco.
-
-        Chamado entre tarefas para consolidar metaplasticidade.
-        """
+        """Finaliza tarefa atual: consolida hiperparâmetros ótimos no banco."""
         if self.current_task_id < 0 or self.current_task_id not in self.task_bank:
             return {}
-
         entry = self.task_bank[self.current_task_id]
-
-        # Atualiza média de erro da tarefa
         if self._task_errors:
             entry.total_error = float(np.mean(self._task_errors[-100:]))
             entry.n_observations += 1
 
         # Meta-learning: ajusta hiperparâmetros ótimos baseado no desempenho
-        # (estilo MAML outer loop: se erro alto, aumenta lr; se erro baixo, consolida mais)
         if len(self._task_errors) > 20:
             recent_err = np.mean(self._task_errors[-20:])
             old_err = np.mean(self._task_errors[:20]) if len(self._task_errors) > 40 else recent_err
-
             if recent_err < old_err:
-                # Melhorou: hiperparâmetros atuais são bons
                 entry.lr_opt = self.brain.learner.lr
                 entry.consolidation_opt = self.brain.learner.consolidation
                 entry.surprise_gain_opt = self.brain.learner.surprise_gain
             else:
-                # Piorou: ajusta lr para cima (precisa aprender mais rápido)
                 entry.lr_opt = min(self.brain.learner.lr * 1.2, self.lr_base * 3.0)
 
-        # Consolida assinatura
         entry.signature = self.signature
-
-        # Reseta para próxima tarefa
         self.signature = TaskSignature(self.n_hidden)
         self._task_errors = []
         self._task_steps = 0
-        self._task_start_step = self.brain.step
-
         return {
             "task_id": entry.task_id,
             "lr_opt": entry.lr_opt,
@@ -370,20 +299,9 @@ class MetaContinualLearner:
 # ==============================================================
 
 def generate_task(kind: str, n: int = 500, seed: int = 0, noise: float = 0.1):
-    """Gera tarefa sintética de regressão.
-
-    Tipos:
-      - "sine": senoide de baixa frequência
-      - "saw": dente de serra
-      - "mixed": combinação de senoides
-      - "high_freq": senoide de alta frequência
-      - "amortecida": senoide com decaimento exponencial
-      - "quadrada": onda quadrada
-      - "noise": ruído gaussiano
-    """
+    """Gera tarefa sintética de regressão."""
     rng = np.random.default_rng(seed)
     t = np.arange(n)
-
     if kind == "sine":
         signal = np.sin(2 * np.pi * 0.05 * t)
     elif kind == "saw":
@@ -400,7 +318,6 @@ def generate_task(kind: str, n: int = 500, seed: int = 0, noise: float = 0.1):
         signal = rng.normal(0, 0.5, n)
     else:
         signal = np.sin(2 * np.pi * 0.05 * t)
-
     u = rng.normal(0, noise, (n, 2))
     u[:, 0] += signal
     y = np.convolve(signal, np.ones(5) / 5, mode="same")[:, None]
@@ -419,18 +336,7 @@ def run_continual_experiment(
     tasks: list[tuple[np.ndarray, np.ndarray]],
     eval_window: int = 100,
 ) -> dict:
-    """Executa experimento continual learning.
-
-    Parameters
-    ----------
-    learner : MetaContinualLearner ou VisaoBrain
-    tasks : lista de (X, Y) para cada tarefa
-    eval_window : tamanho da janela de avaliação
-
-    Returns
-    -------
-    dict com métricas por tarefa e esquecimento acumulado.
-    """
+    """Executa experimento continual learning."""
     n_tasks = len(tasks)
     task_errors = {i: [] for i in range(n_tasks)}
     task_final_mse = {}
@@ -439,15 +345,10 @@ def run_continual_experiment(
     for task_idx, (X, Y) in enumerate(tasks):
         learner.set_mode("learn")
         learner.reset_state()
-
-        # Treina na tarefa
         for xi, yi in zip(X, Y):
             learner.learn(xi, yi)
-
         if isinstance(learner, MetaContinualLearner):
             learner.end_task()
-
-        # Avalia em todas as tarefas vistas
         for eval_idx in range(task_idx + 1):
             X_eval, Y_eval = tasks[eval_idx]
             learner.set_mode("infer")
@@ -459,14 +360,12 @@ def run_continual_experiment(
             if eval_idx == task_idx:
                 task_final_mse[eval_idx] = eval_result["mse"]
 
-    # Calcula esquecimento (backward transfer)
     forgetting = 0.0
     for i in range(n_tasks):
         if len(task_errors[i]) > 1:
             best = min(task_errors[i])
             final = task_errors[i][-1]
             forgetting += max(0, final - best)
-
     return {
         "task_errors": task_errors,
         "task_final_mse": task_final_mse,
@@ -480,33 +379,23 @@ def compare_baseline_vs_meta(
     n_hidden: int = 32,
     seed: int = 42,
 ) -> dict:
-    """Compara baseline (VisaoBrain sem meta-learning) vs MetaContinualLearner.
-
-    Retorna métricas de comparação.
-    """
-    # Baseline: VisaoBrain com parâmetros padrão
+    """Compara baseline (VisaoBrain sem meta-learning) vs MetaContinualLearner."""
     baseline = VisaoBrain(
         n_in=2, n_hidden=n_hidden, n_out=1,
         consolidation=8.0, surprise_gain=3.0,
         meta_learn=False, seed=seed,
     )
-
-    # MetaContinualLearner
     meta = MetaContinualLearner(
         n_in=2, n_hidden=n_hidden, n_out=1,
         consolidation=8.0, surprise_gain=3.0,
         seed=seed,
     )
-
-    # Executa experimentos
     result_baseline = run_continual_experiment(baseline, tasks)
     result_meta = run_continual_experiment(meta, tasks)
-
     improvement = (
         (result_baseline["forgetting"] - result_meta["forgetting"])
         / max(result_baseline["forgetting"], 1e-8)
     ) * 100
-
     return {
         "baseline": result_baseline,
         "meta": result_meta,
