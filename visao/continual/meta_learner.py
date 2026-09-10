@@ -121,10 +121,10 @@ class MetaContinualLearner:
         surprise_gain: float = 3.0,
         lambda_decay: float = 0.0005,
         signature_buffer: int = 50,
-        similarity_threshold: float = 0.85,
-        exploration_factor: float = 0.5,
-        adapt_ewc: bool = False,
-        adapt_surprise: bool = False,
+        similarity_threshold: float = 0.80,
+        exploration_factor: float = 0.3,
+        adapt_ewc: bool = True,
+        adapt_surprise: bool = True,
         adapt_lr: bool = True,
         seed: int = 0,
     ):
@@ -194,9 +194,14 @@ class MetaContinualLearner:
         return tid
 
     def _apply_task_hyperparams(self, task_id: int, is_new: bool = False) -> None:
-        """Aplica hiperparâmetros da tarefa detectada ao cérebro."""
+        """Aplica hiperparâmetros da tarefa detectada ao cérebro.
+        
+        Estratégia:
+        - Tarefa nova: consolidacao BAIXA para aprender rapido, lr alta
+        - Tarefa conhecida: consolidacao ALTA para proteger de esquecimento
+        """
         if task_id < 0 or task_id not in self.task_bank:
-            # Tarefa nova: exploração
+            # Tarefa nova: aprender rapido (menos consolidacao)
             if self.adapt_ewc:
                 self.brain.learner.consolidation = self.consolidation_base * self.exploration_factor
             if self.adapt_surprise:
@@ -245,11 +250,15 @@ class MetaContinualLearner:
             recent_err = np.mean(self._task_errors[-20:])
             old_err = np.mean(self._task_errors[:20]) if len(self._task_errors) > 40 else recent_err
             if recent_err < old_err:
+                # Melhorou: manter direção
                 entry.lr_opt = self.brain.learner.lr
                 entry.consolidation_opt = self.brain.learner.consolidation
                 entry.surprise_gain_opt = self.brain.learner.surprise_gain
             else:
-                entry.lr_opt = min(self.brain.learner.lr * 1.2, self.lr_base * 3.0)
+                # Piorou: ajustar conservadoramente
+                entry.lr_opt = min(self.brain.learner.lr * 1.1, self.lr_base * 2.0)
+                entry.consolidation_opt = self.consolidation_base
+                entry.surprise_gain_opt = self.surprise_gain_base
 
         entry.signature = self.signature
         self.signature = TaskSignature(self.n_hidden)
