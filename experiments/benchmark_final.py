@@ -7,7 +7,9 @@ import json
 from pathlib import Path
 
 import sys
-sys.path.insert(0, str(Path(__file__).parent))
+_ROOT = Path(__file__).parent
+sys.path.insert(0, str(_ROOT))
+sys.path.insert(0, str(_ROOT.parent))
 
 from visao.brain import VisaoBrain
 from visao.memory_profile import MemoryProfiler
@@ -89,7 +91,7 @@ print(f"{'Error (meta)':<25} {results['meta']['error']:.4f}")
 print(f"{'Memory saving (int8)':<25} {results['quantize']['memory_saving_pct']:.1f}%")
 print(f"{'Inference speedup':<25} {results['infer']['speedup']:.1f}x")
 
-# Salvar
-with open('/home/juan/projeto-visao/benchmark_final_results.json', 'w') as f:
+out_path = _ROOT.parent / "experiments" / "benchmark_final_results.json"
+with open(out_path, 'w') as f:
     json.dump(results, f, indent=2)
-print(f"\nSalvo em: /home/juan/projeto-visao/benchmark_final_results.json")
+print(f"\nSalvo em: {out_path}")

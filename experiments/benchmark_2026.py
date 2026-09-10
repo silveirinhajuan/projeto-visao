@@ -10,6 +10,7 @@ import numpy as np
 
 ROOT = Path(__file__).parent
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT.parent))
 
 from prototype.liquid import LiquidCell, sigmoid
 from prototype.plasticity import LocalLearner

@@ -300,7 +300,7 @@ class GRU:
             dcat_z = self.W_z.T @ dz_raw
             dcat_n = self.W_n.T @ dn_raw
             dcat = dcat_r + dcat_z + dcat_n
-            dh_next = dcat[:self.n_hidden] + dh * z + dn_raw * (r - 1.0) * self.W_n[:, :self.n_hidden]
+            dh_next = dcat[:self.n_hidden] + dh * z + (dn_raw * (r - 1.0)) @ self.W_n[:, :self.n_hidden]
 
             # Output weights
             dW_out += np.outer(diff[t], h)
@@ -390,24 +390,23 @@ class Transformer:
         T = X.shape[0]
         Q = Q.reshape(T, self.n_heads, self.d_head)
         K = K.reshape(T, self.n_heads, self.d_head)
-        V = V.reshape(T, self.n_heads, d_head)
+        V = V.reshape(T, self.n_heads, self.d_head)
 
-        # Scores: (T, T, n_heads)
+        # Scores: (n_heads, T, T)
         scale = np.sqrt(self.d_head)
-        scores = np.einsum('thd,shd->ths', Q, K) / scale
+        scores = np.einsum('thd,shd->hts', Q, K) / scale
 
         # Causal mask
         mask = np.triu(np.ones((T, T)), k=1).astype(bool)
-        scores = scores.copy()
-        scores[mask] = -1e9
+        scores[:, mask] = -1e9
 
-        # Softmax
-        scores_max = scores.max(axis=1, keepdims=True)
+        # Softmax (over last axis)
+        scores_max = scores.max(axis=-1, keepdims=True)
         exp_s = np.exp(scores - scores_max)
-        attn_weights = exp_s / (exp_s.sum(axis=1, keepdims=True) + 1e-12)
+        attn_weights = exp_s / (exp_s.sum(axis=-1, keepdims=True) + 1e-12)
 
         # Apply attention
-        out = np.einsum('ths,shd->thd', attn_weights, V)
+        out = np.einsum('hts,shd->thd', attn_weights, V)
         out = out.reshape(T, self.n_hidden)
         out = out @ self.W_o.T
 
@@ -488,16 +487,19 @@ class Transformer:
 # ==============================================================
 
 def make_stream(n: int = 3000, seed: int = 0):
-    """Gera stream não-estacionário: sine → saw → mixed (sem fronteira)."""
+    """Gera stream não-estacionário: sine → saw → mixed (sem fronteira).
+    
+    Regimes são proporcionais a n.
+    """
     rng = np.random.default_rng(seed)
-    t = np.arange(n)
     u = np.zeros((n, 2))
     y = np.zeros((n, 1))
 
+    # Regimes proporcionais a n (1/3 cada)
     regimes = [
-        ("sine", 0, 1000),
-        ("saw", 1000, 2000),
-        ("mixed", 2000, 3000),
+        ("sine", 0, n // 3),
+        ("saw", n // 3, 2 * n // 3),
+        ("mixed", 2 * n // 3, n),
     ]
 
     for kind, start, end in regimes:
@@ -675,7 +677,7 @@ def run_benchmark(seeds=(1, 2, 3), quick: bool = False) -> dict:
             "mse_final_std": float(np.std([r["mse_final"] for r in runs])),
             "regime_mses": {
                 reg: float(np.mean([r["regime_mses"][reg] for r in runs]))
-                for reg in ["R1_sine", "R2_saw", "R3_mixed"]
+                for reg in ["sine", "saw", "mixed"]
             },
             "forgetting": float(np.mean([r["forgetting"] for r in runs])),
             "forgetting_std": float(np.std([r["forgetting"] for r in runs])),
@@ -710,7 +712,7 @@ def print_results(results: dict):
     for name in ["visao", "lstm", "gru", "transformer"]:
         r = results[name]
         rm = r["regime_mses"]
-        print(f"{name:<14} {rm['R1_sine']:>10.4f} {rm['R2_saw']:>10.4f} {rm['R3_mixed']:>10.4f}")
+        print(f"{name:<14} {rm['sine']:>10.4f} {rm['saw']:>10.4f} {rm['mixed']:>10.4f}")
 
     # Veredito
     print("\n--- Veredito ---")

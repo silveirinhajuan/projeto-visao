@@ -1,0 +1,66 @@
+{
+  "visao": {
+    "mse_total": 0.3830526732811905,
+    "mse_total_std": 0.0,
+    "mse_final": 0.38662149725843087,
+    "mse_final_std": 0.0,
+    "regime_mses": {
+      "sine": 0.38663209715421537,
+      "saw": 0.23281690143912592,
+      "mixed": 0.5297090212502304
+    },
+    "forgetting": 0.0,
+    "forgetting_std": 0.0,
+    "wall_time": 0.10941648483276367,
+    "params": 4288,
+    "ram_mb": 0.1796875
+  },
+  "lstm": {
+    "mse_total": 0.22887236719063292,
+    "mse_total_std": 0.0,
+    "mse_final": 0.19068148336989385,
+    "mse_final_std": 0.0,
+    "regime_mses": {
+      "sine": 0.37165270002126827,
+      "saw": 0.09350867107433575,
+      "mixed": 0.22145573047629472
+    },
+    "forgetting": 0.0,
+    "forgetting_std": 0.0,
+    "wall_time": 0.33428168296813965,
+    "params": 17217,
+    "ram_mb": 0.9375
+  },
+  "gru": {
+    "mse_total": 0.12572471492174106,
+    "mse_total_std": 0.0,
+    "mse_final": 0.09460417975207318,
+    "mse_final_std": 0.0,
+    "regime_mses": {
+      "sine": 0.2257916432707508,
+      "saw": 0.034516812137747224,
+      "mixed": 0.11686568935672519
+    },
+    "forgetting": 0.0,
+    "forgetting_std": 0.0,
+    "wall_time": 0.3134622573852539,
+    "params": 12929,
+    "ram_mb": 0.0
+  },
+  "transformer": {
+    "mse_total": 0.048918244248862944,
+    "mse_total_std": 0.0,
+    "mse_final": 0.025919969512928097,
+    "mse_final_std": 0.0,
+    "regime_mses": {
+      "sine": 0.10820012033182849,
+      "saw": 0.026784097774655794,
+      "mixed": 0.011770514640104566
+    },
+    "forgetting": 0.0,
+    "forgetting_std": 0.0,
+    "wall_time": 0.24474835395812988,
+    "params": 49665,
+    "ram_mb": 1.26953125
+  }
+}

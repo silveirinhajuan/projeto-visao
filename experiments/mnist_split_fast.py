@@ -2,9 +2,16 @@
 """mnist_fast.py — MNIST split rápido (subset para execução local)."""
 
 import json
+import sys
 import time
+from pathlib import Path
 import numpy as np
 from sklearn.datasets import fetch_openml
+
+# Ensure project root is importable
+_ROOT = Path(__file__).parent.parent
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
 
 print("Carregando MNIST (subset)...")
 mnist = fetch_openml('mnist_784', version=1, as_frame=False)
@@ -120,6 +127,7 @@ for seed in range(3):
 print(f"\nFINAL: fg={np.mean([r['forgetting'] for r in results]):.4f} +/- {np.std([r['forgetting'] for r in results]):.4f}")
 print(f"       acc={np.mean([r['accuracy'] for r in results]):.4f} +/- {np.std([r['accuracy'] for r in results]):.4f}")
 
-with open('/home/juan/projeto-visao/mnist_split_results.json', 'w') as f:
+out_path = Path(__file__).parent / "mnist_split_results.json"
+with open(out_path, 'w') as f:
     json.dump(results, f, indent=2)
-print("Salvo em: /home/juan/projeto-visao/mnist_split_results.json")
+print(f"Salvo em: {out_path}")

@@ -96,6 +96,7 @@ class TestInstantiation:
             simple_brain.set_mode("invalid")
 
     def test_reset_state(self, simple_brain):
+        simple_brain.set_mode("infer")
         simple_brain.forward([0.5, 0.3])
         simple_brain.reset_state()
         assert np.allclose(simple_brain.x, 0.0)

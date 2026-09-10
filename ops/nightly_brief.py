@@ -18,7 +18,7 @@ import sys
 import time
 from pathlib import Path
 
-ROOT = Path("/home/juan/projeto-visao")
+ROOT = Path(__file__).resolve().parents[1]
 LOGS = ROOT / "ops" / "logs"
 ENV = {**os.environ}
 ENV.pop("PYTHONPATH", None)
