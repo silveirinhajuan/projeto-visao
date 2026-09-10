@@ -855,6 +855,62 @@
       "files": [],
       "verify": "python3 visao/ops/validate_30days.py",
       "notes": "Validação final: 30 dias de operação contínua sem intervenção humana."
+    },
+    {
+      "id": "11.0",
+      "phase": 11,
+      "title": "Otimização: poda de sinapses inúteis (sparsity learning)",
+      "status": "pending",
+      "deps": [
+        "10.0"
+      ],
+      "files": [
+        "visao/brain.py"
+      ],
+      "verify": "python3 -c \"from visao.brain import VisaoBrain; b = VisaoBrain(2, 64, 1); b.prune(0.1); print('ok')\"",
+      "notes": "Poda sinapses com importancia omega baixa. Reduz params em 30-50% sem perder performance."
+    },
+    {
+      "id": "11.1",
+      "phase": 11,
+      "title": "Otimização: quantização de pesos (int8)",
+      "status": "pending",
+      "deps": [
+        "11.0"
+      ],
+      "files": [
+        "visao/brain.py"
+      ],
+      "verify": "python3 -c \"from visao.brain import VisaoBrain; b = VisaoBrain(2, 64, 1); b.quantize(); print('ok')\"",
+      "notes": "Quantizar pesos para int8. Reduz RAM em 4x e acelera inferência em CPUs sem AVX."
+    },
+    {
+      "id": "11.2",
+      "phase": 11,
+      "title": "Otimização: JIT compilation com numba",
+      "status": "pending",
+      "deps": [
+        "11.1"
+      ],
+      "files": [
+        "visao/brain.py"
+      ],
+      "verify": "python3 -c \"from visao.brain import VisaoBrain; b = VisaoBrain(2, 64, 1); b.jit_compile(); print('ok')\"",
+      "notes": "JIT compilar o loop interno com numba. Acelera 10-100x em CPUs."
+    },
+    {
+      "id": "12.0",
+      "phase": 12,
+      "title": "Validação: benchmark vs LSTM/GRU/Transformer em tarefa real",
+      "status": "pending",
+      "deps": [
+        "11.2"
+      ],
+      "files": [
+        "visao/bench/baselines.py"
+      ],
+      "verify": "python3 visao/bench/baselines.py",
+      "notes": "Comparar VisaoBrain vs LSTM/GRU/Transformer em tarefa de previsão de série temporal."
     }
   ]
 }
