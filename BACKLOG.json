@@ -732,7 +732,7 @@
       "id": 8.3,
       "phase": 8,
       "title": "Metaplasticidade: aprende a taxa de aprendizado (meta-learning)",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "8.0"
       ],
@@ -740,7 +740,8 @@
         "visao/brain.py"
       ],
       "verify": "python3 -c 'from visao.brain import VisaoBrain; b = VisaoBrain(2, 32, 1, meta_learn=True); print(b)'",
-      "notes": "Meta-learning: o pr\u00f3prio c\u00e9rebro ajusta lr baseado na tend\u00eancia de erro (descendo = mantenha; subindo = reduza). Mais est\u00e1vel que lr fixo."
+      "notes": "Meta-learning: o próprio cérebro ajusta lr baseado na tendência de erro (descendo = mantenha; subindo = reduza). Mais estável que lr fixo.",
+      "evidence": "MetaPlasticityLearner integrado ao VisaoBrain via meta_learn=True. lr por neurônio ajusta baseado na variância do erro (neurônio estável=lr alto, volátil=lr baixo). Hook mechanism injeta EWC-temporal + surprise decay. 25 testes passam (20 brain + 5 metaplasticity). Commit c203689."
     },
     {
       "id": "8.4",
