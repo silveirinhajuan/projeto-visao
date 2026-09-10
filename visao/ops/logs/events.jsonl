@@ -1,0 +1,18 @@
+{"event": "loop_started", "timestamp": 1789015476.6020327, "step": 0, "state": "RUNNING", "duration_seconds": 60, "brain": "VisaoBrain(n_in=2, n_hidden=64, n_out=1, params=4417, step=0, mode='learn')", "checkpoint_interval": 2000}
+{"event": "health_critical", "timestamp": 1789015482.6987276, "step": 500, "state": "RUNNING"}
+{"event": "emergency_checkpoint", "timestamp": 1789015482.7059124, "step": 500, "state": "DEGRADED", "path": "/home/juan/projeto-visao/visao/ops/checkpoints/brain_step_500.json"}
+{"event": "health_critical", "timestamp": 1789015492.7706008, "step": 600, "state": "DEGRADED"}
+{"event": "emergency_checkpoint", "timestamp": 1789015492.7779334, "step": 600, "state": "DEGRADED", "path": "/home/juan/projeto-visao/visao/ops/checkpoints/brain_step_600.json"}
+{"event": "health_critical", "timestamp": 1789015502.845145, "step": 700, "state": "DEGRADED"}
+{"event": "emergency_checkpoint", "timestamp": 1789015502.8520691, "step": 700, "state": "DEGRADED", "path": "/home/juan/projeto-visao/visao/ops/checkpoints/brain_step_700.json"}
+{"event": "health_critical", "timestamp": 1789015517.164878, "step": 3700, "state": "RUNNING"}
+{"event": "emergency_checkpoint", "timestamp": 1789015517.1771784, "step": 3700, "state": "DEGRADED", "path": "/home/juan/projeto-visao/visao/ops/checkpoints/brain_step_3700.json"}
+{"event": "health_critical", "timestamp": 1789015527.2384067, "step": 3800, "state": "DEGRADED"}
+{"event": "emergency_checkpoint", "timestamp": 1789015527.2450967, "step": 3800, "state": "DEGRADED", "path": "/home/juan/projeto-visao/visao/ops/checkpoints/brain_step_3800.json"}
+{"event": "duration_reached", "timestamp": 1789015536.7019625, "step": 3893, "state": "DEGRADED", "elapsed": 60.09994125366211}
+{"event": "loop_finished", "timestamp": 1789015536.709122, "step": 3893, "state": "STOPPING", "total_steps": 3893, "total_errors": 0, "total_recoveries": 0, "total_checkpoints": 7, "uptime_seconds": 60.1001410484314}
+{"event": "loop_started", "timestamp": 1789015546.9358072, "step": 0, "state": "RUNNING", "duration_seconds": 60, "brain": "VisaoBrain(n_in=2, n_hidden=64, n_out=1, params=4417, step=0, mode='learn')", "checkpoint_interval": 2000}
+{"event": "health_critical", "timestamp": 1789015552.8210309, "step": 500, "state": "RUNNING"}
+{"event": "emergency_checkpoint", "timestamp": 1789015552.8285959, "step": 500, "state": "DEGRADED", "path": "/home/juan/projeto-visao/visao/ops/checkpoints/brain_step_500.json"}
+{"event": "health_critical", "timestamp": 1789015562.9056494, "step": 600, "state": "DEGRADED"}
+{"event": "emergency_checkpoint", "timestamp": 1789015562.91313, "step": 600, "state": "DEGRADED", "path": "/home/juan/projeto-visao/visao/ops/checkpoints/brain_step_600.json"}
