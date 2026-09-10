@@ -388,9 +388,9 @@ def run_benchmark(seeds=(0, 1, 2), quick: bool = False, output_dir: str = None) 
     if output_dir is None:
         output_dir = str(Path(__file__).parent)
 
-    max_train = 500 if quick else 2000
-    max_test = 200 if quick else 1000
-    n_epochs = 3 if quick else 5
+    max_train = 50 if quick else 2000
+    max_test = 20 if quick else 1000
+    n_epochs = 1 if quick else 5
 
     results = {"visao": [], "lstm": [], "gru": [], "transformer": []}
 

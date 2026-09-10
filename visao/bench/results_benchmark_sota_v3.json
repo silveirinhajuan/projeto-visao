@@ -1,0 +1,30 @@
+{
+  "visao": {
+    "accuracy_mean": 0.05,
+    "accuracy_std": 0.0,
+    "params": 4938,
+    "time_mean": 21.12052309513092,
+    "ram_mean": 0.109161376953125
+  },
+  "lstm": {
+    "accuracy_mean": 0.175,
+    "accuracy_std": 0.02500000000000001,
+    "params": 17546,
+    "time_mean": 8.238736391067505,
+    "ram_mean": 0.9818115234375
+  },
+  "gru": {
+    "accuracy_mean": 0.125,
+    "accuracy_std": 0.125,
+    "params": 13130,
+    "time_mean": 6.788093566894531,
+    "ram_mean": 0.04559326171875
+  },
+  "transformer": {
+    "accuracy_mean": 0.1,
+    "accuracy_std": 0.049999999999999996,
+    "params": 906,
+    "time_mean": 3.8207043409347534,
+    "ram_mean": 19.984745025634766
+  }
+}

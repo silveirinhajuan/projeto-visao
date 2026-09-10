@@ -171,16 +171,16 @@ class TestMeasureModel:
         lstm = BaselineLSTM(n_in=1, n_hidden=32, n_out=10, seed=0)
         result = measure_model("lstm", lstm, task, n_epochs=2)
 
-        required_keys = ["model", "mse", "params", "time", "ram_mb"]
+        required_keys = ["model", "error", "params", "time", "ram_mb"]
         for key in required_keys:
             assert key in result, f"Missing key: {key}"
 
     def test_measure_model_mse_is_positive(self):
-        """MSE should be positive."""
+        """Error should be positive."""
         task = PSMNISTTask(data_dir="visao/bench/data", max_train=50, max_test=20, seed=0)
         lstm = BaselineLSTM(n_in=1, n_hidden=32, n_out=10, seed=0)
         result = measure_model("lstm", lstm, task, n_epochs=2)
-        assert result["mse"] > 0
+        assert result["error"] > 0
 
     def test_measure_model_params_is_positive(self):
         """Params should be positive."""
