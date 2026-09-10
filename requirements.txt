@@ -1,3 +1,2 @@
-numpy
-numba
-pytest
+numpy>=1.21
+numba>=0.56
