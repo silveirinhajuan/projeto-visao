@@ -258,21 +258,32 @@ class TestContinual:
 
 class TestMetaLearning:
     def test_meta_adjusts_lr(self, meta_brain):
-        """Meta-learning deve ajustar lr."""
-        lr_before = meta_brain.lr
+        """Meta-learning deve ajustar lr (via metaplasticidade por neurônio)."""
+        if hasattr(meta_brain.learner, 'lr_per_neuron'):
+            lr_before = meta_brain.learner.lr_per_neuron.copy()
+        else:
+            lr_before = meta_brain.lr
         u, y = make_task("sine", n=100, seed=0)
         for ui, yi in zip(u, y):
             meta_brain.learn(ui, yi)
-        # lr deve ter mudado
-        assert meta_brain.lr != lr_before or meta_brain._err_trend != 0
+        if hasattr(meta_brain.learner, 'lr_per_neuron'):
+            # MetaPlasticityLearner ajusta lr por neurônio
+            assert not np.allclose(meta_brain.learner.lr_per_neuron, lr_before)
+        else:
+            # Legacy meta-learning
+            assert meta_brain.lr != lr_before or meta_brain._err_trend != 0
 
     def test_meta_lr_bounded(self, meta_brain):
         """lr deve ficar dentro dos limites."""
         u, y = make_task("sine", n=200, seed=0)
         for ui, yi in zip(u, y):
             meta_brain.learn(ui, yi)
-        assert meta_brain.lr >= meta_brain._meta_min
-        assert meta_brain.lr <= meta_brain._meta_max
+        if hasattr(meta_brain.learner, 'lr_per_neuron'):
+            assert np.all(meta_brain.learner.lr_per_neuron >= meta_brain.learner.lr_min)
+            assert np.all(meta_brain.learner.lr_per_neuron <= meta_brain.learner.lr_max)
+        else:
+            assert meta_brain.lr >= meta_brain._meta_min
+            assert meta_brain.lr <= meta_brain._meta_max
 
 
 # ==============================================================

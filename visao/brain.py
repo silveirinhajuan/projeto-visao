@@ -142,16 +142,23 @@ class VisaoBrain:
                 rng=self._rng,
             )
 
+        # Hook p/ injetar EWC-temporal + surprise decay no MetaPlasticityLearner
+        if isinstance(self.learner, MetaPlasticityLearner):
+            self.learner.set_post_omega_hook(self._ewc_surprise_hook)
+
         # Estado do reservatório
         self.x = np.zeros(n_hidden)
 
         # --- Meta-learning ---
+        # Se meta_learn=True com MetaPlasticityLearner, a metaplasticidade
+        # por neurônio já é o meta-learning (não usa legacy _meta_update).
         self.lr = lr
         self._err_trend = 0.0
         self._prev_err = 1.0
         self._meta_alpha = 0.01  # taxa de ajuste do meta-learner
         self._meta_min = lr * 0.1
         self._meta_max = lr * 5.0
+        self._use_legacy_meta = meta_learn and not isinstance(self.learner, MetaPlasticityLearner)
 
         # --- Consolidação adaptativa ---
         self.adaptive_consolidation = adaptive_consolidation
@@ -189,10 +196,16 @@ class VisaoBrain:
         pred = self.learner.predict(self.x)
 
         # 3. Aprendizado local (com todos os mecanismos)
-        err_sq, surprise = self._local_update(self.x, x_prev, y)
+        if isinstance(self.learner, MetaPlasticityLearner):
+            # MetaPlasticityLearner já aplica metaplasticidade + consolidação
+            # + surpresa + Oja internamente. O hook cuida de EWC-temporal e
+            # surprise decay.
+            err_sq, surprise = self.learner.update(self.x, y)
+        else:
+            err_sq, surprise = self._local_update(self.x, x_prev, y)
 
-        # 4. Meta-learning
-        if self.meta_learn:
+        # 4. Meta-learning legado (só para LocalLearner)
+        if self._use_legacy_meta:
             self._meta_update(float(np.abs(y - pred).mean()))
 
         self._step += 1
@@ -286,6 +299,14 @@ class VisaoBrain:
                 "step": self._step,
             },
         }
+
+        # Estado adicional para MetaPlasticityLearner
+        if isinstance(self.learner, MetaPlasticityLearner):
+            data["metaplasticity"] = {
+                "lr_per_neuron": self.learner.lr_per_neuron.tolist(),
+                "err_mean": self.learner._err_mean.tolist(),
+                "err_var_mp": self.learner._err_var.tolist(),
+            }
         Path(path).parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w") as f:
             json.dump(data, f, separators=(",", ":"))
@@ -327,6 +348,13 @@ class VisaoBrain:
         brain.learner.err_var = st["err_var"]
         brain.lr = st["lr"]
         brain._step = st["step"]
+
+        # Carregar estado de metaplasticidade se presente
+        if "metaplasticity" in data and isinstance(brain.learner, MetaPlasticityLearner):
+            mp = data["metaplasticity"]
+            brain.learner.lr_per_neuron = np.array(mp["lr_per_neuron"], dtype=np.float64)
+            brain.learner._err_mean = np.array(mp["err_mean"], dtype=np.float64)
+            brain.learner._err_var = np.array(mp["err_var_mp"], dtype=np.float64)
 
         return brain
 
@@ -403,6 +431,23 @@ class VisaoBrain:
         learner.err_var += 0.02 * (d * d - learner.err_var)
 
         return float((err ** 2).mean()), s
+
+    def _ewc_surprise_hook(self, omega: np.ndarray, surprise: float) -> np.ndarray:
+        """Hook chamado pelo MetaPlasticityLearner após update de omega.
+
+        Aplica decaimento temporal (EWC-temporal) e surpresa como decaimento
+        de omega (surprise_decay 7.1).
+        """
+        # Decaimento temporal de importancia (EWC-temporal 7.2)
+        if self.lambda_decay > 0:
+            omega = omega * np.exp(-self.lambda_decay)
+
+        # Surpresa como decaimento de omega (surprise_decay 7.1)
+        if surprise > 1.0:
+            decay = np.exp(-(surprise - 1.0) * 0.5)
+            omega = omega * decay
+
+        return omega
 
     def _meta_update(self, err_mag: float) -> None:
         """Meta-learning: ajusta lr baseado na tendência de erro.
