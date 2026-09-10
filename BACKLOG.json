@@ -1029,7 +1029,7 @@
       "title": "Split-MNIST: Validar em benchmark real",
       "description": "Implementar experimento Split-MNIST (5 tarefas) com MLP/GRU/LSTM/CfC/VISÃO. Blindar claim de 'elimina catastrophic forgetting' com credibilidade externa.",
       "priority": "alta",
-      "status": "pending",
+      "status": "done",
       "depends_on": []
     },
     {
@@ -1037,7 +1037,7 @@
       "title": "Redesenhar Surprise: decair lr em vez de omega",
       "description": "Mecanismo atual decai omega (pesos de importância), enfraquecendo EWC. Redesenhar para decair learning rate: alta no início (exploração), baixa no fim (estabilização).",
       "priority": "alta",
-      "status": "pending",
+      "status": "done",
       "depends_on": []
     },
     {
