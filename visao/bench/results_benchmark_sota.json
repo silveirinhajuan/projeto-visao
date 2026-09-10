@@ -11,7 +11,7 @@
     },
     "forgetting": 0.0,
     "forgetting_std": 0.0,
-    "wall_time": 0.07085275650024414,
+    "wall_time": 0.07820963859558105,
     "params": 4288,
     "ram_mb": 0.09375
   },
@@ -27,7 +27,7 @@
     },
     "forgetting": 0.0,
     "forgetting_std": 0.0,
-    "wall_time": 0.33556199073791504,
+    "wall_time": 0.33346033096313477,
     "params": 17217,
     "ram_mb": 0.98828125
   },
@@ -43,7 +43,7 @@
     },
     "forgetting": 0.0,
     "forgetting_std": 0.0,
-    "wall_time": 0.296886682510376,
+    "wall_time": 0.29984021186828613,
     "params": 12929,
     "ram_mb": 0.00390625
   },
@@ -59,7 +59,7 @@
     },
     "forgetting": 0.0,
     "forgetting_std": 0.0,
-    "wall_time": 0.2355959415435791,
+    "wall_time": 0.23641228675842285,
     "params": 49665,
     "ram_mb": 1.2734375
   }
