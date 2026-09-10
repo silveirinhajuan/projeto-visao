@@ -992,12 +992,13 @@
       "id": 19,
       "title": "Validação empírica: forgetting em 20+ tarefas adversariais",
       "description": "Testar o VisaoBrain em 20+ tarefas sequenciais com distribuição shiftada. Medir: (1) forward transfer, (2) backward transfer, (3) forgetting acumulado. Comparar com baseline naive e com EWC puro. Meta: provar que Oja+EWC+Surprise supera EWC sozinho. Artefatos: experiments/continual_20tasks.py",
-      "status": "pending",
+      "status": "done",
       "depends_on": [
         15,
         16
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "evidence": "experiments/continual_20tasks.py + experiments/results_continual_20tasks.json. 20 tarefas (sine/saw/square/mixed/amp_mod/freq_mod/noise), 5 seeds. Full (Oja+EWC+Surprise): forgetting=-0.2441±0.0323; EWC only: -0.0476±0.0099; Naive: -0.3013±0.0619. Todas as configs mostram transferência retroativa positiva (forgetting negativo). 9 testes TDD em visao/tests/test_continual_20tasks.py PASSAM. Commit ef95371."
     },
     {
       "id": 20,
