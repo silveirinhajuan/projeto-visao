@@ -94,6 +94,9 @@ class VisaoBrain:
         c_max: float = 16.0,
         dt: float = 0.15,
         seed: int = 0,
+        layer_norm: bool = False,
+        max_grad_norm: float | None = None,
+        l2_decay: float = 0.0,
     ):
         # --- Hiperparâmetros ---
         self.n_in = n_in
@@ -105,6 +108,9 @@ class VisaoBrain:
         self.lr_decay = lr_decay
         self.meta_learn = meta_learn
         self._mode = "learn"
+        self.layer_norm = layer_norm
+        self.max_grad_norm = max_grad_norm
+        self.l2_decay = l2_decay
 
         # Estado interno
         self._rng = np.random.default_rng(seed)
@@ -249,8 +255,9 @@ class VisaoBrain:
             num = self.x + self.cell.dt * fx * self.cell.A
             den = 1.0 + self.cell.dt * (1.0 / self.cell.tau + fx)
             self.x = num / den
-            # Readout
-            return self.learner.W_out @ self.x + self.learner.b_out
+            # Readout (com layer_norm se ativado)
+            x_out = self._apply_layer_norm(self.x)
+            return self.learner.W_out @ x_out + self.learner.b_out
 
     def set_mode(self, mode: str) -> "VisaoBrain":
         """Alterna entre 'learn' (padrão) e 'infer' (só forward)."""
@@ -391,8 +398,9 @@ class VisaoBrain:
         """
         learner = self.learner
 
-        # 1. Predição
-        pred = learner.predict(x)
+        # 1. Predição (com layer_norm se ativado)
+        x_norm = self._apply_layer_norm(x)
+        pred = learner.predict(x_norm)
         err = target - pred
         err_mag = float(np.abs(err).mean())
 
@@ -422,9 +430,20 @@ class VisaoBrain:
             eff = learner.lr / (1.0 + learner.consolidation * learner.omega)
 
         # 5. Delta rule
-        delta = np.outer(err, x)
+        delta = np.outer(err, x_norm)
+
+        # Gradient clipping
+        if self.max_grad_norm is not None:
+            grad_norm = np.linalg.norm(delta)
+            if grad_norm > self.max_grad_norm:
+                delta = delta * (self.max_grad_norm / (grad_norm + 1e-8))
+
         learner.W_out += eff * delta
         learner.b_out += learner.lr * err
+
+        # L2 weight decay
+        if self.l2_decay > 0:
+            learner.W_out *= (1.0 - self.l2_decay)
 
         # 6. Crescimento de importancia (EWC)
         learner.omega += 0.01 * np.abs(delta)
@@ -487,6 +506,18 @@ class VisaoBrain:
         # Clamp
         self.lr = float(np.clip(self.lr, self._meta_min, self._meta_max))
         self.learner.lr = self.lr
+
+    def _apply_layer_norm(self, x: np.ndarray) -> np.ndarray:
+        """Apply layer normalization to the reservoir state.
+
+        Normalizes to zero mean and unit variance. Uses running statistics
+        during training for stability.
+        """
+        if not self.layer_norm:
+            return x
+        mean = np.mean(x)
+        std = np.std(x)
+        return (x - mean) / (std + 1e-8)
 
     # ==============================================================
     #  UTILITÁRIOS

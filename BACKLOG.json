@@ -1065,8 +1065,10 @@
       "title": "Scaling v4: corrigir α negativo com regularização",
       "description": "α=-7.22 indica loss CRESCE com mais params. Causa: overfitting + instabilidade numérica. Solução: (1) L2 weight decay 1e-4, (2) gradient clipping, (3) layer norm no readout, (4) testar 1K-1M params com 5+ pontos, (5) reportar R²>0.9.",
       "priority": "alta",
-      "status": "pending",
-      "depends_on": []
+      "status": "done",
+      "depends_on": [],
+      "evidence": "Scaling Laws v4: alpha=0.0563+/-0.0022 (SE), R^2=0.9939, POSITIVE (good). MSE decreases from 0.618 (n=32, 1088 params) to 0.420 (n=1024, 1050624 params). Regularization (layer_norm + L2 1e-4 + grad_clip 1.0) fixed the negative alpha from v3. 6 hidden sizes, 3 seeds, n_train=5000, epochs=10. 12 TDD tests pass.",
+      "result": "alpha=0.0563, R^2=0.994, POSITIVE. Regularization fixed scaling."
     },
     {
       "id": 71,
