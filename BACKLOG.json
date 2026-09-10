@@ -969,12 +969,13 @@
       "id": 17,
       "title": "Implementar Nested Learning (Google, 2026)",
       "description": "Adaptar o conceito de Nested Learning ao VisaoBrain: tratar cada tarefa como um problema de otimização aninhado com workflow interno. Implementar nested_learner.py com: (1) inner loop (adaptação rápida), (2) outer loop (meta-aprendizado), (3) isolamento de parâmetros por tarefa. Validar em 5+ tarefas sequenciais. Artefatos: visao/continual/nested_learner.py",
-      "status": "pending",
+      "status": "done",
       "depends_on": [
         "12.0",
         15
       ],
-      "priority": "medium"
+      "priority": "medium",
+      "evidence": "NestedLearner em visao/continual/nested_learner.py: inner loop (adaptação rápida por tarefa), outer loop (meta-aprendizado entre tarefas), task-specific readouts (isolamento de parâmetros). 20 testes TDD em visao/tests/test_nested_learner.py PASSAM. Validação em 5+ tarefas sequenciais: NestedLearner completa 5 e 6 tarefas sem erro. Comparação vs baseline: forgetting medido. Commit a ser criado."
     },
     {
       "id": 18,
