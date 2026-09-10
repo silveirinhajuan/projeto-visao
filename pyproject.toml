@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "visao"
+version = "3.0.0"
+description = "VISÃO - Agentic Cognitive Architecture with Liquid Neural Networks"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [{name = "Juan Guerra"}]
+requires-python = ">=3.9"
+dependencies = [
+    "numpy>=1.21",
+    "numba>=0.56",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "flake8>=5.0",
+    "mypy>=1.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["visao/tests", "tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
