@@ -102,6 +102,7 @@ class MetaPlasticityLearner(LocalLearner):
         self.lr_per_neuron = np.full(n_out, lr)
         self._err_mean = np.zeros(n_out)   # EMA do erro (1º momento)
         self._err_var = np.ones(n_out)     # EMA da variância do erro (2º momento)
+        self._post_omega_hook = None       # hook p/ EWC-temporal + surprise decay
 
     def update(self, x: np.ndarray, target: np.ndarray) -> tuple[float, float]:
         """Um passo de aprendizado com metaplasticidade.
@@ -151,12 +152,24 @@ class MetaPlasticityLearner(LocalLearner):
         # Importância cresce onde a sinapse fez trabalho útil
         self.omega += 0.01 * np.abs(delta)
 
+        # --- Hooks para mecanismos externos (EWC-temporal, surprise decay) ---
+        if self._post_omega_hook is not None:
+            self.omega = self._post_omega_hook(self.omega, s)
+
         # Baselines de surpresa (Welford simplificado)
         d_surp = err_mag - self.err_ema
         self.err_ema += 0.02 * d_surp
         self.err_var += 0.02 * (d_surp * d_surp - self.err_var)
 
         return float((err ** 2).mean()), s
+
+    def set_post_omega_hook(self, hook):
+        """Define callback para modificação pós-update de omega.
+
+        Assinatura: hook(omega, surprise) -> omega_modificado
+        Usado por VisaoBrain para injetar EWC-temporal e surprise decay.
+        """
+        self._post_omega_hook = hook
 
     def get_lr_stats(self) -> dict:
         """Retorna estatísticas do lr por neurônio para diagnóstico."""

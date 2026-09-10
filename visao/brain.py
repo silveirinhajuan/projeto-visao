@@ -30,6 +30,7 @@ if str(_ROOT) not in sys.path:
 
 from prototype.liquid import LiquidCell
 from prototype.plasticity import LocalLearner
+from visao.metaplasticity import MetaPlasticityLearner
 
 
 class VisaoBrain:
@@ -115,15 +116,31 @@ class VisaoBrain:
 
         # Learner (readout) — usamos a classe base LocalLearner
         # e aplicamos EWC-temporal + surprise decay manualmente
-        self.learner = LocalLearner(
-            n_hidden=n_hidden,
-            n_out=n_out,
-            lr=lr,
-            oja_lr=oja_lr,
-            consolidation=consolidation,
-            surprise_gain=surprise_gain,
-            rng=self._rng,
-        )
+        # Se meta_learn=True, usa MetaPlasticityLearner (lr por neurônio)
+        if meta_learn:
+            self.learner = MetaPlasticityLearner(
+                n_hidden=n_hidden,
+                n_out=n_out,
+                lr=lr,
+                oja_lr=oja_lr,
+                consolidation=consolidation,
+                surprise_gain=surprise_gain,
+                meta_alpha=2.0,
+                meta_beta=0.9,
+                lr_min=lr * 0.1,
+                lr_max=lr * 5.0,
+                rng=self._rng,
+            )
+        else:
+            self.learner = LocalLearner(
+                n_hidden=n_hidden,
+                n_out=n_out,
+                lr=lr,
+                oja_lr=oja_lr,
+                consolidation=consolidation,
+                surprise_gain=surprise_gain,
+                rng=self._rng,
+            )
 
         # Estado do reservatório
         self.x = np.zeros(n_hidden)

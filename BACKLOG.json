@@ -911,6 +911,36 @@
       ],
       "verify": "python3 visao/bench/baselines.py",
       "notes": "Comparar VisaoBrain vs LSTM/GRU/Transformer em tarefa de previs\u00e3o de s\u00e9rie temporal."
+    },
+    {
+      "id": "13.0",
+      "title": "Memory System: Hippocampus (epis\u00f3dica, sem\u00e2ntica, procedural)",
+      "status": "pending",
+      "deps": [
+        "8.0"
+      ],
+      "notes": "Mem\u00f3ria expl\u00edcita para racioc\u00ednio superior. ICML 2026: hippocampal explicit memory \u00e9 essencial para planejamento, metacogni\u00e7\u00e3o e racioc\u00ednio simb\u00f3lico."
+    },
+    {
+      "id": "14.0",
+      "title": "Reasoning Layer: Neuro-Symbolic (solucionador l\u00f3gico + gradiente textual)",
+      "status": "pending",
+      "deps": [
+        "8.0",
+        "13.0"
+      ],
+      "notes": "Camada simb\u00f3lica para racioc\u00ednio expl\u00edcito. Baseado em Agentic Neural Networks (arXiv 2506.09046) e Scallop (diferenci\u00e1vel)."
+    },
+    {
+      "id": "15.0",
+      "title": "Agentic Module: Planejamento + Execu\u00e7\u00e3o + Auto-monitoramento",
+      "status": "pending",
+      "deps": [
+        "8.0",
+        "13.0",
+        "14.0"
+      ],
+      "notes": "M\u00f3dulo agentico para decomposi\u00e7\u00e3o de tarefas, tool use e auto-melhoria governada (R1-R5)."
     }
   ]
 }
