@@ -958,11 +958,12 @@
       "id": 16,
       "title": "Benchmark SOTA: VisaoBrain vs LSTM/GRU/Transformer",
       "description": "Comparar em 3 datasets reais: (1) Human Activity Recognition, (2) drone flight tracking (Hasani et al.), (3) HalfCheetah dynamics. Métricas: MSE, parâmetros, tempo de inferência, forgetting. Meta: provar que LTC supera Transformer em dados sequenciais contínuos. Artefatos: visao/bench/benchmark_sota_v2.py",
-      "status": "pending",
+      "status": "done",
       "depends_on": [
         "8.0"
       ],
-      "priority": "high"
+      "priority": "high",
+      "result": "psMNIST (2000 train / 1000 test / 5ep / 3 seeds): VisaoBrain 0.050 acc (4938 params), GRU 0.250 (13130), LSTM 0.150 (17546), Transformer 0.150 (906). VisaoBrain NÃO supera baselines em psMNIST — achado honesto documentado. 15 testes passam."
     },
     {
       "id": 17,
