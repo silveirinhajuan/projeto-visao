@@ -12,15 +12,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from visao.brain import VisaoBrain
 
-# Tenta importar módulos opcionais (ainda sendo implementados)
+# Importar módulos (com fallback para placeholders durante desenvolvimento)
 try:
-    from visao.memory.hippocampus import HippocampusMemory, EpisodicBuffer, SemanticGraph, ProceduralMemory
+    from visao.memory.hippocampus import Hippocampus, EpisodicBuffer, SemanticGraph, ProceduralMemory
     HAS_MEMORY = True
 except ImportError:
     HAS_MEMORY = False
 
 try:
-    from visao.reasoning.neuro_symbolic import NeuroSymbolicReasoner, SymbolicSolver, TextualGradient, VerificationEngine
+    from visao.reasoning.neuro_symbolic import ReasoningLayer, SymbolicSolver, TextualGradient, VerificationEngine
     HAS_REASONING = True
 except ImportError:
     HAS_REASONING = False
@@ -36,15 +36,19 @@ class _PlaceholderMemory:
     """Placeholder para memória até implementação final."""
     def __init__(self, **kwargs):
         self.capacity = kwargs.get('buffer_capacity', 1000)
+        self.state_dim = kwargs.get('state_dim', 64)
         self.items = []
     
     def store(self, *args, **kwargs):
         self.items.append({'time': time.time()})
     
     def recall(self, *args, **kwargs):
-        return []
+        return {'semantic_matches': [], 'recent_episodes': []}
     
     def usage_stats(self):
+        return {'items': len(self.items), 'capacity': self.capacity}
+    
+    def get_stats(self):
         return {'items': len(self.items), 'capacity': self.capacity}
     
     def to_dict(self):
@@ -103,20 +107,20 @@ class VisaoCognitiveBrain(VisaoBrain):
         
         # Memória (usando placeholder se módulo não disponível)
         if HAS_MEMORY:
-            self.memory = HippocampusMemory(
-                n_hidden=self.n_hidden,
-                buffer_capacity=1000,
-                semantic_capacity=500,
+            self.memory = Hippocampus(
+                state_dim=max(self.n_in, self.n_out),
+                n_actions=max(self.n_out, 1),
+                episodic_capacity=1000,
+                max_entities=500,
             )
         else:
             self.memory = _PlaceholderMemory()
         
         # Raciocínio (usando placeholder se módulo não disponível)
         if HAS_REASONING:
-            self.reasoner = NeuroSymbolicReasoner(
-                n_hidden=self.n_hidden,
-                n_in=self.n_in,
-                n_out=self.n_out,
+            self.reasoner = ReasoningLayer(
+                brain=self,
+                verbose=False,
             )
         else:
             self.reasoner = _PlaceholderReasoner()
@@ -143,32 +147,34 @@ class VisaoCognitiveBrain(VisaoBrain):
             self._batch_y = []
     
     def think(self, x: np.ndarray) -> dict:
-        """Pipeline cognitivo completo: percepção → memória → raciocínio → ação.
-        
-        Parameters
-        ----------
-        x : array (n_input,)
-            Entrada sensorial/perceptual.
-        
-        Returns
-        -------
-        dict com 'perception', 'memory_recall', 'reasoning', 'action'
-        """
+        """Pipeline cognitivo completo: percepção → memória → raciocínio → ação."""
         # 1. Percepção (liquid core)
         perception = self.forward(x)
         
         # 2. Memória: recuperar experiências similares
-        memory_recall = self.memory.recall(x, top_k=3)
+        if HAS_MEMORY:
+            memory_recall = self.memory.recall(query=x, k=3)
+        else:
+            memory_recall = {'semantic_matches': [], 'recent_episodes': []}
         
         # 3. Raciocínio: integrar percepção + memória
-        reasoning = self.reasoner.reason(x, perception, memory_recall)
+        if HAS_REASONING:
+            reasoning = self.reasoner.reason(f"processar entrada {x.tolist()}")
+        else:
+            reasoning = {'bias': np.zeros_like(perception)}
         
         # 4. Ação: gerar saída informada
         action = self._generate_action(perception, reasoning)
         
         # 5. Atualizar memória (aprendizado contínuo)
-        if self._mode == 'continual':
-            self.memory.store(x, action, context=reasoning)
+        if self._mode == 'continual' and HAS_MEMORY:
+            # Usar a saída como next_state (mesma dimensão)
+            self.memory.store(
+                state=x[:self.memory.state_dim] if len(x) >= self.memory.state_dim else np.pad(x, (0, self.memory.state_dim - len(x))),
+                action=int(np.argmax(action)) if len(action) > 1 else 0,
+                reward=float(-np.mean(action**2)),
+                next_state=action[:self.memory.state_dim] if len(action) >= self.memory.state_dim else np.pad(action, (0, self.memory.state_dim - len(action))),
+            )
         
         return {
             'perception': perception,
@@ -189,28 +195,36 @@ class VisaoCognitiveBrain(VisaoBrain):
     
     def remember(self, event: dict):
         """Armazena um evento na memória."""
-        self.memory.store(
-            input_data=event.get('input', np.zeros(self.n_in)),
-            output_data=event.get('output', np.zeros(self.n_out)),
-            context=event.get('context', {}),
-        )
+        if HAS_MEMORY:
+            self.memory.store(
+                state=event.get('input', np.zeros(self.n_in)),
+                action=int(event.get('action', 0)),
+                reward=float(event.get('reward', 0.0)),
+                next_state=event.get('output', np.zeros(self.n_out)),
+            )
     
-    def recall(self, query: np.ndarray, top_k: int = 5) -> list:
+    def recall(self, query: np.ndarray, top_k: int = 5) -> dict:
         """Recupera memórias similares."""
-        return self.memory.recall(query, top_k=top_k)
+        if HAS_MEMORY:
+            return self.memory.recall(query=query, k=top_k)
+        return {'semantic_matches': [], 'recent_episodes': []}
     
     def reason_about(self, problem: str) -> dict:
         """Raciocina sobre um problema usando neuro-simbólico."""
-        x = np.zeros(self.n_in)  # Placeholder
-        perception = self.forward(x)
-        return self.reasoner.reason(x, perception, context={'problem': problem})
+        if HAS_REASONING:
+            return self.reasoner.reason(problem)
+        return {'bias': np.zeros(self.n_out)}
     
     def get_cognitive_state(self) -> dict:
         """Retorna estado cognitivo atual."""
+        memory_stats = {}
+        if HAS_MEMORY:
+            memory_stats = self.memory.get_stats()
+        
         return {
             'step': self.step,
             'mode': self._mode,
-            'memory_usage': self.memory.usage_stats(),
+            'memory_usage': memory_stats,
             'health': self.agent.monitor.check_health(),
         }
     
@@ -222,7 +236,7 @@ class VisaoCognitiveBrain(VisaoBrain):
                 'W_rec': self.cell.W_rec.tolist(),
                 'W_out': self.learner.W_out.tolist(),
             },
-            'memory': self.memory.to_dict(),
+            'memory': self.memory.get_stats(),
             'cognitive_state': {
                 'attention': self._cognitive_state['attention'].tolist(),
                 'context': self._cognitive_state['context'],
@@ -250,8 +264,8 @@ class VisaoCognitiveBrain(VisaoBrain):
         brain.cell.W_rec = np.array(data['weights']['W_rec'])
         brain.learner.W_out = np.array(data['weights']['W_out'])
         
-        brain.memory.from_dict(data['memory'])
-        brain._cognitive_state = data['cognitive_state']
+        # Memory state not fully serializable yet
+        brain._cognitive_state = data.get('cognitive_state', {})
         
         return brain
 
@@ -278,7 +292,7 @@ def demo_cognitive_brain():
         brain.learn(u, y)
     
     print(f"    Step: {brain.step}")
-    print(f"    Memória: {brain.memory.usage_stats()}")
+    print(f"    Memória: {brain.memory.get_stats()}")
     
     # Think
     print("\n[2] Think (pipeline cognitivo)...")
