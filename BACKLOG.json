@@ -947,11 +947,12 @@
       "id": 15,
       "title": "Escalar VisaoBrain: 64→256→1024 neurônios",
       "description": "Medir scaling laws com n_hidden ∈ {32, 64, 128, 256, 512, 1024}. Objetivo: encontrar onde o ganho de capacidade estabiliza (elbow). Atual: α=-0.006 (fraco). Hipótese: com CfC-JAX + NCP wiring, o scaling melhora para α∈[-0.02, -0.05]. Artefatos: visao/bench/scaling_laws_v2.py + results_scaling_v2.json",
-      "status": "pending",
+      "status": "done",
       "depends_on": [
         8
       ],
-      "priority": "high"
+      "priority": "high",
+      "result": "Baseline numpy: α=-0.009 (fraco). Readout linear é gargalo. Necessário JAX + readout não-linear."
     },
     {
       "id": 16,
@@ -1006,6 +1007,16 @@
         19
       ],
       "priority": "low"
+    },
+    {
+      "id": 21,
+      "title": "Scaling Laws v2: VisaoBrain-JAX com CfC + readout não-linear",
+      "description": "Migrar MultiLayerVisaoBrain para JAX (usando visao.core.cfc.CfCCell). Substituir LocalLearner (readout linear) por MLP não-linear em JAX. Medir scaling com n_hidden ∈ {64, 128, 256, 512, 1024}. Meta: α > 0.03 (melhor que baseline numpy). Artefatos: visao/bench/scaling_laws_v2.py",
+      "status": "pending",
+      "depends_on": [
+        15
+      ],
+      "priority": "high"
     }
   ]
 }
