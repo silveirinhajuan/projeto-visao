@@ -1109,9 +1109,9 @@ class VerificationEngine:
                             warnings.append(f"Import potencialmente perigoso: {node.module}")
 
         # 3. Estrutura
-        has_function = any(isnode, ast.FunctionDef) for isnode in ast.walk(tree))
-        has_class = any(isnode, ast.ClassDef) for isnode in ast.walk(tree))
-        has_lambda = any(isnode, ast.Lambda) for isnode in ast.walk(tree))
+        has_function = any(isinstance(n, ast.FunctionDef) for n in ast.walk(tree))
+        has_class = any(isinstance(n, ast.ClassDef) for n in ast.walk(tree))
+        has_lambda = any(isinstance(n, ast.Lambda) for n in ast.walk(tree))
 
         if not has_function and not has_class and not has_lambda:
             if len(code.strip().split("\n")) > 5:

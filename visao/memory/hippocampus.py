@@ -767,6 +767,7 @@ class ProceduralMemory:
         if name not in self._skills:
             return
         skill = self._skills[name]
+        skill.total_uses += 1
         if success:
             skill.success_count += 1
             skill.importance = min(skill.importance + 0.5, 10.0)

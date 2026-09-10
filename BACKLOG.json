@@ -916,7 +916,7 @@
     {
       "id": "13.0",
       "title": "Memory System: Hippocampus (epis\u00f3dica, sem\u00e2ntica, procedural)",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "8.0"
       ],
@@ -925,7 +925,7 @@
     {
       "id": "14.0",
       "title": "Reasoning Layer: Neuro-Symbolic (solucionador l\u00f3gico + gradiente textual)",
-      "status": "pending",
+      "status": "done",
       "deps": [
         "8.0",
         "13.0"
