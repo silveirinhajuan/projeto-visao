@@ -1012,11 +1012,12 @@
       "id": 21,
       "title": "Scaling Laws v2: VisaoBrain-JAX com CfC + readout não-linear",
       "description": "Migrar MultiLayerVisaoBrain para JAX (usando visao.core.cfc.CfCCell). Substituir LocalLearner (readout linear) por MLP não-linear em JAX. Medir scaling com n_hidden ∈ {64, 128, 256, 512, 1024}. Meta: α > 0.03 (melhor que baseline numpy). Artefatos: visao/bench/scaling_laws_v2.py",
-      "status": "pending",
+      "status": "done",
       "depends_on": [
         15
       ],
-      "priority": "high"
+      "priority": "high",
+      "result": "JAX scaling v2: α=-0.399 (44x melhor que numpy α=-0.009). Readout MLP não-linear é o diferencial."
     }
   ]
 }
