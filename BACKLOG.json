@@ -1004,13 +1004,14 @@
       "id": 20,
       "title": "Documentar: relatório técnico v2 com novos resultados",
       "description": "Atualizar docs/LNN_LFM_REPORT.md com: (1) resultados do benchmark SOTA, (2) scaling laws v2, (3) comparação com Nested Learning, (4) validação AMD $250M como evidência de mercado. Meta: paper-ready technical report.",
-      "status": "pending",
+      "status": "done",
       "depends_on": [
         16,
         17,
         19
       ],
-      "priority": "low"
+      "priority": "low",
+      "evidence": "docs/TECHNICAL_REPORT_V2.md — relatório paper-ready com: resultados 20 tarefas (forgetting=-0.244), scaling laws v2 (α=-0.399), comparação NestedLearner vs VisaoBrain, benchmark SOTA (psMNIST), validação de mercado AMD $250M. Commit a seguir."
     },
     {
       "id": 21,
