@@ -1,0 +1,70 @@
+name: ablation_visao
+type: continual
+seed: 42
+n_seeds: 5
+task_type: regression
+output_dir: results
+save_checkpoints: true
+save_plots: false
+verbose: true
+dataset:
+  name: sine_regression
+  params:
+    n_train: 400
+    n_test: 150
+    n_inputs: 1
+    noise: 0.1
+    freq: 1.0
+n_tasks: 5
+metrics:
+- mse
+- mae
+- forgetting
+- backward_transfer
+- average_accuracy
+models:
+- name: "VIS\xC3O-full"
+  params:
+    n_hidden: 64
+    lr: 0.02
+    sparsity: 0.6
+    consolidation: 8.0
+    surprise_gain: 3.0
+    lambda_decay: 0.0005
+    meta_learn: true
+- name: "VIS\xC3O-no_meta"
+  params:
+    n_hidden: 64
+    lr: 0.02
+    sparsity: 0.6
+    consolidation: 8.0
+    surprise_gain: 3.0
+    lambda_decay: 0.0005
+    meta_learn: false
+- name: "VIS\xC3O-no_consolidation"
+  params:
+    n_hidden: 64
+    lr: 0.02
+    sparsity: 0.6
+    consolidation: 0.0
+    surprise_gain: 3.0
+    lambda_decay: 0.0
+    meta_learn: false
+- name: "VIS\xC3O-no_surprise"
+  params:
+    n_hidden: 64
+    lr: 0.02
+    sparsity: 0.6
+    consolidation: 8.0
+    surprise_gain: 0.0
+    lambda_decay: 0.0005
+    meta_learn: false
+- name: "VIS\xC3O-baseline"
+  params:
+    n_hidden: 64
+    lr: 0.02
+    sparsity: 0.0
+    consolidation: 0.0
+    surprise_gain: 0.0
+    lambda_decay: 0.0
+    meta_learn: false

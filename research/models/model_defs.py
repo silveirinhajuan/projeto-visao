@@ -506,7 +506,14 @@ class VisaoModel(BaseModel):
 
 
 def create_model(name: str, n_in: int, n_out: int, **kwargs) -> BaseModel:
-    """Factory function to create models by name."""
+    """Factory function to create models by name.
+    
+    Supports ablation variants like "VISÃO-full", "VISÃO-no_meta", etc.
+    by recognizing the VISÃO prefix.
+    """
+    name_stripped = name.strip()
+    
+    # Direct matches
     models = {
         "MLP": MLPModel,
         "GRU": GRUModel,
@@ -516,7 +523,12 @@ def create_model(name: str, n_in: int, n_out: int, **kwargs) -> BaseModel:
         "Visao": VisaoModel,
         "visao": VisaoModel,
     }
-    key = name.strip()
-    if key not in models:
-        raise ValueError(f"Unknown model: {name}. Available: {list(models.keys())}")
-    return models[key](n_in=n_in, n_out=n_out, **kwargs)
+    
+    if name_stripped in models:
+        return models[name_stripped](n_in=n_in, n_out=n_out, **kwargs)
+    
+    # Ablation variants: "VISÃO-full", "VISÃO-no_meta", etc.
+    if name_stripped.startswith(("VISÃO-", "Visao-", "visao-")):
+        return VisaoModel(n_in=n_in, n_out=n_out, **kwargs)
+    
+    raise ValueError(f"Unknown model: {name}. Available: {list(models.keys())}")

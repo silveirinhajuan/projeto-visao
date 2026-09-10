@@ -1,8 +1,8 @@
-# VISÃO Research Harness — Ablation Study: VISÃO Mechanisms
-# Test VISÃO with different mechanism combinations
+# VISÃO Research Harness — Ablation Study: Continual Learning
+# Test VISÃO variants on sequential tasks to measure each component's contribution
 
 name: ablation_visao
-type: benchmark
+type: continual
 seed: 42
 n_seeds: 5
 task_type: regression
@@ -12,25 +12,28 @@ save_plots: true
 verbose: true
 
 dataset:
-  name: mackey_glass
+  name: sine_regression
   params:
-    n_train: 800
-    n_test: 200
-    tau: 17.0
-    horizon: 1
-    noise: 0.0
+    n_train: 400
+    n_test: 150
+    n_inputs: 1
+    noise: 0.1
+    freq: 1.0
+
+n_tasks: 5
 
 metrics:
   - mse
   - mae
-  - rmse
+  - forgetting
+  - backward_transfer
+  - average_accuracy
 
 models:
   - name: VISÃO-full
     params:
       n_hidden: 64
       lr: 0.02
-      epochs: 1
       sparsity: 0.6
       consolidation: 8.0
       surprise_gain: 3.0
@@ -41,7 +44,6 @@ models:
     params:
       n_hidden: 64
       lr: 0.02
-      epochs: 1
       sparsity: 0.6
       consolidation: 8.0
       surprise_gain: 3.0
@@ -52,7 +54,6 @@ models:
     params:
       n_hidden: 64
       lr: 0.02
-      epochs: 1
       sparsity: 0.6
       consolidation: 0.0
       surprise_gain: 3.0
@@ -63,7 +64,6 @@ models:
     params:
       n_hidden: 64
       lr: 0.02
-      epochs: 1
       sparsity: 0.6
       consolidation: 8.0
       surprise_gain: 0.0
@@ -74,7 +74,6 @@ models:
     params:
       n_hidden: 64
       lr: 0.02
-      epochs: 1
       sparsity: 0.0
       consolidation: 0.0
       surprise_gain: 0.0

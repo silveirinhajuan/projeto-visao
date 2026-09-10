@@ -1,0 +1,223 @@
+{
+  "model_results": {
+    "VIS\u00c3O-full": {
+      "backward_transfer": {
+        "mean": -0.06685250326882372,
+        "std": 0.05912132193877299,
+        "ci_lower": -0.11867462682052418,
+        "ci_upper": -0.015030379717123267,
+        "n": 5
+      },
+      "average_accuracy": {
+        "mean": 0.6070320105566873,
+        "std": 0.08104352237290197,
+        "ci_lower": 0.5359942310932484,
+        "ci_upper": 0.6780697900201262,
+        "n": 5
+      },
+      "forgetting": {
+        "mean": 0.05348200261505898,
+        "std": 0.047297057551018394,
+        "ci_lower": 0.012024303773698612,
+        "ci_upper": 0.09493970145641933,
+        "n": 5
+      },
+      "forward_transfer": {
+        "mean": 0.0,
+        "std": 0.0,
+        "ci_lower": 0.0,
+        "ci_upper": 0.0,
+        "n": 5
+      },
+      "performance_matrix": {
+        "mean": 0.33934358969556355,
+        "std": 0.28370569419746783,
+        "ci_lower": 0.09066458430647575,
+        "ci_upper": 0.5880225950846514,
+        "n": 5
+      }
+    },
+    "VIS\u00c3O-no_meta": {
+      "backward_transfer": {
+        "mean": -0.10887854873708418,
+        "std": 0.10123640145506284,
+        "ci_lower": -0.19761616711386798,
+        "ci_upper": -0.02014093036030036,
+        "n": 5
+      },
+      "average_accuracy": {
+        "mean": 0.6478150737956113,
+        "std": 0.10661694162750418,
+        "ci_lower": 0.5543612040149786,
+        "ci_upper": 0.7412689435762441,
+        "n": 5
+      },
+      "forgetting": {
+        "mean": 0.08710283898966734,
+        "std": 0.08098912116405026,
+        "ci_lower": 0.016112744288240305,
+        "ci_upper": 0.15809293369109437,
+        "n": 5
+      },
+      "forward_transfer": {
+        "mean": 0.0,
+        "std": 0.0,
+        "ci_lower": 0.0,
+        "ci_upper": 0.0,
+        "n": 5
+      },
+      "performance_matrix": {
+        "mean": 0.34760697919851485,
+        "std": 0.2944904798873781,
+        "ci_lower": 0.08947469235066774,
+        "ci_upper": 0.605739266046362,
+        "n": 5
+      }
+    },
+    "VIS\u00c3O-no_consolidation": {
+      "backward_transfer": {
+        "mean": -0.11171452848420176,
+        "std": 0.1078157235449262,
+        "ci_lower": -0.20621917694499536,
+        "ci_upper": -0.01720988002340816,
+        "n": 5
+      },
+      "average_accuracy": {
+        "mean": 0.6539229278790276,
+        "std": 0.11728744373661722,
+        "ci_lower": 0.5511159506149425,
+        "ci_upper": 0.7567299051431128,
+        "n": 5
+      },
+      "forgetting": {
+        "mean": 0.08937162278736142,
+        "std": 0.08625257883594097,
+        "ci_lower": 0.013767904018726546,
+        "ci_upper": 0.1649753415559963,
+        "n": 5
+      },
+      "forward_transfer": {
+        "mean": 0.0,
+        "std": 0.0,
+        "ci_lower": 0.0,
+        "ci_upper": 0.0,
+        "n": 5
+      },
+      "performance_matrix": {
+        "mean": 0.34996062516933324,
+        "std": 0.29715317654914186,
+        "ci_lower": 0.08949438179173325,
+        "ci_upper": 0.6104268685469332,
+        "n": 5
+      }
+    },
+    "VIS\u00c3O-no_surprise": {
+      "backward_transfer": {
+        "mean": -0.0161117621009498,
+        "std": 0.025455887607964182,
+        "ci_lower": -0.03842483138759875,
+        "ci_upper": 0.00620130718569915,
+        "n": 5
+      },
+      "average_accuracy": {
+        "mean": 0.5328422204638966,
+        "std": 0.029057602737845228,
+        "ci_lower": 0.5073721086697743,
+        "ci_upper": 0.5583123322580189,
+        "n": 5
+      },
+      "forgetting": {
+        "mean": 0.012889409680759837,
+        "std": 0.020364710086371345,
+        "ci_lower": -0.004961045748559321,
+        "ci_upper": 0.030739865110078993,
+        "n": 5
+      },
+      "forward_transfer": {
+        "mean": 0.0,
+        "std": 0.0,
+        "ci_lower": 0.0,
+        "ci_upper": 0.0,
+        "n": 5
+      },
+      "performance_matrix": {
+        "mean": 0.313410477007874,
+        "std": 0.25954824870706583,
+        "ci_lower": 0.08590640620826576,
+        "ci_upper": 0.5409145478074823,
+        "n": 5
+      }
+    },
+    "VIS\u00c3O-baseline": {
+      "backward_transfer": {
+        "mean": -0.10523827691060728,
+        "std": 0.10317380577489596,
+        "ci_lower": -0.19567410504893815,
+        "ci_upper": -0.014802448772276405,
+        "n": 5
+      },
+      "average_accuracy": {
+        "mean": 0.6460854962657939,
+        "std": 0.10553399488773904,
+        "ci_lower": 0.5535808711554028,
+        "ci_upper": 0.7385901213761851,
+        "n": 5
+      },
+      "forgetting": {
+        "mean": 0.08419062152848585,
+        "std": 0.08253904461991678,
+        "ci_lower": 0.011841959017821146,
+        "ci_upper": 0.15653928403915054,
+        "n": 5
+      },
+      "forward_transfer": {
+        "mean": 0.0,
+        "std": 0.0,
+        "ci_lower": 0.0,
+        "ci_upper": 0.0,
+        "n": 5
+      },
+      "performance_matrix": {
+        "mean": 0.34786738482127805,
+        "std": 0.2946534546417452,
+        "ci_lower": 0.08959224430271351,
+        "ci_upper": 0.6061425253398426,
+        "n": 5
+      }
+    }
+  },
+  "continual_metrics": {
+    "n_tasks": 5,
+    "forgetting": {
+      "VIS\u00c3O-full": 0.05348200261505898,
+      "VIS\u00c3O-no_meta": 0.08710283898966734,
+      "VIS\u00c3O-no_consolidation": 0.08937162278736142,
+      "VIS\u00c3O-no_surprise": 0.012889409680759837,
+      "VIS\u00c3O-baseline": 0.08419062152848585
+    },
+    "backward_transfer": {
+      "VIS\u00c3O-full": -0.06685250326882372,
+      "VIS\u00c3O-no_meta": -0.10887854873708418,
+      "VIS\u00c3O-no_consolidation": -0.11171452848420176,
+      "VIS\u00c3O-no_surprise": -0.0161117621009498,
+      "VIS\u00c3O-baseline": -0.10523827691060728
+    },
+    "forward_transfer": {
+      "VIS\u00c3O-full": 0.0,
+      "VIS\u00c3O-no_meta": 0.0,
+      "VIS\u00c3O-no_consolidation": 0.0,
+      "VIS\u00c3O-no_surprise": 0.0,
+      "VIS\u00c3O-baseline": 0.0
+    },
+    "average_accuracy": {
+      "VIS\u00c3O-full": 0.6070320105566873,
+      "VIS\u00c3O-no_meta": 0.6478150737956113,
+      "VIS\u00c3O-no_consolidation": 0.6539229278790276,
+      "VIS\u00c3O-no_surprise": 0.5328422204638966,
+      "VIS\u00c3O-baseline": 0.6460854962657939
+    }
+  },
+  "dataset": "sine_regression",
+  "n_seeds": 5,
+  "elapsed_seconds": 2.5822415351867676
+}
