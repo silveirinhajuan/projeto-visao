@@ -97,6 +97,7 @@ class VisaoBrain:
         layer_norm: bool = False,
         max_grad_norm: float | None = None,
         l2_decay: float = 0.0,
+        task_type: str = "regression",
     ):
         # --- Hiperparâmetros ---
         self.n_in = n_in
@@ -107,6 +108,7 @@ class VisaoBrain:
         self.surprise_mode = surprise_mode
         self.lr_decay = lr_decay
         self.meta_learn = meta_learn
+        self.task_type = task_type
         self._mode = "learn"
         self.layer_norm = layer_norm
         self.max_grad_norm = max_grad_norm
@@ -185,8 +187,20 @@ class VisaoBrain:
     #  API PÚBLICA
     # ==============================================================
 
-    def learn(self, x: np.ndarray, y: np.ndarray) -> dict:
+    def settle(self, x: np.ndarray) -> None:
+        """Step the reservoir without learning. Used for settle-then-learn pattern."""
+        x = np.asarray(x, dtype=np.float64).ravel()
+        self.x, _ = self.cell.step(self.x, x)
+
+    def learn(self, x: np.ndarray, y: np.ndarray, step_reservoir: bool = True) -> dict:
         """Um passo completo: forward do reservatório + aprendizado local.
+
+        Parameters
+        ----------
+        x : input vector
+        y : target vector
+        step_reservoir : if False, uses current state (no reservoir step).
+            Use after settle() to learn on the settled state.
 
         Raises
         ------
@@ -198,24 +212,22 @@ class VisaoBrain:
                 "learn() não disponível no modo 'infer'. "
                 "Use forward() para inferência ou set_mode('learn')."
             )
-        # ... rest unchanged
         x = np.asarray(x, dtype=np.float64).ravel()
         y = np.asarray(y, dtype=np.float64).ravel()
 
-        # 1. Forward do reservatório líquido
-        x_prev = self.x.copy()
-        self.x, _ = self.cell.step(self.x, x)
+        # 1. Forward do reservatório líquido (optional)
+        if step_reservoir:
+            x_prev = self.x.copy()
+            self.x, _ = self.cell.step(self.x, x)
+        else:
+            x_prev = self.x.copy()
 
         # 2. Predição do readout
         pred = self.learner.predict(self.x)
 
         # 3. Aprendizado local (com todos os mecanismos)
         if isinstance(self.learner, MetaPlasticityLearner):
-            # MetaPlasticityLearner já aplica metaplasticidade + consolidação
-            # + surpresa + Oja internamente. O hook cuida de EWC-temporal e
-            # surprise decay.
             err_sq, surprise = self.learner.update(self.x, y)
-            # Modulação de lr já aplicada em _local_update
         else:
             err_sq, surprise = self._local_update(self.x, x_prev, y)
 
@@ -257,7 +269,10 @@ class VisaoBrain:
             self.x = num / den
             # Readout (com layer_norm se ativado)
             x_out = self._apply_layer_norm(self.x)
-            return self.learner.W_out @ x_out + self.learner.b_out
+            pred = self.learner.W_out @ x_out + self.learner.b_out
+            if self.task_type == "classification":
+                pred = 1.0 / (1.0 + np.exp(-np.clip(pred, -500, 500)))
+            return pred
 
     def set_mode(self, mode: str) -> "VisaoBrain":
         """Alterna entre 'learn' (padrão) e 'infer' (só forward)."""
@@ -401,6 +416,9 @@ class VisaoBrain:
         # 1. Predição (com layer_norm se ativado)
         x_norm = self._apply_layer_norm(x)
         pred = learner.predict(x_norm)
+        # Apply sigmoid for classification output
+        if self.task_type == "classification":
+            pred = 1.0 / (1.0 + np.exp(-np.clip(pred, -500, 500)))
         err = target - pred
         err_mag = float(np.abs(err).mean())
 

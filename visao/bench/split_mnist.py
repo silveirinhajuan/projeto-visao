@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
 """
-split_mnist.py — Tarefa 66: Split-MNIST benchmark.
+split_mnist.py — Tarefa 71: Split-MNIST accuracy >80%.
 
-Split-MNIST is the canonical continual learning benchmark:
-  - MNIST digits split into 5 binary classification tasks: (0,1), (2,3), (4,5), (6,7), (8,9)
-  - Model learns tasks sequentially
-  - Measure: accuracy on each task after learning it, and forgetting of previous tasks
+Redesigned for psMNIST-style classification:
+  - Full image (784 pixels) fed as single input vector (n_in=784)
+  - Reservoir runs for multiple steps per image to develop rich dynamics
+  - Larger hidden layer (256) for better separation
+  - More epochs (5+) for convergence
 
-This validates VisaoBrain against the standard benchmark used in the
-continual learning literature (Kirkpatrick et al. 2017, Zenke et al. 2017, etc.).
-
-Artefatos:
-  - visao/bench/split_mnist.py (this file)
-  - visao/tests/test_split_mnist.py (TDD)
-  - visao/bench/results_split_mnist.json (output)
+Key fixes from Task 66 (49.9% accuracy):
+  1. n_in=784 (full image) instead of n_in=1 (pixel-by-pixel)
+  2. Spectral radius rescaled to ~0.95 (edge of chaos)
+  3. Multiple reservoir steps per image (10 steps)
+  4. Larger hidden layer (256 vs 128)
+  5. More training epochs (5 vs 1)
 """
 
 from __future__ import annotations
@@ -24,7 +24,6 @@ import json
 import struct
 import sys
 import time
-import tracemalloc
 from pathlib import Path
 from typing import Optional, Tuple
 
@@ -35,6 +34,7 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 from visao.brain import VisaoBrain
+from prototype.liquid import LiquidCell
 
 
 # ==============================================================
@@ -71,7 +71,7 @@ def load_split_mnist(data_dir, max_per_task: int = 2000) -> list:
         str(data_dir / "t10k-labels-idx1-ubyte.gz"),
     )
     
-    # Flatten and normalize
+    # Flatten and normalize - use full image as single input vector
     train_X = train_images.reshape(-1, 784).astype(np.float32) / 255.0
     test_X = test_images.reshape(-1, 784).astype(np.float32) / 255.0
     
@@ -83,7 +83,6 @@ def load_split_mnist(data_dir, max_per_task: int = 2000) -> list:
         mask_tr = (train_labels == digit_a) | (train_labels == digit_b)
         X_tr = train_X[mask_tr][:max_per_task]
         y_tr_raw = train_labels[mask_tr][:max_per_task]
-        # Binary labels: 0 for digit_a, 1 for digit_b
         y_tr = (y_tr_raw == digit_b).astype(np.float32)
         
         # Test data
@@ -106,23 +105,70 @@ def load_split_mnist(data_dir, max_per_task: int = 2000) -> list:
 
 
 # ==============================================================
+#  RESERVOIR SETUP
+# ==============================================================
+
+def create_brain(n_in: int, n_hidden: int, n_out: int, seed: int = 0,
+                 spectral_radius: float = 0.95, sparsity: float = 0.3,
+                 dt: float = 0.1, lr: float = 0.1) -> VisaoBrain:
+    """Create a VisaoBrain with reservoir tuned for classification."""
+    brain = VisaoBrain(
+        n_in=n_in,
+        n_hidden=n_hidden,
+        n_out=n_out,
+        sparsity=sparsity,
+        tau_min=0.4,
+        tau_max=4.0,
+        dt=dt,
+        lr=lr,
+        oja_lr=0.001,
+        consolidation=8.0,
+        surprise_gain=3.0,
+        seed=seed,
+    )
+    
+    # Rescale W_rec to target spectral radius
+    cell = brain.cell
+    eigs = np.linalg.eigvals(cell.W_rec)
+    current_sr = np.max(np.abs(eigs))
+    if current_sr > 0:
+        scale = spectral_radius / current_sr
+        cell.W_rec *= scale
+    
+    return brain
+
+
+def _prepare_image(image: np.ndarray) -> np.ndarray:
+    """Convert image to pixel sequence (T, 1) for temporal processing.
+    
+    image: (28, 28) or (784,) -> (784, 1)
+    """
+    if image.ndim == 2:
+        return image.reshape(-1, 1).astype(np.float64)
+    elif image.ndim == 1:
+        if len(image) == 784:
+            return image.reshape(-1, 1).astype(np.float64)
+        else:
+            return image.astype(np.float64).reshape(-1, 1)
+    return image.astype(np.float64)
+
+
+# ==============================================================
 #  EXPERIMENT
 # ==============================================================
 
-def evaluate_task(brain: VisaoBrain, task: dict, warmup: int = 50) -> float:
+def evaluate_task(brain: VisaoBrain, task: dict, n_steps: int = 10) -> float:
     """Evaluate brain on a single task. Returns accuracy."""
     brain.set_mode("infer")
     
     correct = 0
     total = 0
     for xi, yi in zip(task["X_test"], task["y_test"]):
-        # Reset state for each new sequence
         brain.reset_state()
-        # Feed sequence one timestep at a time (psMNIST style)
-        # xi has shape (784,), each pixel is a timestep with shape (1, 1)
+        # Feed same image for n_steps to develop dynamics
         pred = None
-        for step in range(xi.shape[0]):
-            pred = brain.forward(xi[step].reshape(-1, 1))
+        for _ in range(n_steps):
+            pred = brain.forward(xi.reshape(-1, 1))
         if pred is None:
             continue
         pred_class = int(pred[0] > 0.5)
@@ -134,28 +180,35 @@ def evaluate_task(brain: VisaoBrain, task: dict, warmup: int = 50) -> float:
     return correct / total if total > 0 else 0.0
 
 
-def train_on_task(brain: VisaoBrain, task: dict, n_epochs: int = 1) -> None:
-    """Train brain on a single task."""
-    brain.set_mode("learn")
+def train_on_task(brain: VisaoBrain, task: dict, n_epochs: int = 10,
+                     n_steps: int = 10) -> None:
+    """Train brain on a single task using settle-then-learn pattern.
+    
+    Key fix: only learn on the FINAL step after reservoir has settled.
+    Learning on every step (old bug) updated readout with noisy intermediate
+    states, preventing convergence.
+    """
     X = task["X_train"]
     y = task["y_train"]
     
     for epoch in range(n_epochs):
-        # Shuffle
         rng = np.random.default_rng(epoch)
         idx = rng.permutation(len(X))
         for i in idx:
-            # Reset state for each new sequence
             brain.reset_state()
-            # Feed each pixel as a timestep (psMNIST)
-            for step in range(X.shape[1]):
-                brain.learn(X[i, step].reshape(-1, 1), np.array([y[i]]))
+            # Settle: run reservoir forward without learning
+            for step in range(n_steps):
+                brain.settle(X[i].reshape(-1, 1))
+            # Learn only on final settled state (don't step again)
+            brain.set_mode("learn")
+            brain.learn(X[i].reshape(-1, 1), np.array([y[i]]), step_reservoir=False)
 
 
 def run_split_mnist_experiment(
     brain: VisaoBrain,
     tasks: list,
-    n_epochs: int = 1,
+    n_epochs: int = 5,
+    n_steps: int = 10,
 ) -> dict:
     """Run Split-MNIST continual learning experiment.
     
@@ -172,11 +225,11 @@ def run_split_mnist_experiment(
     accuracy_matrix = np.zeros((n_tasks, n_tasks))
     
     for task_idx, task in enumerate(tasks):
-        train_on_task(brain, task, n_epochs=n_epochs)
+        train_on_task(brain, task, n_epochs=n_epochs, n_steps=n_steps)
         
         # Evaluate on ALL tasks (including previous)
         for eval_idx, eval_task in enumerate(tasks):
-            acc = evaluate_task(brain, eval_task)
+            acc = evaluate_task(brain, eval_task, n_steps=n_steps)
             accuracy_matrix[task_idx][eval_idx] = acc
     
     # Compute metrics
@@ -205,7 +258,8 @@ def run_experiment_for_config(
     config_name: str,
     n_seeds: int = 3,
     max_per_task: int = 2000,
-    n_epochs: int = 1,
+    n_epochs: int = 5,
+    n_steps: int = 10,
     seed_start: int = 0,
 ) -> dict:
     """Run experiment for a specific configuration.
@@ -224,27 +278,30 @@ def run_experiment_for_config(
         rng_seed = seed_start + seed
         
         if config_name == "visao":
-            brain = VisaoBrain(
-                n_in=1, n_hidden=128, n_out=1,
-                consolidation=8.0, surprise_gain=3.0, oja_lr=0.0015,
-                seed=rng_seed,
+            brain = create_brain(
+                n_in=784, n_hidden=256, n_out=1,
+                seed=rng_seed, spectral_radius=0.95, lr=0.1,
             )
         elif config_name == "naive":
-            brain = VisaoBrain(
-                n_in=1, n_hidden=128, n_out=1,
-                consolidation=0.0, surprise_gain=0.0, oja_lr=0.0,
-                seed=rng_seed,
+            brain = create_brain(
+                n_in=784, n_hidden=256, n_out=1,
+                seed=rng_seed, spectral_radius=0.95, lr=0.1,
             )
+            brain.learner.consolidation = 0.0
+            brain.learner.surprise_gain = 0.0
+            brain.learner.oja_lr = 0.0
         elif config_name == "ewc_only":
-            brain = VisaoBrain(
-                n_in=1, n_hidden=128, n_out=1,
-                consolidation=8.0, surprise_gain=0.0, oja_lr=0.0,
-                seed=rng_seed,
+            brain = create_brain(
+                n_in=784, n_hidden=256, n_out=1,
+                seed=rng_seed, spectral_radius=0.95, lr=0.1,
             )
+            brain.learner.surprise_gain = 0.0
+            brain.learner.oja_lr = 0.0
         else:
             raise ValueError(f"Unknown config: {config_name}")
         
-        result = run_split_mnist_experiment(brain, tasks, n_epochs=n_epochs)
+        result = run_split_mnist_experiment(brain, tasks, n_epochs=n_epochs,
+                                           n_steps=n_steps)
         all_results.append(result)
     
     # Aggregate
@@ -265,17 +322,18 @@ def run_experiment_for_config(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Split-MNIST Benchmark — Task 66")
+    parser = argparse.ArgumentParser(description="Split-MNIST Benchmark — Task 71")
     parser.add_argument("--quick", action="store_true", help="Fast mode (fewer samples)")
     parser.add_argument("--seeds", type=int, default=3, help="Number of seeds")
-    parser.add_argument("--epochs", type=int, default=1, help="Epochs per task")
+    parser.add_argument("--epochs", type=int, default=5, help="Epochs per task")
+    parser.add_argument("--steps", type=int, default=10, help="Reservoir steps per image")
     parser.add_argument("--output", type=str, default=None, help="Output JSON path")
     args = parser.parse_args()
     
     max_per_task = 500 if args.quick else 2000
     
     print("=" * 60)
-    print("SPLIT-MNIST BENCHMARK — Task 66")
+    print("SPLIT-MNIST BENCHMARK — Task 71 (accuracy >80%)")
     print("=" * 60)
     
     configs = ["visao", "naive", "ewc_only"]
@@ -288,6 +346,7 @@ def main():
             n_seeds=args.seeds,
             max_per_task=max_per_task,
             n_epochs=args.epochs,
+            n_steps=args.steps,
         )
         all_results[config] = result
         print(f"  Accuracy: {result['mean_accuracy']:.3f} ± {result['mean_accuracy_std']:.3f}")
