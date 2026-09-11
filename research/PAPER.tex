@@ -134,6 +134,12 @@ CfC & 51.4\% & 15.7\% \\
 \label{tab:splitmnist}
 \end{table}
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/split_mnist.png}
+\caption{Split-MNIST: accuracy vs forgetting across models}
+\end{figure}
+
 Configuration: $h=512$, spectral\_radius=1.0, 15 epochs, EWC $\lambda=8.0$, surprise disabled.
 
 \subsection{Permuted-MNIST}
@@ -154,10 +160,12 @@ Shared Readout & 14.0\% & --- \\
 \label{tab:permutedmnist}
 \end{table}
 
-The shared-readout baseline achieves 14\% (below chance for 10 classes), confirming catastrophic interference.
-Multi-Task Readout eliminates this, achieving 90.6\% with near-zero forgetting.
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/permuted_mnist.png}
+\caption{Permuted-MNIST: shared vs multi-task readout (20 tasks)}
+\end{figure}
 
-\subsection{Ablation Study}
 
 \begin{table}[H]
 \centering
@@ -175,6 +183,12 @@ Surprise-only & 58.0\% & 0.0\% \\
 \caption{Ablation on Split-MNIST (3 seeds)}
 \label{tab:ablation}
 \end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/ablation.png}
+\caption{Ablation study on Split-MNIST (3 seeds)}
+\end{figure}
 
 \subsection{Scaling Laws}
 
@@ -194,6 +208,12 @@ v4 (optimized) & 1K--100K & $+0.056$ & 0.994 & Weak positive \\
 \end{table}
 
 Positive $\alpha$ indicates that larger networks achieve lower loss, but the effect is weak ($\alpha < 1$).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/scaling.png}
+\caption{Scaling laws: positive but weak scaling}
+\end{figure}
 
 %--------------------------------------------------
 \section{Discussion}

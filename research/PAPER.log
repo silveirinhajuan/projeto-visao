@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.7.19)  11 SEP 2026 02:12
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.7.19)  11 SEP 2026 02:29
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -782,7 +782,7 @@ File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count333
 \l__pdf_internal_box=\box69
 )
-No file PAPER.aux.
+(research/PAPER.aux)
 \openout1 = `PAPER.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 33.
@@ -803,6 +803,7 @@ LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 33.
 LaTeX Font Info:    ... okay on input line 33.
 LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 33.
 LaTeX Font Info:    ... okay on input line 33.
+
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count334
@@ -826,6 +827,8 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
 Package hyperref Info: Link coloring ON on input line 33.
+
+(research/PAPER.out) (research/PAPER.out)
 \@outlinefile=\write4
 \openout4 = `PAPER.out'.
 
@@ -887,52 +890,45 @@ LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 3
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2023/04/13 v2.5m Standard LaTeX font definitions
-)
+) [1
 
-LaTeX Warning: Citation `kirkpatrick2017overcoming' on page 1 undefined on inpu
-t line 52.
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+<figures/split_mnist.png, id=103, 569.9694pt x 352.6776pt>
+File: figures/split_mnist.png Graphic file (type png)
+<use figures/split_mnist.png>
+Package pdftex.def Info: figures/split_mnist.png  used on input line 139.
+(pdftex.def)             Requested size: 452.9679pt x 280.29124pt.
+ [2]
+<figures/permuted_mnist.png, id=118, 425.4294pt x 353.1594pt>
+File: figures/permuted_mnist.png Graphic file (type png)
+<use figures/permuted_mnist.png>
+Package pdftex.def Info: figures/permuted_mnist.png  used on input line 165.
+(pdftex.def)             Requested size: 452.9679pt x 376.03923pt.
+ [3 <research/figures/split_mnist.png>]
+<figures/ablation.png, id=126, 642.2394pt x 352.6776pt>
+File: figures/ablation.png Graphic file (type png)
+<use figures/ablation.png>
+Package pdftex.def Info: figures/ablation.png  used on input line 189.
+(pdftex.def)             Requested size: 452.9679pt x 248.74536pt.
 
-
-LaTeX Warning: Citation `hasani2022liquid' on page 1 undefined on input line 57
-.
-
-
-LaTeX Warning: Citation `chahine2023robust' on page 1 undefined on input line 5
-7.
-
-[1
-
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] [3]
-
-LaTeX Warning: Citation `kirkpatrick2017overcoming' on page 4 undefined on inpu
-t line 222.
-
-
-LaTeX Warning: Citation `hasani2022liquid' on page 4 undefined on input line 22
-3.
-
-
-LaTeX Warning: Citation `chahine2023robust' on page 4 undefined on input line 2
-23.
-
-
-LaTeX Warning: Citation `kaplan2020scaling' on page 4 undefined on input line 2
-25.
-
-[4]
-Underfull \hbox (badness 1107) in paragraph at lines 275--278
+[4 <research/figures/permuted_mnist.png>]
+<figures/scaling.png, id=134, 497.6994pt x 353.6412pt>
+File: figures/scaling.png Graphic file (type png)
+<use figures/scaling.png>
+Package pdftex.def Info: figures/scaling.png  used on input line 214.
+(pdftex.def)             Requested size: 452.9679pt x 321.86255pt.
+ [5 <research/figures/ablation.png>]
+[6 <research/figures/scaling.png>]
+Underfull \hbox (badness 1107) in paragraph at lines 295--298
 []\T1/cmr/m/n/10.95 Kaplan, J., et al. (2020). Scal-ing laws for neu-ral lan-gu
 age mod-els. \T1/cmr/m/it/10.95 arXiv preprint
  []
 
-[5] (research/PAPER.aux)
+[7] [8] (research/PAPER.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
-
-
-LaTeX Warning: There were undefined references.
 
 
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
@@ -943,42 +939,46 @@ Package rerunfilecheck Warning: File `PAPER.out' has changed.
 (rerunfilecheck)                or use package `bookmark'.
 
 Package rerunfilecheck Info: Checksums for `PAPER.out':
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  12DF5AF727A779A29B6BD9B7551D9087;2165.
+(rerunfilecheck)             Before: 12DF5AF727A779A29B6BD9B7551D9087;2165
+(rerunfilecheck)             After:  790A26F6075DF66DB3E3A4F92C0106E6;2034.
  ) 
 Here is how much of TeX's memory you used:
- 33671 strings out of 476182
- 768246 string characters out of 5795595
+ 33737 strings out of 476182
+ 769640 string characters out of 5795595
  1937975 words of memory out of 5000000
- 55120 multiletter control sequences out of 15000+600000
+ 55173 multiletter control sequences out of 15000+600000
  577482 words of font info for 86 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  99i,11n,101p,735b,609s stack positions out of 10000i,1000n,20000p,200000b,200000s
- </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1095.600p
-k> </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0800.600p
-k> </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1200.600p
-k> </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1095.600p
-k> </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1095.600p
-k> </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1095.600p
-k> </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600p
-k> </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1000.600p
-k> </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1000.600p
-k> </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt1200.600p
-k> </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1200.600p
-k> </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1728.600p
-k></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share
-/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texli
-ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/publ
-ic/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
-fonts/cm/cmsy8.pfb>
-Output written on research/PAPER.pdf (5 pages, 211443 bytes).
+
+pdfTeX warning (dest): name{subsection.3.4} has been referenced but does not ex
+ist, replaced by a fixed one
+
+ </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1095.600pk>
+ </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0800.600pk>
+ </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1200.600pk>
+ </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1095.600pk>
+ </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1095.600pk>
+ </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1095.600pk>
+ </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600pk>
+ </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1000.600pk>
+ </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1000.600pk>
+ </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt1200.600pk>
+ </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1200.600pk>
+ </home/juan/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1728.600pk>
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/
+share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share/t
+exlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type
+1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
+/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmsy8.pfb>
+Output written on research/PAPER.pdf (8 pages, 375092 bytes).
 PDF statistics:
- 556 PDF objects out of 1000 (max. 8388607)
- 150 compressed objects within 2 object streams
- 47 named destinations out of 1000 (max. 500000)
- 13 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 641 PDF objects out of 1000 (max. 8388607)
+ 226 compressed objects within 3 object streams
+ 54 named destinations out of 1000 (max. 500000)
+ 169 words of extra memory for PDF output out of 10000 (max. 10000000)
 
