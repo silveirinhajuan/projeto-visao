@@ -87,7 +87,7 @@ class VisaoBrain:
         surprise_gain: float = 3.0,
         lambda_decay: float = 0.0005,
         surprise_mode: str = 'lr',
-        lr_decay: float = 0.0001,
+        lr_decay: float = 0.00001,
         meta_learn: bool = False,
         adaptive_consolidation: bool = False,
         c_min: float = 0.0,
@@ -436,16 +436,23 @@ class VisaoBrain:
                 learner.consolidation = self.c_min + (self.c_max - self.c_min) * normalized
 
         # 4. lr efetivo
-        if self.surprise_mode == 'lr':
-            # Modo lr: surpresa modula lr diretamente, omega PROTEGIDO
-            # lr(t) = lr_0 * exp(-lr_decay * t) * (1 + surprise_gain * normalized_error)
-            normalized_error = np.tanh(s - 1.0)  # ~0 quando erro esperado, >0 quando alto
-            time_decay = np.exp(-self.lr_decay * self._t)
+        time_decay = np.exp(-self.lr_decay * self._t)
+
+        if self.surprise_mode == 'lr' and self.learner.surprise_gain > 0:
+            # Modo lr: surpresa amplifica lr quando erro explode
+            normalized_error = np.tanh(s - 1.0)
             surprise_boost = 1.0 + self.learner.surprise_gain * normalized_error
-            eff = (self.lr_base * time_decay * surprise_boost) / (1.0 + learner.consolidation * learner.omega)
+            eff_lr = self.lr_base * time_decay * surprise_boost
+        elif self.surprise_mode == 'omega' and self.learner.surprise_gain > 0:
+            # Modo omega: surpresa DECAI o omega (afrouxa consolidação)
+            normalized_error = np.tanh(s - 1.0)
+            decay = np.exp(-self.learner.surprise_gain * normalized_error)
+            learner.omega *= decay
+            eff_lr = self.lr_base * time_decay
         else:
-            # Modo omega (legado): surpresa decai omega (afrouxa consolidacao)
-            eff = learner.lr / (1.0 + learner.consolidation * learner.omega)
+            eff_lr = self.lr_base * time_decay
+
+        eff = eff_lr / (1.0 + learner.consolidation * learner.omega)
 
         # 5. Delta rule
         delta = np.outer(err, x_norm)

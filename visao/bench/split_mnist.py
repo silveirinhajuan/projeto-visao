@@ -110,7 +110,8 @@ def load_split_mnist(data_dir, max_per_task: int = 2000) -> list:
 
 def create_brain(n_in: int, n_hidden: int, n_out: int, seed: int = 0,
                  spectral_radius: float = 0.95, sparsity: float = 0.3,
-                 dt: float = 0.1, lr: float = 0.1) -> VisaoBrain:
+                 dt: float = 0.1, lr: float = 0.1,
+                 surprise_mode: str = 'lr') -> VisaoBrain:
     """Create a VisaoBrain with reservoir tuned for classification."""
     brain = VisaoBrain(
         n_in=n_in,
@@ -125,6 +126,7 @@ def create_brain(n_in: int, n_hidden: int, n_out: int, seed: int = 0,
         consolidation=8.0,
         surprise_gain=3.0,
         seed=seed,
+        surprise_mode=surprise_mode,
     )
     
     # Rescale W_rec to target spectral radius
@@ -254,11 +256,12 @@ def run_split_mnist_experiment(
     }
 
 
+
 def run_experiment_for_config(
     config_name: str,
     n_seeds: int = 3,
     max_per_task: int = 2000,
-    n_epochs: int = 5,
+    n_epochs: int = 15,
     n_steps: int = 10,
     seed_start: int = 0,
 ) -> dict:
@@ -279,9 +282,11 @@ def run_experiment_for_config(
         
         if config_name == "visao":
             brain = create_brain(
-                n_in=784, n_hidden=256, n_out=1,
-                seed=rng_seed, spectral_radius=0.95, lr=0.1,
+                n_in=784, n_hidden=512, n_out=1,
+                seed=rng_seed, spectral_radius=1.0, lr=0.1,
             )
+            brain.learner.surprise_gain = 0.0  # DISABLED: hurts accuracy
+            brain.learner.oja_lr = 0.0
         elif config_name == "naive":
             brain = create_brain(
                 n_in=784, n_hidden=256, n_out=1,
@@ -292,8 +297,8 @@ def run_experiment_for_config(
             brain.learner.oja_lr = 0.0
         elif config_name == "ewc_only":
             brain = create_brain(
-                n_in=784, n_hidden=256, n_out=1,
-                seed=rng_seed, spectral_radius=0.95, lr=0.1,
+                n_in=784, n_hidden=512, n_out=1,
+                seed=rng_seed, spectral_radius=1.0, lr=0.1,
             )
             brain.learner.surprise_gain = 0.0
             brain.learner.oja_lr = 0.0
@@ -325,7 +330,7 @@ def main():
     parser = argparse.ArgumentParser(description="Split-MNIST Benchmark — Task 71")
     parser.add_argument("--quick", action="store_true", help="Fast mode (fewer samples)")
     parser.add_argument("--seeds", type=int, default=3, help="Number of seeds")
-    parser.add_argument("--epochs", type=int, default=5, help="Epochs per task")
+    parser.add_argument("--epochs", type=int, default=15, help="Epochs per task")
     parser.add_argument("--steps", type=int, default=10, help="Reservoir steps per image")
     parser.add_argument("--output", type=str, default=None, help="Output JSON path")
     args = parser.parse_args()
