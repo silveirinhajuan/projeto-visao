@@ -501,3 +501,17 @@
 {"event": "signal_received", "timestamp": 1789062580.6966827, "step": 14085, "state": "RECOVERING", "signal": "SIGTERM"}
 {"event": "stop_requested", "timestamp": 1789062580.6968136, "step": 14085, "state": "STOPPING"}
 {"event": "loop_finished", "timestamp": 1789062581.2668905, "step": 9379, "state": "STOPPING", "total_steps": 14085, "total_errors": 2, "total_recoveries": 2, "total_checkpoints": 7, "uptime_seconds": 20.105417728424072}
+{"event": "stop_requested", "timestamp": 1789088295.8185189, "step": 0, "state": "STOPPING"}
+{"event": "loop_started", "timestamp": 1789088295.8240936, "step": 0, "state": "RUNNING", "duration_seconds": 1, "brain": "VisaoBrain(n_in=2, n_hidden=16, n_out=1, params=337, step=0, mode='learn')", "checkpoint_interval": 100}
+{"event": "duration_reached", "timestamp": 1789088296.8241408, "step": 678, "state": "RUNNING", "elapsed": 1.0000522136688232}
+{"event": "loop_finished", "timestamp": 1789088296.8257377, "step": 678, "state": "STOPPING", "total_steps": 678, "total_errors": 0, "total_recoveries": 0, "total_checkpoints": 7, "uptime_seconds": 1.0002496242523193}
+{"event": "loop_started", "timestamp": 1789088296.828201, "step": 0, "state": "RUNNING", "duration_seconds": 2, "brain": "VisaoBrain(n_in=2, n_hidden=16, n_out=1, params=337, step=0, mode='learn')", "checkpoint_interval": 50}
+{"event": "duration_reached", "timestamp": 1789088298.828715, "step": 1331, "state": "RUNNING", "elapsed": 2.0005199909210205}
+{"event": "loop_finished", "timestamp": 1789088298.8308597, "step": 1331, "state": "STOPPING", "total_steps": 1331, "total_errors": 0, "total_recoveries": 0, "total_checkpoints": 27, "uptime_seconds": 2.0007331371307373}
+{"event": "loop_started", "timestamp": 1789088299.0175686, "step": 0, "state": "RUNNING", "duration_seconds": 60, "brain": "VisaoBrain(n_in=2, n_hidden=64, n_out=1, params=4417, step=0, mode='learn')", "checkpoint_interval": 2000}
+{"event": "duration_reached", "timestamp": 1789088359.0190513, "step": 40283, "state": "RUNNING", "elapsed": 60.0014865398407}
+{"event": "loop_finished", "timestamp": 1789088359.0268261, "step": 40283, "state": "STOPPING", "total_steps": 40283, "total_errors": 0, "total_recoveries": 0, "total_checkpoints": 21, "uptime_seconds": 60.001736640930176}
+{"event": "loop_started", "timestamp": 1789088359.0296113, "step": 0, "state": "RUNNING", "duration_seconds": 60, "brain": "VisaoBrain(n_in=2, n_hidden=64, n_out=1, params=4417, step=0, mode='learn')", "checkpoint_interval": 2000}
+{"event": "signal_received", "timestamp": 1789088362.061799, "step": 2047, "state": "RUNNING", "signal": "SIGTERM"}
+{"event": "stop_requested", "timestamp": 1789088362.0620444, "step": 2047, "state": "STOPPING"}
+{"event": "loop_finished", "timestamp": 1789088362.0698268, "step": 2047, "state": "STOPPING", "total_steps": 2047, "total_errors": 0, "total_recoveries": 0, "total_checkpoints": 2, "uptime_seconds": 3.033104181289673}

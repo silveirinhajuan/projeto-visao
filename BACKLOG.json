@@ -1077,7 +1077,7 @@
       "priority": "alta",
       "status": "done",
       "depends_on": [],
-      "evidence": "Settle-then-learn pattern: reservoir settles via settle() (no readout update), learning only on final settled state via learn(step_reservoir=False). Default lr=0.1. Single-task: 100% accuracy (target >80% met). Continual (5 tasks, 2 seeds, quick mode): VisaoBrain 46% acc / 0.041 forgetting vs Naive 61.5% / 0.101. Tradeoff: VisaoBrain sacrifices final accuracy for lowest forgetting. 20/20 tests pass. Commit 68cb66a."
+      "evidence": "EWC-only (consolidation=8.0, no surprise, no Oja) atinge 81% acc com 2% forgetting em Split-MNIST (5 tarefas, h=512, sr=1.0, 15 epochs, 3 seeds). Surprise mechanism PREJUDICA: amplifica lr quando erro e alto no inicio, causando overshoot. Diagnostico completo: surprise_lr=66%, surprise_omega=58.5%, ewc_only=75.5-81%. Commit e226ae6."
     },
     {
       "id": 72,

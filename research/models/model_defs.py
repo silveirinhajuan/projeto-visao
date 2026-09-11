@@ -59,6 +59,7 @@ class MLPModel(BaseModel):
         lr: float = 0.01,
         epochs: int = 50,
         seed: int = 0,
+        task_type: str = "regression",
     ):
         super().__init__(name="MLP")
         self.n_in = n_in
@@ -66,6 +67,7 @@ class MLPModel(BaseModel):
         self.n_hidden = n_hidden
         self.lr = lr
         self.epochs = epochs
+        self.task_type = task_type
         self._rng = np.random.default_rng(seed)
 
         # Xavier init
@@ -76,6 +78,9 @@ class MLPModel(BaseModel):
         self.W2 = self._rng.standard_normal((n_hidden, n_out)) * scale2
         self.b2 = np.zeros(n_out)
 
+    def _sigmoid(self, z):
+        return 1.0 / (1.0 + np.exp(-np.clip(z, -500, 500)))
+
     def _forward(self, X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         h = np.tanh(X @ self.W1 + self.b1)
         out = h @ self.W2 + self.b2
@@ -84,37 +89,77 @@ class MLPModel(BaseModel):
     def fit(self, X: np.ndarray, Y: np.ndarray, **kwargs) -> dict:
         n = len(X)
         losses = []
+        
+        # Adam optimizer parameters
+        beta1, beta2, eps = 0.9, 0.999, 1e-8
+        mW1, vW1 = np.zeros_like(self.W1), np.zeros_like(self.W1)
+        mW2, vW2 = np.zeros_like(self.W2), np.zeros_like(self.W2)
+        mb1, vb1 = np.zeros_like(self.b1), np.zeros_like(self.b1)
+        mb2, vb2 = np.zeros_like(self.b2), np.zeros_like(self.b2)
+        
         for epoch in range(self.epochs):
-            # Mini-batch SGD
-            perm = self._rng.permutation(n)
-            epoch_loss = 0.0
-            for i in perm:
-                xi, yi = X[i:i+1], Y[i:i+1]
-                h, pred = self._forward(xi)
-                err = pred - yi
-
-                # Backprop
-                dW2 = h.T @ err
-                db2 = err.sum(axis=0)
+            # Batch gradient descent (much faster for classification)
+            if self.task_type == "classification":
+                # Forward: output logits (no sigmoid) for stable BCE gradient
+                h = np.tanh(X @ self.W1 + self.b1)
+                logits = h @ self.W2 + self.b2
+                pred = self._sigmoid(logits)
+                
+                # BCE gradient w.r.t. logits: (pred - target)
+                err = pred - Y
+                dW2 = h.T @ err / n
+                db2 = err.sum(axis=0) / n
                 dh = err @ self.W2.T
-                dh *= (1 - h ** 2)  # tanh derivative
-                dW1 = xi.T @ dh
-                db1 = dh.sum(axis=0)
+                dh *= (1 - h ** 2)
+                dW1 = X.T @ dh / n
+                db1 = dh.sum(axis=0) / n
 
-                # Update
-                self.W2 -= self.lr * dW2
-                self.b2 -= self.lr * db2
-                self.W1 -= self.lr * dW1
-                self.b1 -= self.lr * db1
-                epoch_loss += float((err ** 2).mean())
+                # Adam update
+                t = epoch + 1
+                for param, grad, m, v in [
+                    (self.W1, dW1, mW1, vW1),
+                    (self.W2, dW2, mW2, vW2),
+                    (self.b1, db1, mb1, vb1),
+                    (self.b2, db2, mb2, vb2),
+                ]:
+                    m[:] = beta1 * m + (1 - beta1) * grad
+                    v[:] = beta2 * v + (1 - beta2) * grad ** 2
+                    m_hat = m / (1 - beta1 ** t)
+                    v_hat = v / (1 - beta2 ** t)
+                    param -= self.lr * m_hat / (np.sqrt(v_hat) + eps)
+                
+                losses.append(float((err ** 2).mean()))
+            else:
+                # Mini-batch SGD for regression
+                perm = self._rng.permutation(n)
+                epoch_loss = 0.0
+                for i in perm:
+                    xi, yi = X[i:i+1], Y[i:i+1]
+                    h, pred = self._forward(xi)
+                    err = pred - yi
 
-            losses.append(epoch_loss / n)
+                    dW2 = h.T @ err
+                    db2 = err.sum(axis=0)
+                    dh = err @ self.W2.T
+                    dh *= (1 - h ** 2)
+                    dW1 = xi.T @ dh
+                    db1 = dh.sum(axis=0)
+
+                    self.W2 -= self.lr * dW2
+                    self.b2 -= self.lr * db2
+                    self.W1 -= self.lr * dW1
+                    self.b1 -= self.lr * db1
+                    epoch_loss += float((err ** 2).mean())
+
+                losses.append(epoch_loss / n)
 
         self._is_trained = True
         return {"losses": losses, "final_loss": losses[-1]}
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         _, out = self._forward(X)
+        if self.task_type == "classification":
+            out = self._sigmoid(out)
         return out
 
     def save(self, path: str | Path) -> None:
@@ -149,6 +194,7 @@ class GRUModel(BaseModel):
         lr: float = 0.01,
         epochs: int = 50,
         seed: int = 0,
+        task_type: str = "regression",
     ):
         super().__init__(name="GRU")
         self.n_in = n_in
@@ -156,6 +202,7 @@ class GRUModel(BaseModel):
         self.n_hidden = n_hidden
         self.lr = lr
         self.epochs = epochs
+        self.task_type = task_type
         self._rng = np.random.default_rng(seed)
 
         # GRU weights
@@ -208,7 +255,10 @@ class GRUModel(BaseModel):
         preds = []
         for i in range(len(X)):
             self._gru_step(X[i])
-            preds.append((self.h @ self.W_out + self.b_out).copy())
+            out = self.h @ self.W_out + self.b_out
+            if self.task_type == "classification":
+                out = 1.0 / (1.0 + np.exp(-np.clip(out, -500, 500)))
+            preds.append(out.copy())
         return np.array(preds)
 
     def save(self, path: str | Path) -> None:
@@ -248,6 +298,7 @@ class LSTMModel(BaseModel):
         lr: float = 0.01,
         epochs: int = 50,
         seed: int = 0,
+        task_type: str = "regression",
     ):
         super().__init__(name="LSTM")
         self.n_in = n_in
@@ -255,6 +306,7 @@ class LSTMModel(BaseModel):
         self.n_hidden = n_hidden
         self.lr = lr
         self.epochs = epochs
+        self.task_type = task_type
         self._rng = np.random.default_rng(seed)
 
         scale = np.sqrt(1.0 / n_hidden)
@@ -312,7 +364,10 @@ class LSTMModel(BaseModel):
         preds = []
         for i in range(len(X)):
             self._lstm_step(X[i])
-            preds.append((self.h @ self.W_out + self.b_out).copy())
+            out = self.h @ self.W_out + self.b_out
+            if self.task_type == "classification":
+                out = 1.0 / (1.0 + np.exp(-np.clip(out, -500, 500)))
+            preds.append(out.copy())
         return np.array(preds)
 
     def save(self, path: str | Path) -> None:
@@ -352,6 +407,7 @@ class CfCModel(BaseModel):
         epochs: int = 50,
         tau: float = 1.0,
         seed: int = 0,
+        task_type: str = "regression",
     ):
         super().__init__(name="CfC")
         self.n_in = n_in
@@ -360,6 +416,7 @@ class CfCModel(BaseModel):
         self.lr = lr
         self.epochs = epochs
         self.tau = tau
+        self.task_type = task_type
         self._rng = np.random.default_rng(seed)
 
         scale = np.sqrt(1.0 / n_hidden)
@@ -407,7 +464,10 @@ class CfCModel(BaseModel):
         preds = []
         for i in range(len(X)):
             self._cfc_step(X[i])
-            preds.append((self.x_state @ self.W_out + self.b_out).copy())
+            out = self.x_state @ self.W_out + self.b_out
+            if self.task_type == "classification":
+                out = 1.0 / (1.0 + np.exp(-np.clip(out, -500, 500)))
+            preds.append(out.copy())
         return np.array(preds)
 
     def save(self, path: str | Path) -> None:
@@ -443,6 +503,7 @@ class VisaoModel(BaseModel):
         lr: float = 0.02,
         epochs: int = 1,  # VisaoBrain learns online
         seed: int = 0,
+        task_type: str = "regression",
         **kwargs,
     ):
         super().__init__(name="VISÃO")
@@ -452,6 +513,7 @@ class VisaoModel(BaseModel):
         self.lr = lr
         self.epochs = epochs
         self.seed = seed
+        self.task_type = task_type
         self.extra_kwargs = kwargs
 
         # Import here to avoid hard dependency
@@ -463,11 +525,12 @@ class VisaoModel(BaseModel):
                 n_out=n_out,
                 lr=lr,
                 seed=seed,
+                task_type=task_type,
                 **kwargs,
             )
         except ImportError:
             # Fallback: use CfC as a stand-in
-            self.model = CfCModel(n_in, n_out, n_hidden, lr, 50, seed=seed)
+            self.model = CfCModel(n_in, n_out, n_hidden, lr, 50, seed=seed, task_type=task_type)
             self.name = "VISÃO(fallback)"
 
     def fit(self, X: np.ndarray, Y: np.ndarray, **kwargs) -> dict:

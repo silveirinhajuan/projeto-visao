@@ -183,6 +183,11 @@ class VisaoBrain:
         self._surprise_window = []
         self._window_size = 100
 
+        # --- Surpresa baseada em embedding (reservatório) ---
+        self._state_ema = None
+        self._state_ema_alpha = 0.01
+        self._surprise_state_alpha = 0.1
+
     # ==============================================================
     #  API PÚBLICA
     # ==============================================================
@@ -422,8 +427,22 @@ class VisaoBrain:
         err = target - pred
         err_mag = float(np.abs(err).mean())
 
-        # 2. Surpresa
-        s = learner.surprise(err_mag)
+        # 2. Surpresa baseada em embedding (distância do estado vs EMA)
+        #    Mais robusta que erro: erro alto no início é normal, não é novidade.
+        #    Distância de embedding captura mudança de regime (distribuição).
+        if self._state_ema is None:
+            self._state_ema = x_norm.copy()
+            s_state = 1.0  # baseline
+        else:
+            self._state_ema = (1 - self._state_ema_alpha) * self._state_ema + self._state_ema_alpha * x_norm
+            distance = np.linalg.norm(x_norm - self._state_ema) / (np.linalg.norm(self._state_ema) + 1e-8)
+            s_state = 1.0 + distance * self.learner.surprise_gain
+
+        # 2b. Surpresa de erro (original) — usada como complementar
+        s_err = learner.surprise(err_mag)
+
+        # Combina: surpresa final = max(erro, embedding)
+        s = float(max(s_err, s_state))
 
         # 3. Consolidação adaptativa
         if self.adaptive_consolidation:

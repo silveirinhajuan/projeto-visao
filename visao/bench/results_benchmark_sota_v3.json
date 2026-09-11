@@ -3,28 +3,28 @@
     "accuracy_mean": 0.05,
     "accuracy_std": 0.0,
     "params": 4938,
-    "time_mean": 21.41075611114502,
-    "ram_mean": 0.109161376953125
+    "time_mean": 25.514460802078247,
+    "ram_mean": 0.10961723327636719
   },
   "lstm": {
-    "accuracy_mean": 0.175,
-    "accuracy_std": 0.02500000000000001,
+    "accuracy_mean": 0.15,
+    "accuracy_std": 0.0,
     "params": 17546,
-    "time_mean": 8.020806431770325,
-    "ram_mean": 0.9818115234375
+    "time_mean": 8.336972951889038,
+    "ram_mean": 0.9818191528320312
   },
   "gru": {
-    "accuracy_mean": 0.125,
-    "accuracy_std": 0.125,
+    "accuracy_mean": 0.25,
+    "accuracy_std": 0.0,
     "params": 13130,
-    "time_mean": 6.650988578796387,
-    "ram_mean": 0.04559326171875
+    "time_mean": 6.6701319217681885,
+    "ram_mean": 0.04570770263671875
   },
   "transformer": {
-    "accuracy_mean": 0.1,
-    "accuracy_std": 0.049999999999999996,
+    "accuracy_mean": 0.15,
+    "accuracy_std": 0.0,
     "params": 906,
-    "time_mean": 3.775364875793457,
-    "ram_mean": 19.984745025634766
+    "time_mean": 3.890810489654541,
+    "ram_mean": 19.98488998413086
   }
 }

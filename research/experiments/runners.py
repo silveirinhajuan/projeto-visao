@@ -313,6 +313,7 @@ class ContinualLearningExperiment(Experiment):
                     n_in=n_in,
                     n_out=n_out,
                     seed=seed,
+                    task_type=self.task_type,
                     **model_cfg.get("params", {}),
                 )
 
