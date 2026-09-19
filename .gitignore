@@ -22,3 +22,22 @@ Thumbs.db
 !docs/
 !publications/
 visao/ops/checkpoints/
+
+# LaTeX build artifacts
+PAPER.aux
+PAPER.log
+PAPER.out
+*.aux
+*.log
+*.out
+*.synctex.gz
+
+# Typst/gravitation book drafts (separate project, not VISAO library)
+gravitacao.typ
+gravitacao-editorial/
+fundo-capitulo.png
+page-*.png
+preview-*.png
+
+# Agent guide (repo-level, not library)
+AGENTS.md
