@@ -41,3 +41,6 @@ preview-*.png
 
 # Agent guide (repo-level, not library)
 AGENTS.md
+
+# Runtime live-loop logs (append-only artifacts, not source)
+visao/ops/logs/*.jsonl

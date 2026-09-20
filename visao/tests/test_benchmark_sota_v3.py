@@ -194,12 +194,17 @@ class TestRunBenchmark:
     """Test the full benchmark run."""
 
     def test_run_benchmark_quick(self):
-        """Quick benchmark should complete and return results."""
-        results = run_benchmark(quick=True, seeds=(0,))
-        assert "visao" in results
-        assert "lstm" in results
-        assert "gru" in results
-        assert "transformer" in results
+        """Quick benchmark should complete and return results.
+
+        Writes to a temp dir: the repo-tracked results_benchmark_sota_v3.json
+        must never be overwritten by test runs (AGENTS.md convention).
+        """
+        with tempfile.TemporaryDirectory() as tmpdir:
+            results = run_benchmark(quick=True, seeds=(0,), output_dir=tmpdir)
+            assert "visao" in results
+            assert "lstm" in results
+            assert "gru" in results
+            assert "transformer" in results
 
     def test_run_benchmark_saves_results(self):
         """Benchmark should save results to file."""
@@ -213,11 +218,12 @@ class TestRunBenchmark:
             assert "visao" in saved
 
     def test_run_benchmark_multi_seed(self):
-        """Multi-seed benchmark should average results."""
-        results = run_benchmark(quick=True, seeds=(0, 1))
-        # Should have std field for multi-seed
-        if "visao" in results and "mse_std" in results["visao"]:
-            assert results["visao"]["mse_std"] >= 0
+        """Multi-seed benchmark should average results (temp dir, never repo)."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            results = run_benchmark(quick=True, seeds=(0, 1), output_dir=tmpdir)
+            # Should have std field for multi-seed
+            if "visao" in results and "mse_std" in results["visao"]:
+                assert results["visao"]["mse_std"] >= 0
 
 
 if __name__ == "__main__":
