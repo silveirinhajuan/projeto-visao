@@ -4,7 +4,7 @@
 
 **VISÃO** is a cognitive architecture designed to operate as a personal brain — trained like modern models, but also continuously from ongoing use. Its central thesis: *"A model that learns both from batch training and from continuous experience."*
 
-[![Tests](https://img.shields.io/badge/tests-150%20passing-brightgreen)](https://github.com/silveirinhajuan/projeto-visao)
+[![Tests](https://img.shields.io/badge/tests-294%20passing-brightgreen)](https://github.com/silveirinhajuan/projeto-visao)
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://python.org)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
