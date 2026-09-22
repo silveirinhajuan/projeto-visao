@@ -240,7 +240,8 @@ def step_numba(
     Todos os parâmetros do modelo devem ser passados explicitamente como
     arrays numpy (dtype float64) — isso é requerido pelo numba.
     """
-    return _step_numba(x, u, W_in, W_rec, b, A, tau, dt)
+    result: tuple = _step_numba(x, u, W_in, W_rec, b, A, tau, dt)
+    return result
 
 
 def forward_sequence_numba(

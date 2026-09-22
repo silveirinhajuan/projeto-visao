@@ -592,7 +592,7 @@ class VisaoBrain:
 
     def n_params(self) -> int:
         """Total number of trainable parameters."""
-        return (
+        total: int = int(
             self.cell.W_in.size
             + self.cell.W_rec.size
             + self.cell.b.size
@@ -600,6 +600,7 @@ class VisaoBrain:
             + self.learner.W_out.size
             + self.learner.b_out.size
         )
+        return total
 
     def __repr__(self) -> str:
         n_params = (
