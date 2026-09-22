@@ -60,6 +60,12 @@ def run_experiment(n_hidden, seed):
     brain = VisaoBrain(
         n_in=1, n_hidden=n_hidden, n_out=1,
         lr=0.01, sparsity=0.0,
+        # lr_decay FIXADO nas condições da Task 70 (0.0001): o default de
+        # VisaoBrain derivou para 0.00001 no commit e226ae6, e com 10 epochs
+        # x 5000 passos isso remove o annealing efetivo (exp(-0.5)~0.61 vs
+        # exp(-5)~0.007) -> maiores overfitam -> alpha vira negativo.
+        # Condição experimental explícita > default herdado que deriva.
+        lr_decay=1e-4,
         consolidation=0.0, surprise_gain=0.0, oja_lr=0.0,
         lambda_decay=0.0,
         layer_norm=True, max_grad_norm=MAX_NORM, l2_decay=L2_DECAY,

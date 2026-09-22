@@ -84,7 +84,7 @@ class VisaoBrain:
         lr: float = 0.02,
         oja_lr: float = 0.0015,
         consolidation: float = 8.0,
-        surprise_gain: float = 3.0,
+        surprise_gain: float = 1.0,
         lambda_decay: float = 0.0005,
         surprise_mode: str = 'lr',
         lr_decay: float = 0.00001,
@@ -183,10 +183,11 @@ class VisaoBrain:
         self._surprise_window = []
         self._window_size = 100
 
-        # --- Surpresa baseada em embedding (reservatório) ---
-        self._state_ema = None
-        self._state_ema_alpha = 0.01
-        self._surprise_state_alpha = 0.1
+        # --- Surpresa baseada em embedding: REMOVIDA (follow-up aee3471) ---
+        # A variante por embedding dispara no noise floor mesmo em regime
+        # estacionário (s >> 1 crônico -> boost de lr espúrio). O próprio
+        # commit aee3471 registrou que a variante falhou.
+        self._state_ema = None  # mantido p/ compat. de estado salvo
 
     # ==============================================================
     #  API PÚBLICA
@@ -427,22 +428,15 @@ class VisaoBrain:
         err = target - pred
         err_mag = float(np.abs(err).mean())
 
-        # 2. Surpresa baseada em embedding (distância do estado vs EMA)
-        #    Mais robusta que erro: erro alto no início é normal, não é novidade.
-        #    Distância de embedding captura mudança de regime (distribuição).
-        if self._state_ema is None:
-            self._state_ema = x_norm.copy()
-            s_state = 1.0  # baseline
-        else:
-            self._state_ema = (1 - self._state_ema_alpha) * self._state_ema + self._state_ema_alpha * x_norm
-            distance = np.linalg.norm(x_norm - self._state_ema) / (np.linalg.norm(self._state_ema) + 1e-8)
-            s_state = 1.0 + distance * self.learner.surprise_gain
-
-        # 2b. Surpresa de erro (original) — usada como complementar
-        s_err = learner.surprise(err_mag)
-
-        # Combina: surpresa final = max(erro, embedding)
-        s = float(max(s_err, s_state))
+        # 2. Surpresa (gate neuromodulatório baseado em erro, normalizado por
+        #    z-score de Welford dentro do learner).
+        #    NOTA (aee3471 follow-up): a variante por embedding (distância do
+        #    estado vs EMA) foi REMOVIDA — dispara no noise floor mesmo em
+        #    regime estacionário (s >> 1 crônico -> boost de lr espúrio ->
+        #    erro cresce). O próprio commit aee3471 registrou que a variante
+        #    falhou; este trecho restaura a surpresa por erro, validada
+        #    pelos testes.
+        s = learner.surprise(err_mag)
 
         # 3. Consolidação adaptativa
         if self.adaptive_consolidation:

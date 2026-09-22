@@ -111,8 +111,15 @@ def load_split_mnist(data_dir, max_per_task: int = 2000) -> list:
 def create_brain(n_in: int, n_hidden: int, n_out: int, seed: int = 0,
                  spectral_radius: float = 0.95, sparsity: float = 0.3,
                  dt: float = 0.1, lr: float = 0.1,
-                 surprise_mode: str = 'lr') -> VisaoBrain:
-    """Create a VisaoBrain with reservoir tuned for classification."""
+                 surprise_mode: str = 'lr',
+                 surprise_gain: float = 0.0) -> VisaoBrain:
+    """Create a VisaoBrain with reservoir tuned for classification.
+
+    surprise_gain defaults to 0.0 (disabled): aee3471 mediu que a surpresa
+    reduz a acurácia de classificação (46-66% com surpresa vs 70-81% sem;
+    Split-MNIST task 71: 100% sem vs 22.5% com gain=3.0). EWC com
+    consolidação fixa é a configuração funcional p/ classificação.
+    """
     brain = VisaoBrain(
         n_in=n_in,
         n_hidden=n_hidden,
@@ -124,7 +131,7 @@ def create_brain(n_in: int, n_hidden: int, n_out: int, seed: int = 0,
         lr=lr,
         oja_lr=0.001,
         consolidation=8.0,
-        surprise_gain=3.0,
+        surprise_gain=surprise_gain,
         seed=seed,
         surprise_mode=surprise_mode,
     )
