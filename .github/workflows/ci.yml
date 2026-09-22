@@ -28,7 +28,7 @@ jobs:
 
     - name: Run fast tests
       run: |
-        pytest visao/tests/test_brain.py visao/tests/test_integration.py visao/tests/test_inference.py visao/tests/test_multi_timescale.py visao/tests/test_task_boundary.py visao/governance/tests/ visao/reasoning/test_neuro_symbolic.py visao/memory/test_hippocampus.py tests/ -v --tb=short
+        pytest visao/tests/test_brain.py visao/tests/test_integration.py visao/tests/test_inference.py visao/tests/test_multi_timescale.py visao/tests/test_task_boundary.py visao/tests/test_scaling_laws_v4.py visao/governance/tests/ visao/reasoning/test_neuro_symbolic.py visao/memory/test_hippocampus.py tests/ -v --tb=short
 
   lint:
     runs-on: ubuntu-latest
