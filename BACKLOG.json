@@ -1110,6 +1110,14 @@
         72
       ],
       "blocked_reason": "Requer ação humana: enviar paper para revisor externo (ChatGPT, orientador, comunidade). Automatização não se aplica."
+    },
+    {
+      "id": "75",
+      "title": "Watchdog: recuperar trabalho órfão + corrigir regressão de scaling (alpha negativo)",
+      "status": "done",
+      "priority": "alta",
+      "depends_on": [],
+      "evidence": "Ciclo watchdog 22/09: (1) BACKLOG sem pendentes (73 done/6 discontinued/1 blocked-ação-humana); trabalho não commitado de sessão morta recuperado e validado. (2) Suíte completa RED: test_scaling_laws_v4::test_scaling_fit_positive_alpha com alpha=-0.205 (regressão no HEAD, invisível 11 dias porque o CI fast não incluía o arquivo). BISECT: 0ca7a04 PASS, 68cb66a PASS, e226ae6 FAIL — causa: e226ae6 mudou default lr_decay 1e-4->1e-5 no brain.py, removendo o annealing efetivo do experimento (exp(-5)~0.007 vs exp(-0.5)~0.61 em 50k passos). FIX: scaling_laws_v4.py agora PINA lr_decay=1e-4 (condição experimental explícita > default herdado); alpha volta a positivo, 12/12 testes. Também commitado: remoção da surpresa por embedding (variante que falhava no noise floor, follow-up aee3471) + surprise_gain=0 default no split_mnist create_brain (alinhado ao medido na task 71). CI atualizado: test_scaling_laws_v4.py entra no subset fast. SUÍTE COMPLETA APÓS FIX: 294 passed / 0 failed em 641s. Commits d101f1c + f3f6fd2, pushados em origin/master."
     }
   ]
 }
