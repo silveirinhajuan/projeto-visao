@@ -50,12 +50,13 @@ except ImportError:
         stacklevel=2,
     )
     _njit_fallback = lambda *args, **kwargs: (lambda f: f)
-    njit = _njit_fallback  # type: ignore[assignment]
+    njit = _njit_fallback  # type: ignore[assignment,misc]
 
 
 def _sigmoid(z: np.ndarray) -> np.ndarray:
     """Sigmoid numericamente estável, usada tanto na versão pura quanto numba."""
-    return 1.0 / (1.0 + np.exp(-np.clip(z, -60.0, 60.0)))
+    sig: np.ndarray = 1.0 / (1.0 + np.exp(-np.clip(z, -60.0, 60.0)))
+    return sig
 
 
 # =====================================================================
@@ -183,19 +184,19 @@ else:
     # =====================================================================
     # Fallback: implementação pura numpy (sem aceleração, mas funcional)
     # =====================================================================
-    def _sigmoid_numba(z: np.ndarray) -> np.ndarray:  # type: ignore[no-redef]
+    def _sigmoid_numba(z: np.ndarray) -> np.ndarray:  # type: ignore[no-redef,misc]
         return _sigmoid(z)
 
-    def _f_numba(x, u, W_in, W_rec, b):
+    def _f_numba(x, u, W_in, W_rec, b):  # type: ignore[no-redef,misc]
         return _sigmoid(W_in @ u + W_rec @ x + b)
 
-    def _step_numba(x, u, W_in, W_rec, b, A, tau, dt):
+    def _step_numba(x, u, W_in, W_rec, b, A, tau, dt):  # type: ignore[no-redef,misc]
         fx = _f_numba(x, u, W_in, W_rec, b)
         num = x + dt * fx * A
         den = 1.0 + dt * (1.0 / tau + fx)
         return num / den, fx
 
-    def _rollout_numba(seq, W_in, W_rec, b, A, tau, dt):
+    def _rollout_numba(seq, W_in, W_rec, b, A, tau, dt):  # type: ignore[no-redef,misc]
         T = len(seq)
         n_hidden = W_rec.shape[0]
         states = np.empty((T, n_hidden))
@@ -207,7 +208,7 @@ else:
             acts[t] = fx
         return states, acts
 
-    def _forward_sequence_numba(
+    def _forward_sequence_numba(  # type: ignore[no-redef,misc]
         seq, W_in, W_rec, b, A, tau, dt, W_out, b_out
     ):
         T = len(seq)
@@ -281,6 +282,16 @@ class JitBrain:
         self.n_out = n_out
         self.dt = dt
         self._x = np.zeros(n_hidden, dtype=np.float64)
+        # Pesos preenchidos por from_brain(); declarados aqui para que
+        # forward() sem from_brain() falhe com mensagem clara (não AttributeError críptico).
+        self._W_in: np.ndarray = np.empty((n_hidden, n_in), dtype=np.float64)
+        self._W_rec: np.ndarray = np.empty((n_hidden, n_hidden), dtype=np.float64)
+        self._b: np.ndarray = np.empty(n_hidden, dtype=np.float64)
+        self._A: np.ndarray = np.empty(n_hidden, dtype=np.float64)
+        self._tau: np.ndarray = np.empty(n_hidden, dtype=np.float64)
+        self._W_out: np.ndarray = np.empty((n_out, n_hidden), dtype=np.float64)
+        self._b_out: np.ndarray = np.empty(n_out, dtype=np.float64)
+        self._loaded = False
 
     @classmethod
     def from_brain(cls, brain) -> "JitBrain":
@@ -299,28 +310,40 @@ class JitBrain:
         jb._tau = np.ascontiguousarray(brain.cell.tau, dtype=np.float64)
         jb._W_out = np.ascontiguousarray(brain.learner.W_out, dtype=np.float64)
         jb._b_out = np.ascontiguousarray(brain.learner.b_out, dtype=np.float64)
+        jb._loaded = True
         return jb
 
     def reset_state(self) -> None:
         self._x = np.zeros(self.n_hidden, dtype=np.float64)
 
+    def _require_weights(self) -> None:
+        if not self._loaded:
+            raise RuntimeError(
+                "JitBrain sem pesos: use JitBrain.from_brain(brain) antes de "
+                "forward()/forward_sequence()."
+            )
+
     def forward(self, u: np.ndarray) -> np.ndarray:
         """Um passo de inferência acelerado (sem aprendizado)."""
+        self._require_weights()
         u = np.asarray(u, dtype=np.float64).ravel()
         self._x, _ = _step_numba(
             self._x, u, self._W_in, self._W_rec, self._b,
             self._A, self._tau, self.dt,
         )
-        return self._W_out @ self._x + self._b_out
+        pred: np.ndarray = self._W_out @ self._x + self._b_out
+        return pred
 
     def forward_sequence(self, seq: np.ndarray) -> np.ndarray:
         """Inferência em lote numa sequência inteira."""
+        self._require_weights()
         seq = np.ascontiguousarray(seq, dtype=np.float64)
         self.reset_state()
-        return _forward_sequence_numba(
+        out: np.ndarray = _forward_sequence_numba(
             seq, self._W_in, self._W_rec, self._b, self._A,
             self._tau, self.dt, self._W_out, self._b_out,
         )
+        return out
 
 
 # =====================================================================

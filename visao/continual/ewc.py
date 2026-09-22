@@ -131,7 +131,7 @@ class EWC:
         """Computa Fisher para tarefa atual."""
         return self.fisher_computer.compute_from_data(brain, X, Y, n_samples)
     
-    def end_task(self, brain: VisaoBrain, X: np.ndarray = None, Y: np.ndarray = None):
+    def end_task(self, brain: VisaoBrain, X: np.ndarray | None = None, Y: np.ndarray | None = None) -> None:
         """Finaliza tarefa — salva parâmetros e Fisher."""
         # Salvar parâmetros atuais
         self.task_params[self.current_task_id] = {
@@ -227,7 +227,7 @@ class MultiTaskReadout:
     def forward(self, x: np.ndarray, task_id: int) -> np.ndarray:
         """Forward pass usando cabeça específica."""
         head = self.get_head(task_id)
-        return head['W_out'] @ x + head['b_out']
+        return head['W_out'] @ x + head['b_out']  # type: ignore[no-any-return]
     
     def update(self, x: np.ndarray, target: np.ndarray, task_id: int, lr: float):
         """Atualiza pesos da cabeça específica."""

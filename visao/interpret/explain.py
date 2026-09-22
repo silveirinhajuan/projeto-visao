@@ -41,7 +41,8 @@ def jacobian_importance(cell, x, u) -> np.ndarray:
     a estabilidade mediu.
     """
     J = jacobian_step(cell, x, u)
-    return np.linalg.norm(np.asarray(J), axis=0)
+    result: np.ndarray = np.linalg.norm(np.asarray(J), axis=0)
+    return result
 
 
 def explain_state(cell, x, u, top_k: int | None = None) -> dict:

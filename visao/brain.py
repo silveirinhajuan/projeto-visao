@@ -133,8 +133,9 @@ class VisaoBrain:
         # Learner (readout) — usamos a classe base LocalLearner
         # e aplicamos EWC-temporal + surprise decay manualmente
         # Se meta_learn=True, usa MetaPlasticityLearner (lr por neurônio)
+        learner: LocalLearner | MetaPlasticityLearner
         if meta_learn:
-            self.learner = MetaPlasticityLearner(
+            learner = MetaPlasticityLearner(
                 n_hidden=n_hidden,
                 n_out=n_out,
                 lr=lr,
@@ -148,7 +149,7 @@ class VisaoBrain:
                 rng=self._rng,
             )
         else:
-            self.learner = LocalLearner(
+            learner = LocalLearner(
                 n_hidden=n_hidden,
                 n_out=n_out,
                 lr=lr,
@@ -157,6 +158,7 @@ class VisaoBrain:
                 surprise_gain=surprise_gain,
                 rng=self._rng,
             )
+        self.learner = learner
 
         # Hook p/ injetar EWC-temporal + surprise decay no MetaPlasticityLearner
         if isinstance(self.learner, MetaPlasticityLearner):
@@ -180,7 +182,7 @@ class VisaoBrain:
         self.adaptive_consolidation = adaptive_consolidation
         self.c_min = c_min
         self.c_max = c_max
-        self._surprise_window = []
+        self._surprise_window: list[float] = []
         self._window_size = 100
 
         # --- Surpresa baseada em embedding: REMOVIDA (follow-up aee3471) ---
@@ -278,7 +280,7 @@ class VisaoBrain:
             pred = self.learner.W_out @ x_out + self.learner.b_out
             if self.task_type == "classification":
                 pred = 1.0 / (1.0 + np.exp(-np.clip(pred, -500, 500)))
-            return pred
+            return pred  # type: ignore[no-any-return]
 
     def set_mode(self, mode: str) -> "VisaoBrain":
         """Alterna entre 'learn' (padrão) e 'infer' (só forward)."""
@@ -555,7 +557,7 @@ class VisaoBrain:
             return x
         mean = np.mean(x)
         std = np.std(x)
-        return (x - mean) / (std + 1e-8)
+        return (x - mean) / (std + 1e-8)  # type: ignore[no-any-return]
 
     # ==============================================================
     #  UTILITÁRIOS

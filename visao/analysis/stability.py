@@ -65,7 +65,7 @@ def jacobian_step(cell: CfCCell, x, u) -> np.ndarray:
     I = np.eye(n)
     # outer[i,j] = num_i * dt * ff_i * W_rec_ij
     outer = np.outer(num, dt * ff) * W_rec
-    J = (I * den[None, :] - outer) / (den[None, :] ** 2)
+    J: np.ndarray = (I * den[None, :] - outer) / (den[None, :] ** 2)
     return J
 
 

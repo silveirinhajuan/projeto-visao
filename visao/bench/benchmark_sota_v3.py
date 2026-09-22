@@ -383,7 +383,7 @@ def measure_model(name: str, model, task: PSMNISTTask, n_epochs: int = 5) -> dic
     }
 
 
-def run_benchmark(seeds=(0, 1, 2), quick: bool = False, output_dir: str = None) -> dict:
+def run_benchmark(seeds=(0, 1, 2), quick: bool = False, output_dir: str | None = None) -> dict:
     """Run full benchmark."""
     if output_dir is None:
         output_dir = str(Path(__file__).parent)
@@ -392,7 +392,7 @@ def run_benchmark(seeds=(0, 1, 2), quick: bool = False, output_dir: str = None) 
     max_test = 20 if quick else 1000
     n_epochs = 1 if quick else 5
 
-    results = {"visao": [], "lstm": [], "gru": [], "transformer": []}
+    results: dict[str, list] = {"visao": [], "lstm": [], "gru": [], "transformer": []}
 
     for seed in seeds:
         print(f"\n--- Seed {seed} ---")

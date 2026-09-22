@@ -62,7 +62,7 @@ def generate_permutations(n_tasks: int = 20, n_pixels: int = 784,
     return perms
 
 
-def load_permuted_mnist(data_dir: str, n_tasks: int = 20,
+def load_permuted_mnist(data_dir: str | Path, n_tasks: int = 20,
                         max_per_task: int = 2000,
                         seed: int = 42) -> list[dict]:
     """Load MNIST and create Permuted-MNIST tasks.
@@ -85,7 +85,7 @@ def load_permuted_mnist(data_dir: str, n_tasks: int = 20,
         str(data_dir / "t10k-images-idx3-ubyte.gz"),
         str(data_dir / "t10k-labels-idx1-ubyte.gz"),
     )
-    
+
     # Flatten and normalize
     train_X = train_images.reshape(-1, 784).astype(np.float32) / 255.0
     test_X = test_images.reshape(-1, 784).astype(np.float32) / 255.0

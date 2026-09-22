@@ -341,7 +341,8 @@ class SemanticGraph:
         norm = np.linalg.norm(emb)
         if norm < 1e-10:
             return emb
-        return emb / norm
+        result: np.ndarray = emb / norm
+        return result
 
     def add_entity(
         self,
@@ -580,7 +581,8 @@ class ProceduralMemory:
     def predict(self, state: np.ndarray) -> np.ndarray:
         """Prediz Q-values para um estado."""
         state = np.asarray(state, dtype=np.float64).ravel()
-        return self.W @ state + self.b
+        result: np.ndarray = self.W @ state + self.b
+        return result
 
     def select_action(self, state: np.ndarray, epsilon: float = 0.1) -> int:
         """Seleciona ação (epsilon-greedy)."""

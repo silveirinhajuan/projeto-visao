@@ -189,7 +189,7 @@ class SynapsePruner:
             return 0
 
         # Podar até o budget
-        n_prune = min(len(candidate_indices), budget)
+        n_prune: int = min(len(candidate_indices), budget)
         for i in range(n_prune):
             row, col = candidate_indices[i]
             W[row, col] = 0.0
@@ -232,7 +232,7 @@ class SynapsePruner:
             return 0
 
         # Podar até o budget
-        n_prune = min(len(candidate_indices), budget)
+        n_prune: int = min(len(candidate_indices), budget)
         for i in range(n_prune):
             row, col = candidate_indices[i]
             W[row, col] = 0.0
@@ -264,7 +264,7 @@ class PersistentSynapsePruner(SynapsePruner):
     ):
         super().__init__(threshold, target_sparsity, prune_rec)
         self.patience = patience
-        self._low_counter = None  # contador de passos abaixo do limiar
+        self._low_counter: np.ndarray | None = None  # contador de passos abaixo do limiar
 
     def prune(self, brain, verbose: bool = True) -> dict:
         """Executa poda com verificação de persistência.
@@ -280,13 +280,15 @@ class PersistentSynapsePruner(SynapsePruner):
         if self._low_counter is None:
             self._low_counter = np.zeros_like(omega)
 
+        counter = self._low_counter  # type: ignore[assignment]
+
         # Atualizar contadores
         low_mask = (omega < self.threshold) & (W != 0)
-        self._low_counter[low_mask] += 1
-        self._low_counter[~low_mask] = 0  # reset se subiu acima do limiar
+        counter[low_mask] += 1
+        counter[~low_mask] = 0  # reset se subiu acima do limiar
 
         # Candidatos: abaixo do limiar por >= patience E não-zero
-        candidates = (self._low_counter >= self.patience) & (W != 0)
+        candidates = (counter >= self.patience) & (W != 0)
 
         if not np.any(candidates):
             if verbose:
@@ -326,12 +328,12 @@ class PersistentSynapsePruner(SynapsePruner):
             }
 
         # Podar até o budget
-        n_prune = min(len(candidate_indices), budget)
+        n_prune: int = min(len(candidate_indices), budget)
         for i in range(n_prune):
             row, col = candidate_indices[i]
             W[row, col] = 0.0
             omega[row, col] = 0.0
-            self._low_counter[row, col] = 0
+            self._low_counter[row, col] = 0  # type: ignore[index]
 
         pruned_rec = self._prune_wrec(brain) if self.prune_rec else 0
 

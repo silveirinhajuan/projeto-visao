@@ -110,7 +110,8 @@ class NestedLearner:
         """Inferência. Se task_id fornecido, usa readout específico."""
         if task_id is not None and task_id in self.task_readouts:
             readout = self.task_readouts[task_id]
-            return readout["W_out"] @ self.brain.x + readout["b_out"]
+            out: np.ndarray = readout["W_out"] @ self.brain.x + readout["b_out"]
+            return out
         return self.brain.forward(x)
 
     def set_mode(self, mode: str) -> "NestedLearner":
@@ -349,7 +350,7 @@ def run_nested_experiment(
 ) -> dict:
     """Executa experimento de nested learning."""
     n_tasks = len(tasks)
-    task_errors = {i: [] for i in range(n_tasks)}
+    task_errors: dict[int, list[float]] = {i: [] for i in range(n_tasks)}
     task_final_mse = {}
 
     for task_idx, (X, Y) in enumerate(tasks):

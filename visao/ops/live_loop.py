@@ -255,10 +255,10 @@ class BrainHealthMonitor:
 
     def __init__(self, window: int = 200):
         self.window = window
-        self.errors = deque(maxlen=window)
-        self.surprises = deque(maxlen=window)
-        self.lrs = deque(maxlen=window)
-        self.timestamps = deque(maxlen=window)
+        self.errors: deque[float] = deque(maxlen=window)
+        self.surprises: deque[float] = deque(maxlen=window)
+        self.lrs: deque[float] = deque(maxlen=window)
+        self.timestamps: deque[float] = deque(maxlen=window)
         self._error_ema = 0.0
         self._surprise_ema = 0.0
         self._alpha = 0.05
@@ -709,7 +709,7 @@ class LiveLoop:
             step = self.data_source._step
             regimes = self.data_source._fallback._regimes
             idx = (step // 1000) % len(regimes)
-            return regimes[idx][0]
+            return str(regimes[idx][0])
         return "unknown"
 
     # ==========================================================
@@ -922,11 +922,11 @@ def _inject_errors(loop: LiveLoop) -> None:
             def bad_get():
                 # Retorna dados com shape inválido para forçar erro
                 raise ValueError(f"Injected error #{error_count} for testing recovery")
-            loop.data_source.get = bad_get
+            loop.data_source.get = bad_get  # type: ignore[method-assign]
             error_count += 1
             # Restaura após um passo
             time.sleep(0.1)
-            loop.data_source.get = original_get
+            loop.data_source.get = original_get  # type: ignore[method-assign]
 
 
 # ==============================================================

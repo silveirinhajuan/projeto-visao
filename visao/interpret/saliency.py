@@ -89,7 +89,8 @@ class VisualBackProp:
             return 0.0
         p = x_pos / x_pos.sum()
         p = p[p > 0]
-        return -np.sum(p * np.log(p))
+        ent: float = -np.sum(p * np.log(p))
+        return ent
 
 
 class OODStressTest:
@@ -108,7 +109,7 @@ class OODStressTest:
     def __init__(self, brain: VisaoBrain):
         self.brain = brain
     
-    def test_noise(self, x: np.ndarray, noise_levels: np.ndarray = None) -> dict:
+    def test_noise(self, x: np.ndarray, noise_levels: "np.ndarray | None" = None) -> dict:
         """Test robustness to Gaussian noise."""
         if noise_levels is None:
             noise_levels = np.array([0.0, 0.05, 0.1, 0.2, 0.3])
@@ -125,7 +126,7 @@ class OODStressTest:
         
         return results
     
-    def test_brightness(self, x: np.ndarray, brightness_range: np.ndarray = None) -> dict:
+    def test_brightness(self, x: np.ndarray, brightness_range: "np.ndarray | None" = None) -> dict:
         """Test robustness to brightness shifts."""
         if brightness_range is None:
             brightness_range = np.array([0.0, 0.1, 0.2, 0.3, 0.4])
@@ -141,7 +142,7 @@ class OODStressTest:
         
         return results
     
-    def test_contrast(self, x: np.ndarray, contrast_range: np.ndarray = None) -> dict:
+    def test_contrast(self, x: np.ndarray, contrast_range: "np.ndarray | None" = None) -> dict:
         """Test robustness to contrast changes."""
         if contrast_range is None:
             contrast_range = np.array([0.5, 0.6, 1.0, 1.4])
@@ -228,7 +229,7 @@ class RangeTest:
     
     def test_scale_generalization(self, 
                                    small_input: np.ndarray,
-                                   scale_factors: list = None) -> dict:
+                                   scale_factors: "list | None" = None) -> dict:
         """Test generalization to different input scales."""
         if scale_factors is None:
             scale_factors = [1.0, 1.5, 2.0, 3.0]

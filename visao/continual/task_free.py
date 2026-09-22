@@ -247,22 +247,22 @@ def run_task_free(
 
     Retorna métricas por regime e detecções.
     """
-    errors = []
-    surprises = []
-    detections = []
-    adapting_flags = []
+    errors_list: list[float] = []
+    surprises_list: list[float] = []
+    detections: list[bool] = []
+    adapting_flags: list[bool] = []
 
     for i in range(len(u)):
         result = learner.learn(u[i], y[i])
-        errors.append(result["err"])
-        surprises.append(result["surprise"])
+        errors_list.append(result["err"])
+        surprises_list.append(result["surprise"])
         detections.append(result["detected_change"])
         adapting_flags.append(result["adapting"])
 
-    errors = np.array(errors)
+    errors: np.ndarray = np.array(errors_list)
     return {
         "errors": errors,
-        "surprises": np.array(surprises),
+        "surprises": np.array(surprises_list),
         "detections": np.array(detections),
         "adapting": np.array(adapting_flags),
         "n_changes_detected": learner.n_changes_detected,

@@ -772,7 +772,7 @@ class TextualGradient:
         for sig in self.history:
             by_component.setdefault(sig.component, []).append(sig.magnitude * sig.direction)
 
-        summary = {"n_signals": len(self.history)}
+        summary: dict[str, Any] = {"n_signals": len(self.history)}
         for comp, vals in by_component.items():
             summary[f"{comp}_mean"] = float(np.mean(vals))
             summary[f"{comp}_std"] = float(np.std(vals))

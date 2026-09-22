@@ -15,6 +15,7 @@ from __future__ import annotations
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 
@@ -66,8 +67,8 @@ class TaskFreeDetector:
     def __init__(self, window: int = 50, threshold: float = 1.5):
         self.window = window
         self.threshold = threshold
-        self.surprise_history = []
-        self.regime_change_points = []
+        self.surprise_history: list[float] = []
+        self.regime_change_points: list[int] = []
 
     def update(self, surprise: float, step: int) -> bool:
         """Retorna True se detectou mudança de regime."""
@@ -89,14 +90,14 @@ class TaskFreeDetector:
 def run_task_free(brain: VisaoBrain, u: np.ndarray, y: np.ndarray) -> dict:
     """Roda o cérebro com detecção de regime."""
     detector = TaskFreeDetector(window=50, threshold=1.5)
-    errors = []
-    surprises = []
-    change_points = []
-    lr_boosts = []
+    errors_list: list[float] = []
+    surprises: list[float] = []
+    change_points: list[int] = []
+    lr_boosts: list[float] = []
 
     for i in range(len(u)):
         result = brain.learn(u[i], y[i])
-        errors.append(result["err"])
+        errors_list.append(result["err"])
         surprises.append(result["surprise"])
 
         # Detectar mudança de regime
@@ -112,7 +113,7 @@ def run_task_free(brain: VisaoBrain, u: np.ndarray, y: np.ndarray) -> dict:
             brain.learner.lr = brain.lr
 
     # Métricas
-    errors = np.array(errors)
+    errors = np.array(errors_list)
     regime_mses = {}
     for name, start, end in [("R1_slow", 0, 1000), ("R2_fast", 1000, 2000), ("R3_saw", 2000, 3000), ("R4_mixed", 3000, 4000)]:
         regime_mses[name] = float(np.mean(errors[start:end] ** 2))
@@ -128,7 +129,7 @@ def run_task_free(brain: VisaoBrain, u: np.ndarray, y: np.ndarray) -> dict:
 
 def run_experiment(seeds: tuple[int, ...] = (1, 2, 3, 4, 5)) -> dict:
     """Roda experimento completo."""
-    results = {"with_detection": [], "without_detection": []}
+    results: dict[str, list[Any]] = {"with_detection": [], "without_detection": []}
 
     for seed in seeds:
         u, y, _ = make_regime_stream(n=4000, seed=seed)

@@ -33,8 +33,8 @@ class TaskBoundaryDetector:
         self.window_size = window_size
         self.error_buffer: list[float] = []
         self.activation_buffer: list[np.ndarray] = []
-        self._baseline_error = None
-        self._baseline_activation = None
+        self._baseline_error: float | None = None
+        self._baseline_activation: np.ndarray | None = None
         self._step = 0
     
     def observe(self, error: float, activation: np.ndarray) -> dict:
@@ -65,7 +65,7 @@ class TaskBoundaryDetector:
             
             if error_std > 1e-8:
                 change_score = abs(recent_error - self._baseline_error) / error_std
-                change_detected = change_score > self.threshold
+                change_detected = bool(change_score > self.threshold)
         
         return {
             'change_detected': change_detected,
@@ -74,7 +74,7 @@ class TaskBoundaryDetector:
             'baseline_error': float(self._baseline_error) if self._baseline_error else None,
         }
     
-    def reset(self):
+    def reset(self) -> None:
         """Reseta detector (após consolidação)."""
         self.error_buffer = []
         self.activation_buffer = []
@@ -99,7 +99,7 @@ class Consolidator:
         self._original_lr = brain.learner.lr
         self._boost_steps = 0
     
-    def consolidate_on_boundary(self, recent_experiences: list = None) -> dict:
+    def consolidate_on_boundary(self, recent_experiences: list | None = None) -> dict:
         """Consolida conhecimento ao detectar fronteira de tarefa.
         
         Parameters

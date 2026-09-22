@@ -19,7 +19,7 @@ import jax.numpy as jnp
 import numpy as np
 
 _DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
-_PERM = {}
+_PERM: dict[int, np.ndarray] = {}
 
 
 # ------------------------------------------------------------------ dados

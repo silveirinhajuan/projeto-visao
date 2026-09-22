@@ -212,12 +212,12 @@ def run_single_config(
     # Avaliar em teste
     model.set_mode("infer")
     model.reset_state()
-    test_preds = []
+    test_preds_list: list[np.ndarray] = []
     for i in range(len(u_te)):
         pred = model.forward(u_te[i])
-        test_preds.append(pred)
+        test_preds_list.append(pred)
 
-    test_preds = np.array(test_preds)
+    test_preds: np.ndarray = np.array(test_preds_list)
     mse_test = float(np.mean((test_preds - y_te) ** 2))
     mae_test = float(np.mean(np.abs(test_preds - y_te)))
     mse_train = float(np.mean(np.array(train_errors[-100:]) ** 2))
@@ -266,12 +266,8 @@ def run_scaling_experiment(quick: bool = False):
     n_hidden_values = [32, 64, 128, 256]
     n_layers_values = [1, 2, 3]
 
-    if quick:
-        seeds = (0, 1)
-        n_train = 400
-    else:
-        seeds = (0, 1, 2)
-        n_train = 600
+    seeds: tuple[int, ...] = (0, 1) if quick else (0, 1, 2)
+    n_train: int = 400 if quick else 600
 
     results = []
 

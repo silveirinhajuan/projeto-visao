@@ -28,10 +28,10 @@ class BrainMonitor:
         self.log_dir.mkdir(parents=True, exist_ok=True)
 
         self.window = window
-        self.errors = deque(maxlen=window)
-        self.surprises = deque(maxlen=window)
-        self.lrs = deque(maxlen=window)
-        self.timestamps = deque(maxlen=window)
+        self.errors: deque[float] = deque(maxlen=window)
+        self.surprises: deque[float] = deque(maxlen=window)
+        self.lrs: deque[float] = deque(maxlen=window)
+        self.timestamps: deque[float] = deque(maxlen=window)
 
     def update(self, result: dict, lr: float = 0.0):
         """Atiliza métricas com novo resultado."""

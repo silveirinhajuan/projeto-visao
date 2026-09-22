@@ -87,7 +87,7 @@ class MetaCognitiveBrain:
             'tracker_stats': self.reflection.tracker.get_stats(),
         }
     
-    def adapt_hyperparams(self, new_lr: float = None, new_consolidation: float = None):
+    def adapt_hyperparams(self, new_lr: float | None = None, new_consolidation: float | None = None):
         """Adapta hiperparâmetros do cérebro manualmente."""
         if new_lr is not None and isinstance(new_lr, (int, float)):
             self.brain.learner.lr = float(new_lr)

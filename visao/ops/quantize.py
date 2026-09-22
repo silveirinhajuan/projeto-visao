@@ -30,16 +30,21 @@ class QuantizedTensor:
         """
         self.shape = w.shape
         self.axis = axis
+        # wmin/wmax/scale: sempre np.ndarray (0-d no caso escalar, 1-d per-channel)
+        self.wmin = np.zeros(0)
+        self.wmax = np.zeros(0)
+        self.scale = np.zeros(0)
+        self.q = np.zeros_like(w, dtype=np.int8)
         
         if w.ndim == 1:
             # Vetor: quantização simples
-            self.wmin = float(w.min())
-            self.wmax = float(w.max())
-            scale = (self.wmax - self.wmin) / 255.0
-            if scale == 0:
-                scale = 1.0
-            self.scale = np.array([scale])
-            self.q = np.clip(np.round((w - self.wmin) / scale) - 128, -128, 127).astype(np.int8)
+            self.wmin = np.array(float(w.min()))
+            self.wmax = np.array(float(w.max()))
+            scale_a = (self.wmax - self.wmin) / 255.0
+            if scale_a == 0:
+                scale_a = np.array(1.0)
+            self.scale = np.array([scale_a])
+            self.q = np.clip(np.round((w - self.wmin) / scale_a) - 128, -128, 127).astype(np.int8)
         else:
             # Matriz: quantização per-channel
             n_channels = w.shape[axis]
@@ -56,19 +61,20 @@ class QuantizedTensor:
                 
                 self.wmin[i] = float(w_channel.min())
                 self.wmax[i] = float(w_channel.max())
-                scale = (self.wmax[i] - self.wmin[i]) / 255.0
-                if scale == 0:
-                    scale = 1.0
-                self.scale[i] = scale
+                scale_ch: float = float((self.wmax[i] - self.wmin[i]) / 255.0)
+                if scale_ch == 0:
+                    scale_ch = 1.0
+                self.scale[i] = scale_ch
                 
                 if axis == 0:
-                    self.q[i, :] = np.clip(np.round((w_channel - self.wmin[i]) / scale) - 128, -128, 127)
+                    self.q[i, :] = np.clip(np.round((w_channel - self.wmin[i]) / scale_ch) - 128, -128, 127)
                 else:
-                    self.q[:, i] = np.clip(np.round((w_channel - self.wmin[i]) / scale) - 128, -128, 127)
+                    self.q[:, i] = np.clip(np.round((w_channel - self.wmin[i]) / scale_ch) - 128, -128, 127)
     
     def dequantize(self) -> np.ndarray:
         if self.scale.size == 1:
-            return (self.q.astype(np.float64) + 128) * self.scale[0] + self.wmin
+            out: np.ndarray = (self.q.astype(np.float64) + 128) * self.scale[0] + self.wmin
+            return out
         else:
             w = np.zeros_like(self.q, dtype=np.float64)
             for i in range(self.scale.size):

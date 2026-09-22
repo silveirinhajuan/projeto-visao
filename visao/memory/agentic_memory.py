@@ -24,7 +24,7 @@ import hashlib
 import re
 import time
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Any, Optional
 
 import numpy as np
 
@@ -436,7 +436,7 @@ class AgenticMemory:
         query_emb = self.embedder.embed(query)
         query_kws = set(self.kw_extractor.extract(query))
 
-        results = []
+        results: list[dict[str, Any]] = []
         for nid, note in self.notes.items():
             # Tag filter
             if tag_filter and not any(t in note.tags for t in tag_filter):
@@ -473,7 +473,7 @@ class AgenticMemory:
             })
 
         # Sort by score descending
-        results.sort(key=lambda x: x["score"], reverse=True)
+        results.sort(key=lambda x: float(x["score"]), reverse=True)
 
         # Update access metadata for top-k
         for r in results[:k]:

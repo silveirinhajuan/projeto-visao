@@ -142,6 +142,10 @@ class ContinualLoop:
     # ---------------------------------------------------------- avaliação
     def _evaluate(self, u, y) -> float:
         states, _ = self.cell.rollout(u)
+        if self.learner is None:
+            raise RuntimeError(
+                "ContinualLoop sem learner: chame add_and_train_task() antes."
+            )
         preds = states @ self.learner.W_out.T + self.learner.b_out
         warm = min(self.warmup, len(u) - 1)
         err = float(((preds[warm:] - y[warm:]) ** 2).mean())
@@ -190,6 +194,11 @@ class ContinualLoop:
         path = str(path)
         cell = self.cell
         learner = self.learner
+        if learner is None:
+            raise RuntimeError(
+                "ContinualLoop sem learner: nada para salvar antes de "
+                "add_and_train_task()."
+            )
         data = {
             "n_in": self.n_in, "n_hidden": self.n_hidden, "seed": self.seed,
             "dt": self.dt, "sparsity": self.sparsity,

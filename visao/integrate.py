@@ -183,17 +183,17 @@ class VisaoCognitiveBrain(VisaoBrain):
             'action': action,
         }
     
-    def _generate_action(self, perception: np.ndarray, reasoning: dict) -> np.ndarray:
+    def _generate_action(self, perception: np.ndarray, reasoning: dict[str, Any]) -> np.ndarray:
         """Gera ação baseada em percepção e raciocínio."""
         # Combina percepção do liquid core com viés do raciocínio
         reasoning_bias = reasoning.get('bias', np.zeros_like(perception))
-        return perception + 0.1 * reasoning_bias
+        return perception + 0.1 * reasoning_bias  # type: ignore[no-any-return]
     
-    def plan_and_execute(self, task: str, verbose: bool = True) -> dict:
+    def plan_and_execute(self, task: str, verbose: bool = True) -> dict[str, Any]:
         """Planeja e executa uma tarefa de forma agentica."""
-        return self.agent.run_task(task, verbose=verbose)
+        return self.agent.run_task(task, verbose=verbose)  # type: ignore[no-any-return]
     
-    def remember(self, event: dict):
+    def remember(self, event: dict[str, Any]) -> None:
         """Armazena um evento na memória."""
         if HAS_MEMORY:
             state = event.get('input', np.zeros(self.n_in))
@@ -212,21 +212,21 @@ class VisaoCognitiveBrain(VisaoBrain):
                 next_state=next_state,
             )
     
-    def recall(self, query: np.ndarray, top_k: int = 5) -> dict:
+    def recall(self, query: np.ndarray, top_k: int = 5) -> dict[str, Any]:
         """Recupera memórias similares."""
         if HAS_MEMORY:
-            return self.memory.recall(query=query, k=top_k)
+            return self.memory.recall(query=query, k=top_k)  # type: ignore[no-any-return]
         return {'semantic_matches': [], 'recent_episodes': []}
     
-    def reason_about(self, problem: str) -> dict:
+    def reason_about(self, problem: str) -> dict[str, Any]:
         """Raciocina sobre um problema usando neuro-simbólico."""
         if HAS_REASONING:
-            return self.reasoner.reason(problem)
+            return self.reasoner.reason(problem)  # type: ignore[no-any-return]
         return {'bias': np.zeros(self.n_out)}
     
-    def get_cognitive_state(self) -> dict:
+    def get_cognitive_state(self) -> dict[str, Any]:
         """Retorna estado cognitivo atual."""
-        memory_stats = {}
+        memory_stats: dict[str, Any] = {}
         if HAS_MEMORY:
             memory_stats = self.memory.get_stats()
         
@@ -237,7 +237,7 @@ class VisaoCognitiveBrain(VisaoBrain):
             'health': self.agent.monitor.check_health(),
         }
     
-    def save(self, path: str):
+    def save(self, path: str | Path) -> None:
         """Salva estado completo (pesos + memória + estado cognitivo)."""
         data = {
             'weights': {
@@ -261,7 +261,7 @@ class VisaoCognitiveBrain(VisaoBrain):
             json.dump(data, f, indent=2)
     
     @classmethod
-    def load(cls, path: str) -> 'VisaoCognitiveBrain':
+    def load(cls, path: str | Path) -> 'VisaoCognitiveBrain':
         """Carrega estado completo."""
         with open(path) as f:
             data = json.load(f)

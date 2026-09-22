@@ -161,9 +161,9 @@ class JaxVisaoBrain:
         return pred
     
     def count_params(self) -> int:
-        total = self.W_in.size + self.W_rec.size + self.b.size + self.A.size
+        total: int = int(self.W_in.size + self.W_rec.size + self.b.size + self.A.size)
         for p in self.mlp_params:
-            total += p['W'].size + p['b'].size
+            total += int(p['W'].size + p['b'].size)
         return total
 
 

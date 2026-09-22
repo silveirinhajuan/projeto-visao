@@ -26,7 +26,7 @@ from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from enum import Enum, auto
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 import numpy as np
 
@@ -511,7 +511,8 @@ class AgentHeartbeat:
         """Lê heartbeat."""
         try:
             with open(self.path, "r") as f:
-                return json.load(f)
+                result: dict[Any, Any] | None = json.load(f)
+                return result
         except Exception:
             return None
 

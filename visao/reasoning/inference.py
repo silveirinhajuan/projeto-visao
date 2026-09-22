@@ -244,7 +244,7 @@ class InferenceEngine:
         return {
             'contradictions': contradictions,
             'n_contradictions': len(contradictions),
-            'pairs': [(c['pair'][0], c['pair'][1]) for c in contradictions],
+            'pairs': [(c['pair'][0], c['pair'][1]) for c in contradictions],  # type: ignore
         }
     
     def _compute_confidence(self, chain: list) -> float:
@@ -286,7 +286,7 @@ class KnowledgeBase:
         self.labels: list[str] = []
         self.metadata: list[dict] = []
     
-    def add_fact(self, fact: np.ndarray, label: str = "", metadata: dict = None):
+    def add_fact(self, fact: np.ndarray, label: str = "", metadata: dict | None = None):
         """Adiciona um fato à base de conhecimento."""
         if len(self.facts) >= self.max_facts:
             # Remover fato mais antigo (FIFO)

@@ -347,7 +347,7 @@ def run_continual_experiment(
 ) -> dict:
     """Executa experimento continual learning."""
     n_tasks = len(tasks)
-    task_errors = {i: [] for i in range(n_tasks)}
+    task_errors: dict[int, list[float]] = {i: [] for i in range(n_tasks)}
     task_final_mse = {}
     brain = _get_brain(learner)
 

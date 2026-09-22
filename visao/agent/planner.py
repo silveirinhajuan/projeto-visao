@@ -18,9 +18,9 @@ class TaskDecomposer:
     
     def __init__(self, brain: VisaoBrain):
         self.brain = brain
-        self.subtasks = []
+        self.subtasks: list[dict] = []
     
-    def decompose(self, task: str, context: dict = None) -> list:
+    def decompose(self, task: str, context: "dict | None" = None) -> list:
         """Decompora task em subtasks baseadas no estado atual do cérebro.
         
         Usa o liquid core para gerar decomposição adaptativa.
@@ -36,7 +36,7 @@ class TaskDecomposer:
         self.subtasks = subtasks
         return subtasks
     
-    def get_next_subtask(self) -> dict:
+    def get_next_subtask(self) -> "dict | None":
         """Retorna a próxima subtask pendente."""
         if self.subtasks:
             return self.subtasks.pop(0)
@@ -54,7 +54,7 @@ class ToolExecutor:
             "code": self._code,
             "memory": self._memory,
         }
-        self.execution_log = []
+        self.execution_log: list[dict] = []
     
     def register_tool(self, name: str, func: Callable):
         """Registra uma nova ferramenta."""
@@ -67,7 +67,7 @@ class ToolExecutor:
         
         try:
             t0 = time.time()
-            result = self.tools[tool_name](**kwargs)
+            result = self.tools[tool_name](**kwargs)  # type: ignore[call-arg]
             dt = time.time() - t0
             
             log_entry = {
@@ -111,7 +111,7 @@ class ToolExecutor:
     def _code(self, code: str) -> dict:
         """Executa código Python (sandbox)."""
         try:
-            local_vars = {}
+            local_vars: dict = {}
             exec(code, {"__builtins__": {}}, local_vars)
             return {"result": local_vars.get("result", None)}
         except Exception as e:
@@ -127,23 +127,24 @@ class SelfMonitor:
     
     def __init__(self, brain: VisaoBrain):
         self.brain = brain
-        self.health_history = []
+        self.health_history: list[dict] = []
         self.error_count = 0
         self.warning_threshold = 5
     
     def check_health(self) -> dict:
         """Verifica saúde do cérebro."""
         # Métricas básicas
+        step = getattr(self.brain, 'step', 0)
         health = {
             "timestamp": time.time(),
-            "step": self.brain.step if hasattr(self.brain, 'step') else 0,
+            "step": step,
             "mode": self.brain._mode if hasattr(self.brain, '_mode') else 'unknown',
-            "error_rate": self.error_count / max(self.brain.step, 1),
+            "error_rate": self.error_count / max(step, 1),
             "status": "healthy",
         }
         
         # Detectar degradação
-        if health["error_rate"] > 0.1:
+        if health["error_rate"] > 0.1:  # type: ignore[operator]
             health["status"] = "degraded"
         if self.error_count > self.warning_threshold:
             health["status"] = "warning"

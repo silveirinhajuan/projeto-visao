@@ -17,6 +17,7 @@ from __future__ import annotations
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 
@@ -62,18 +63,18 @@ def make_stream(n: int = 5000, seed: int = 0):
 
 def run_streaming_brain(brain: VisaoBrain, u: np.ndarray, y: np.ndarray, window: int = 100) -> dict:
     """Roda o cérebro no stream e coleta métricas."""
-    errors = []
-    surprises = []
-    lrs = []
+    errors_list: list[float] = []
+    surprises: list[float] = []
+    lrs: list[float] = []
 
     for i in range(len(u)):
         result = brain.learn(u[i], y[i])
-        errors.append(result["err"])
+        errors_list.append(result["err"])
         surprises.append(result["surprise"])
         lrs.append(brain.lr)
 
     # Métricas
-    errors = np.array(errors)
+    errors = np.array(errors_list)
     mse_total = float(np.mean(errors ** 2))
     mae_total = float(np.mean(errors))
 
@@ -99,13 +100,13 @@ def run_streaming_brain(brain: VisaoBrain, u: np.ndarray, y: np.ndarray, window:
 
 def run_benchmark(seeds: tuple[int, ...] = (1, 2, 3, 4, 5)) -> dict:
     """Roda o benchmark completo."""
-    configs = {
+    configs: dict[str, dict[str, Any]] = {
         "visao_full": {"consolidation": 8.0, "surprise_gain": 3.0, "meta_learn": True, "lambda_decay": 0.0005},
         "visao_no_meta": {"consolidation": 8.0, "surprise_gain": 3.0, "meta_learn": False, "lambda_decay": 0.0005},
         "naive": {"consolidation": 0.0, "surprise_gain": 0.0, "meta_learn": False, "lambda_decay": 0.0},
     }
 
-    results = {name: [] for name in configs}
+    results: dict[str, list[Any]] = {name: [] for name in configs}
 
     for seed in seeds:
         u, y = make_stream(n=5000, seed=seed)

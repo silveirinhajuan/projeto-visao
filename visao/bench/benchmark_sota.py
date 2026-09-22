@@ -25,7 +25,7 @@ import time
 import tracemalloc
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 import numpy as np
 
@@ -49,7 +49,8 @@ except ImportError:
 def _get_ram_mb() -> float:
     """Retorna uso de RAM do processo atual em MB."""
     if HAS_PSUTIL:
-        return psutil.Process(os.getpid()).memory_info().rss / (1024 * 1024)
+        mem = psutil.Process(os.getpid()).memory_info()
+        return float(mem.rss / (1024 * 1024))
     return 0.0
 
 
@@ -538,24 +539,24 @@ class BenchResult:
     mse_final_std: float = 0.0
 
 
-def run_visao_brain(u, y, seed: int, window: int = 10) -> dict:
+def run_visao_brain(u, y, seed: int, window: int = 10) -> np.ndarray:
     """Roda VisaoBrain no stream."""
     brain = VisaoBrain(n_in=2, n_hidden=64, n_out=1, seed=seed,
                        consolidation=8.0, surprise_gain=3.0, meta_learn=True,
                        lambda_decay=0.0005)
-    errors = []
+    errors_list: list[float] = []
     for i in range(len(u)):
         result = brain.learn(u[i], y[i])
-        errors.append(result["err"])
-    errors = np.array(errors)
+        errors_list.append(result["err"])
+    errors = np.array(errors_list)
     return errors
 
 
-def run_baseline(model, u, y, seed: int, window: int = 10) -> dict:
+def run_baseline(model, u, y, seed: int, window: int = 10) -> np.ndarray:
     """Roda modelo baseline (LSTM/GRU/Transformer) no stream com BPTT truncado."""
-    errors = []
-    buffer_x = []
-    buffer_y = []
+    errors: list[float] = []
+    buffer_x: list[np.ndarray] = []
+    buffer_y: list[np.ndarray] = []
 
     for i in range(len(u)):
         buffer_x.append(u[i])
@@ -633,14 +634,14 @@ def run_benchmark(seeds=(1, 2, 3), quick: bool = False) -> dict:
         n_steps = 3000
         window = 10
 
-    configs = {
+    configs: dict[str, dict[str, Any]] = {
         "visao": {"consolidation": 8.0, "surprise_gain": 3.0, "meta_learn": True, "lambda_decay": 0.0005},
         "lstm": {"n_hidden": 64, "lr": 1e-3},
         "gru": {"n_hidden": 64, "lr": 1e-3},
         "transformer": {"n_hidden": 64, "n_heads": 4, "lr": 1e-3},
     }
 
-    results = {name: [] for name in configs}
+    results: dict[str, list[Any]] = {name: [] for name in configs}
 
     for seed in seeds:
         u, y, regimes = make_stream(n=n_steps, seed=seed)
