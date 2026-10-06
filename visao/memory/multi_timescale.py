@@ -161,14 +161,14 @@ class ThreeTimescaleState:
     @staticmethod
     def _activation(x: np.ndarray) -> np.ndarray:
         """Smooth bounded activation."""
-        return np.tanh(x)
+        return np.asarray(np.tanh(x))
 
     def _compute_drive(self, u: np.ndarray) -> np.ndarray:
         """Compute input drive from external signal."""
         u = np.asarray(u, dtype=np.float64).ravel()
         if self._proj is None or self._input_dim != len(u):
             self._init_projection(len(u))
-        raw = self._proj @ u + self._bias
+        raw = np.asarray(self._proj) @ u + self._bias
         return self._activation(raw)
 
     def step(self, u: np.ndarray, input_mask: Optional[np.ndarray] = None) -> np.ndarray:

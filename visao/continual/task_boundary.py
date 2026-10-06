@@ -51,8 +51,10 @@ class TaskBoundaryDetector:
         
         # Calcular baseline nos primeiros `window_size` passos
         if len(self.error_buffer) == self.window_size:
-            self._baseline_error = np.mean(self.error_buffer)
-            self._baseline_activation = np.mean(self.activation_buffer, axis=0)
+            self._baseline_error = float(np.mean(self.error_buffer))
+            self._baseline_activation = np.asarray(
+                np.mean(self.activation_buffer, axis=0)
+            )
         
         # Detectar mudança
         change_detected = False
@@ -64,7 +66,9 @@ class TaskBoundaryDetector:
             error_std = np.std(self.error_buffer[:self.window_size])
             
             if error_std > 1e-8:
-                change_score = abs(recent_error - self._baseline_error) / error_std
+                change_score = float(
+                    abs(recent_error - self._baseline_error) / error_std
+                )
                 change_detected = bool(change_score > self.threshold)
         
         return {

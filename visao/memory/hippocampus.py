@@ -675,7 +675,7 @@ class ProceduralMemory:
 
     def get_skill_importance(self) -> np.ndarray:
         """Retorna importância média por ação (EWC omega)."""
-        return np.mean(self.omega, axis=1)
+        return np.asarray(np.mean(self.omega, axis=1))
 
     def get_stats(self) -> dict:
         """Estatísticas da memória procedural."""
