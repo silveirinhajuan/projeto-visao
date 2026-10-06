@@ -1,28 +1,31 @@
 #!/usr/bin/env python3
 """VISÃO watchdog heartbeat (canonical, repo-versioned).
 
-Records one watchdog cycle:
-  1. appends the full entry to ops/watchdog_cycles.log (append-only history);
-  2. keeps only the 2 most recent cycles in BACKLOG.json task 76 `evidence`;
-  3. updates `_last_watchdog_cycle`.
+Records one watchdog cycle. Since 06/10/2026 a heartbeat writes ONLY to the
+append-only, NON-versioned log `ops/watchdog_cycles.log` (covered by the repo's
+`*.log` ignore rule). It no longer touches `BACKLOG.json`.
 
-Earlier versions hardcoded a single cycle string and let heartbeats pile up in
-task 76 `blocked_reason` (5841 chars / 14 cycles by 06/10/2026), bloating the
-file that the autonomous loop reads. Consolidation happened 06/10/2026.
+Why: the previous version updated `BACKLOG.json` (`_last_watchdog_cycle` plus a
+rolling 2-cycle `evidence` window) on every cycle. With the watchdog running
+every ~20-30 min that produced ~25 commits/DAY that changed nothing but that one
+file, drowning real work in `git log` and rewriting the very file the autonomous
+loop re-reads each cycle. Health history belongs in an append-only log, not in
+git history. Liveness is independently recorded by the scheduler in
+`~/.hermes/cron/executions.db`.
 
 Usage: heartbeat_update.py "<cycle text>" "<dd/mm HH:MM>"
 """
 from __future__ import annotations
 
-import json
 import sys
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-BACKLOG = ROOT / "BACKLOG.json"
 LOG = Path(__file__).resolve().parent / "watchdog_cycles.log"
 
-KEEP_IN_BACKLOG = 2
+# Fortaleza (GMT-3), where the project owner and the cron schedule live.
+TZ = timezone(timedelta(hours=-3))
 
 
 def main() -> int:
@@ -33,38 +36,25 @@ def main() -> int:
     entry = cycle_text.strip()
     if not entry.startswith("CICLO"):
         entry = "CICLO " + entry.lstrip()
+    if not entry.endswith(stamp):
+        entry = f"{entry} [{stamp}]"
 
-    with BACKLOG.open("r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    task = next((t for t in data["tasks"] if str(t.get("id")) == "76"), None)
-    if task is None:
-        print("ERROR: task 76 not found")
-        return 1
-
-    old = task.get("evidence", "")
-    cycles = [c for c in old.split("CICLO") if c.strip()]
-    kept = cycles[-KEEP_IN_BACKLOG:] if len(cycles) > KEEP_IN_BACKLOG else cycles
-    task["evidence"] = "CICLO".join(kept) + entry
-    data["_last_watchdog_cycle"] = stamp
-
-    with BACKLOG.open("w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-        f.write("\n")
-
+    LOG.parent.mkdir(parents=True, exist_ok=True)
+    before = LOG.stat().st_size if LOG.exists() else 0
     with LOG.open("a", encoding="utf-8") as f:
         f.write(entry + "\n\n")
 
-    with BACKLOG.open("r", encoding="utf-8") as f:
-        check = f.read()
+    # Verify the append actually landed (same guard the old version had).
+    text = LOG.read_text(encoding="utf-8")
     marker = entry.strip().split("(")[0].strip()
-    if marker not in check:
-        print("FAILED: cycle not persisted in BACKLOG.json")
+    if marker not in text:
+        print("FAILED: cycle not persisted in the log")
         return 1
 
-    print(f"OK: evidence {len(old)} -> {len(task['evidence'])} chars")
-    print(f"OK: cycle appended to {LOG.name}")
-    print("tail:", task["evidence"][-160:])
+    after = LOG.stat().st_size
+    print(f"OK: {after - before} bytes appended to {LOG.name} ({after} total)")
+    print(f"OK: BACKLOG.json untouched (heartbeats are not versioned)")
+    print(f"at {datetime.now(TZ).strftime('%d/%m/%Y %H:%M')} GMT-3")
     return 0
 
 
