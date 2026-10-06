@@ -1,45 +1,72 @@
 #!/usr/bin/env python3
-"""Watchdog heartbeat: append cycle log to task 76 evidence in BACKLOG.json."""
+"""VISÃO watchdog heartbeat (canonical, repo-versioned).
+
+Records one watchdog cycle:
+  1. appends the full entry to ops/watchdog_cycles.log (append-only history);
+  2. keeps only the 2 most recent cycles in BACKLOG.json task 76 `evidence`;
+  3. updates `_last_watchdog_cycle`.
+
+Earlier versions hardcoded a single cycle string and let heartbeats pile up in
+task 76 `blocked_reason` (5841 chars / 14 cycles by 06/10/2026), bloating the
+file that the autonomous loop reads. Consolidation happened 06/10/2026.
+
+Usage: heartbeat_update.py "<cycle text>" "<dd/mm HH:MM>"
+"""
+from __future__ import annotations
+
 import json
 import sys
+from pathlib import Path
 
-PATH = "/home/juan/projeto-visao/BACKLOG.json"
+ROOT = Path(__file__).resolve().parent.parent
+BACKLOG = ROOT / "BACKLOG.json"
+LOG = Path(__file__).resolve().parent / "watchdog_cycles.log"
 
-CYCLE = (
-    " CICLO 24/09 20:59 (HEAD 01089ed, sem mudanças desde 16:20): backlog sem pendentes "
-    "(75 done / 6 discontinued / 2 blocked-ação-humana); fast 186/0 em 71.8s; flake8 0; "
-    "mypy 5 erros (todos em arquivos imutáveis: 2 governance/ R3 + 3 prototype/ legacy, "
-    "zero regressões); disco estável em 88% (28G livres, purga anterior sustentada); "
-    "RAM ok (4,8G available). Heartbeat registrado."
-)
+KEEP_IN_BACKLOG = 2
 
-with open(PATH, "r", encoding="utf-8") as f:
-    data = json.load(f)
 
-task = None
-for t in data["tasks"]:
-    if t.get("id") == 76 or t.get("id") == "76":
-        task = t
-        break
+def main() -> int:
+    if len(sys.argv) < 3:
+        print("usage: heartbeat_update.py '<cycle text>' '<dd/mm HH:MM>'")
+        return 2
+    cycle_text, stamp = sys.argv[1], sys.argv[2]
+    entry = cycle_text.strip()
+    if not entry.startswith("CICLO"):
+        entry = "CICLO " + entry.lstrip()
 
-if task is None:
-    print("ERROR: task 76 not found")
-    sys.exit(1)
+    with BACKLOG.open("r", encoding="utf-8") as f:
+        data = json.load(f)
 
-# Anexa ao evidence (onde vivem os ciclos recentes), mantendo só os 2 anteriores
-old = task.get("evidence", "")
-cycles = [c for c in old.split("CICLO") if c.strip()]
-kept = cycles[-2:] if len(cycles) > 2 else cycles
-task["evidence"] = "CICLO".join(kept) + CYCLE
+    task = next((t for t in data["tasks"] if str(t.get("id")) == "76"), None)
+    if task is None:
+        print("ERROR: task 76 not found")
+        return 1
 
-with open(PATH, "w", encoding="utf-8") as f:
-    json.dump(data, f, ensure_ascii=False, indent=2)
-    f.write("\n")
+    old = task.get("evidence", "")
+    cycles = [c for c in old.split("CICLO") if c.strip()]
+    kept = cycles[-KEEP_IN_BACKLOG:] if len(cycles) > KEEP_IN_BACKLOG else cycles
+    task["evidence"] = "CICLO".join(kept) + entry
+    data["_last_watchdog_cycle"] = stamp
 
-# Verificação: reler do disco e confirmar persistência
-with open(PATH, "r", encoding="utf-8") as f:
-    check = f.read()
-assert "CICLO 24/09 20:59" in check, "FALHOU: ciclo não persistiu no disco"
+    with BACKLOG.open("w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+        f.write("\n")
 
-print(f"OK: evidence {len(old)} -> {len(task['evidence'])} chars")
-print("Last 120 chars:", task["evidence"][-120:])
+    with LOG.open("a", encoding="utf-8") as f:
+        f.write(entry + "\n\n")
+
+    with BACKLOG.open("r", encoding="utf-8") as f:
+        check = f.read()
+    marker = entry.strip().split("(")[0].strip()
+    if marker not in check:
+        print("FAILED: cycle not persisted in BACKLOG.json")
+        return 1
+
+    print(f"OK: evidence {len(old)} -> {len(task['evidence'])} chars")
+    print(f"OK: cycle appended to {LOG.name}")
+    print("tail:", task["evidence"][-160:])
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
