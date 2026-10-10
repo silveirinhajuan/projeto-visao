@@ -1139,8 +1139,5 @@
       "blocked_reason": "Requer ação humana: regularizar billing da conta GitHub (github.com/settings/billing). Enquanto travado, o CI fast (matrix 3.9-3.12 + flake8 + mypy) não roda em push nenhum. Mitigação ativa do watchdog: rodar o subset fast localmente a cada ciclo — verificado 22/09 17:37 no HEAD 21b45d0: 186 passed / 0 failed em 81s. Suíte completa medida hoje 07:44 no mesmo HEAD: 294 passed / 0 failed (task 75). CICLOS DE WATCHDOG: histórico append-only movido para ops/watchdog_cycles.log (este campo acumulou ~6k chars de heartbeats; a razão humana permanece acima).",
       "evidence": "Histórico de ciclos: ops/watchdog_cycles.log (append-only, NÃO versionado — coberto pela regra *.log do .gitignore). Desde 06/10/2026 o heartbeat NÃO muta BACKLOG.json: antes ele reescrevia `_last_watchdog_cycle` + uma janela rolante de 2 ciclos aqui a cada ~20-30 min, gerando ~25 commits/dia que não mudavam nada além deste arquivo — exatamente o arquivo que o loop autônomo relê a cada ciclo. Liveness independente: ~/.hermes/cron/executions.db."
     }
-  ],
-  "_watchdog_log": [
-    "2026-10-09 16:52 - heartbeat: sem tarefas pendentes (75 done, 6 discontinued, 2 blocked-human-action). BACKLOG integro. Watchdog log corrompido restaurado para valid JSON."
   ]
 }
