@@ -1141,6 +1141,7 @@
     }
   ],
   "_watchdog_log": [
+    "heartbeat 18/10/2026 22:51 — sem tarefas pendentes; 75 done, 0 pending, 2 blocked (74 paper review + 76 CI billing, ambos acao humana); flake8 0; git tree limpa; disco 90% (24G livres)",
     "heartbeat 18/10/2026 13:40 — sem tarefas pendentes; 75 done, 0 pending, 2 blocked (74 paper review + 76 CI billing, ambos acao humana); flake8 0; git tree limpa; disco 90% (24G livres)",
     "heartbeat 18/10/2026 12:22 — sem tarefas pendentes; 75 done, 0 pending, 2 blocked (74 paper review + 76 CI billing, ambos acao humana); flake8 0 fatal; git tree limpa; disco 90% (24G livres); suite completa estourou timeout em 420s (tests pesados)"
   ]
