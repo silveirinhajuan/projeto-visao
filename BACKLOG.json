@@ -1141,13 +1141,6 @@
     }
   ],
   "_watchdog_log": [
-    "heartbeat 18/10/2026 22:51 — sem tarefas pendentes; 75 done, 0 pending, 2 blocked (74 paper review + 76 CI billing, ambos acao humana); flake8 0; git tree limpa; disco 90% (24G livres)",
-    "heartbeat 18/10/2026 13:40 — sem tarefas pendentes; 75 done, 0 pending, 2 blocked (74 paper review + 76 CI billing, ambos acao humana); flake8 0; git tree limpa; disco 90% (24G livres)",
-    "heartbeat 18/10/2026 12:22 — sem tarefas pendentes; 75 done, 0 pending, 2 blocked (74 paper review + 76 CI billing, ambos acao humana); flake8 0 fatal; git tree limpa; disco 90% (24G livres); suite completa estourou timeout em 420s (tests pesados)",
-    "heartbeat 19/10/2026 00:26 — sem tarefas pendentes; 75 done, 0 pending, 2 blocked (74 paper review + 76 CI billing, ambos acao humana); git tree limpa; ultimo commit e87b668 (85min atras)",
-    "heartbeat 19/10/2026 02:30 — sem tarefas pendentes; 75 done, 0 pending, 2 blocked (74 paper review + 76 CI billing, ambos acao humana); git tree limpa; ultimo commit e87b668 (4h atras)",
-    "heartbeat 19/10/2026 06:53 — sem tarefas pendentes; 75 done, 0 pending, 2 blocked (74 paper review + 76 CI billing, ambos acao humana); git tree limpa; ultimo commit e87b668 (8h atras)",
-    "heartbeat 19/10/2026 05:07 — sem tarefas pendentes; 75 done, 0 pending, 2 blocked (74 paper review + 76 CI billing, ambos acao humana); git tree limpa; ultimo commit 4856290 (42min atras); disco 90% (24G livres)",
     "heartbeat 19/10/2026 05:55 — sem tarefas pendentes; 75 done, 0 pending, 2 blocked (74 paper review + 76 CI billing, ambos acao humana); git tree limpa; ultimo commit e87b668 (11h atras)",
     "heartbeat 19/10/2026 06:25 — sem tarefas pendentes; 75 done, 0 pending, 2 blocked (74 paper review + 76 CI billing, ambos acao humana); git tree limpa; ultimo commit d2012b0 (1h atras); disco 90% (24G livres)",
     "heartbeat 19/10/2026 06:43 — sem tarefas pendentes; 75 done, 0 pending, 2 blocked (74 paper review + 76 CI billing, ambos acao humana); git tree limpa; ultimo commit add92a7 (18min atras); disco 90% (24G livres)",
@@ -1156,6 +1149,7 @@
     "heartbeat 19/10/2026 09:45 — sem tarefas pendentes; 75 done, 0 pending, 2 blocked (74 paper review + 76 CI billing, ambos acao humana); git tree limpa; ultimo commit 46f7fb5 (36min atras); disco 90% (24G livres)",
     "heartbeat 19/10/2026 11:45 — sem tarefas pendentes; 75 done, 0 pending, 2 blocked (74 paper review + 76 CI billing, ambos acao humana); git tree limpa; ultimo commit 46f7fb5 (2h atras); disco 90% (24G livres)",
     "heartbeat 20/10/2026 01:12 — sem tarefas pendentes; 75 done, 0 pending, 2 blocked (74 paper review + 76 CI billing, ambos acao humana); git tree limpa; ultimo commit 46f7fb5 (13h atras); disco 90% (24G livres)",
-    "heartbeat 20/10/2026 09:00 — sem tarefas pendentes; 75 done, 0 pending, 2 blocked (74 paper review + 76 CI billing, ambos acao humana); git tree limpa; ultimo commit 8823a8c (8h atras); disco 90% (24G livres)"
+    "heartbeat 20/10/2026 09:00 — sem tarefas pendentes; 75 done, 0 pending, 2 blocked (74 paper review + 76 CI billing, ambos acao humana); git tree limpa; ultimo commit 8823a8c (8h atras); disco 90% (24G livres)",
+    "heartbeat 19/10/2026 16:57 — sem tarefas pendentes; 75 done, 0 pending, 2 blocked (74 paper review + 76 CI billing, ambos acao humana); git tree limpa; ultimo commit 50c3c85 (30min atras); disco 90% (24G livres)"
   ]
 }
