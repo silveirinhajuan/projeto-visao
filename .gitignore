@@ -44,3 +44,6 @@ AGENTS.md
 
 # Runtime live-loop logs (append-only artifacts, not source)
 visao/ops/logs/*.jsonl
+
+# Watchdog heartbeat runtime artifacts (never source)
+ops/watchdog_heartbeat_*.md
