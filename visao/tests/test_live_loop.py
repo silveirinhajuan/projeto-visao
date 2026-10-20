@@ -7,6 +7,7 @@ from __future__ import annotations
 import sys
 import tempfile
 import time
+import json
 from pathlib import Path
 
 import numpy as np
@@ -23,6 +24,11 @@ from visao.ops.live_loop import (
     HealthStatus,
     simulate_24h,
     validate_30day_gate,
+    rotate_log_if_needed,
+    count_jsonl_lines,
+    ROTATE_MAX_LINES,
+    ROTATE_KEEP_LINES,
+    HEALTH_LOG,
 )
 from visao.ops.monitor import BrainMonitor
 
@@ -240,6 +246,106 @@ class TestSimulation:
         result = validate_30day_gate(summary)
         assert "gate_passed" in result
         assert "criteria" in result
+
+
+def _write_jsonl(path: Path, n: int) -> None:
+    """Helper: escreve n linhas JSON válidas em path."""
+    with open(path, "a") as f:
+        for i in range(n):
+            f.write(json.dumps({"i": i}) + "\n")
+
+
+class TestLogRotation:
+    """Tarefa 78 — rotação de logs do LiveLoop.
+
+    O CheckpointManager poda checkpoints antigos, mas health.jsonl e
+    events.jsonl cresciam SEM LIMITE (41MB / 125k linhas observados em
+    20/10/2026, com o disco do projeto a 90%). Log de operação contínua
+    que nunca rotaciona é dívida disfarçada de telemetria.
+    """
+
+    def test_count_jsonl_lines(self, tmp_path):
+        p = tmp_path / "x.jsonl"
+        assert count_jsonl_lines(p) == 0  # inexistente -> 0
+        _write_jsonl(p, 7)
+        assert count_jsonl_lines(p) == 7
+
+    def test_rotate_does_nothing_under_limit(self, tmp_path):
+        p = tmp_path / "health.jsonl"
+        _write_jsonl(p, 5)
+        rotate_log_if_needed(p, max_lines=100)
+        assert p.exists()
+        assert count_jsonl_lines(p) == 5  # intacto
+
+    def test_rotate_truncates_over_limit(self, tmp_path):
+        p = tmp_path / "health.jsonl"
+        _write_jsonl(p, 250)
+        rotate_log_if_needed(p, max_lines=100, keep_lines=40)
+        assert p.exists()  # nunca apaga o arquivo, só trunca
+        assert count_jsonl_lines(p) == 40  # mantém a cauda (keep_lines)
+
+    def test_rotate_keeps_tail_not_head(self, tmp_path):
+        """As linhas mais recentes (cauda) sobrevivem — o histórico antigo já
+        foi consolidado nos checkpoints."""
+        p = tmp_path / "health.jsonl"
+        _write_jsonl(p, 100)
+        rotate_log_if_needed(p, max_lines=100, keep_lines=10)
+        last = json.loads(open(p).readlines()[-1])
+        assert last["i"] == 99  # a última linha é a mais recente
+
+    def test_rotate_boundary_at_limit(self, tmp_path):
+        p = tmp_path / "health.jsonl"
+        _write_jsonl(p, 100)
+        rotate_log_if_needed(p, max_lines=100, keep_lines=10)
+        assert count_jsonl_lines(p) == 100  # exatamente no limite -> não rotaciona
+
+    def test_rotate_default_limit_is_finite(self):
+        # Regressão: o limite default NÃO pode ser ilimitado/None, e o
+        # keep precisa ser menor que o max (senão nunca trunca).
+        assert isinstance(ROTATE_MAX_LINES, int)
+        assert ROTATE_MAX_LINES > 0
+        assert ROTATE_MAX_LINES <= 100000
+        assert 0 < ROTATE_KEEP_LINES < ROTATE_MAX_LINES
+
+    def test_rotate_missing_file_is_noop(self, tmp_path):
+        p = tmp_path / "nao_existe.jsonl"
+        rotate_log_if_needed(p, max_lines=10)  # não deve levantar
+        assert not p.exists()
+
+    def test_liveloop_uses_custom_log_dir(self, tmp_path):
+        """Regressão: log_dir customizado era ignorado (constantes de módulo
+        capturadas na importação) e o log caía no diretório do repo."""
+        log_dir = tmp_path / "meu_log"
+        loop = LiveLoop(checkpoint_dir=tmp_path / "ck", log_dir=log_dir)
+        assert loop.log_dir == log_dir
+        assert loop.health_log == log_dir / "health.jsonl"
+        assert loop.event_log == log_dir / "events.jsonl"
+        assert loop.health_log != HEALTH_LOG  # não é mais o default global
+
+    def test_liveloop_respects_rotation_limit(self, tmp_path):
+        """Com log_dir isolado, verificar que a rotação é invocada e limita
+        o arquivo — sem tocar o health.jsonl real do repositório."""
+        log_dir = tmp_path / "lg"
+        loop = LiveLoop(
+            checkpoint_dir=tmp_path / "ck",
+            log_dir=log_dir,
+            max_log_lines=20,
+            keep_log_lines=8,
+        )
+        assert loop.max_log_lines == 20
+        _write_jsonl(log_dir / "health.jsonl", 50)
+        _write_jsonl(log_dir / "events.jsonl", 50)
+        loop._rotate_logs_if_needed()
+        assert count_jsonl_lines(log_dir / "health.jsonl") == 8
+        assert count_jsonl_lines(log_dir / "events.jsonl") == 8
+
+    def test_rotation_leaves_valid_jsonl(self, tmp_path):
+        """Após rotacionar, o que sobra precisa ser JSONL válido (não corrompido)."""
+        p = tmp_path / "health.jsonl"
+        _write_jsonl(p, 500)
+        rotate_log_if_needed(p, max_lines=100)
+        for line in open(p):
+            json.loads(line)  # levanta se estiver corrompido
 
 
 if __name__ == "__main__":

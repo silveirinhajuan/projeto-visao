@@ -1138,6 +1138,21 @@
       "depends_on": [],
       "blocked_reason": "Requer ação humana: regularizar billing da conta GitHub (github.com/settings/billing). Enquanto travado, o CI fast (matrix 3.9-3.12 + flake8 + mypy) não roda em push nenhum. Mitigação ativa do watchdog: rodar o subset fast localmente a cada ciclo — verificado 22/09 17:37 no HEAD 21b45d0: 186 passed / 0 failed em 81s. Suíte completa medida hoje 07:44 no mesmo HEAD: 294 passed / 0 failed (task 75). CICLOS DE WATCHDOG: histórico append-only movido para ops/watchdog_cycles.log (este campo acumulou ~6k chars de heartbeats; a razão humana permanece acima).",
       "evidence": "Histórico de ciclos: ops/watchdog_cycles.log (append-only, NÃO versionado — coberto pela regra *.log do .gitignore). Desde 06/10/2026 o heartbeat NÃO muta BACKLOG.json: antes ele reescrevia `_last_watchdog_cycle` + uma janela rolante de 2 ciclos aqui a cada ~20-30 min, gerando ~25 commits/dia que não mudavam nada além deste arquivo — exatamente o arquivo que o loop autônomo relê a cada ciclo. Liveness independente: ~/.hermes/cron/executions.db."
+    },
+    {
+      "id": "78",
+      "title": "Rotação de logs do LiveLoop (health.jsonl/events.jsonl cresciam sem limite)",
+      "description": "O CheckpointManager poda checkpoints antigos, mas os logs de operação contínua NÃO tinham rotação: health.jsonl chegou a 41MB / 125.601 linhas e events.jsonl a 4.235 linhas, ambos append-only por 30 dias de operação. Com o disco do projeto a 90% (23G livres), log que nunca rotaciona é dívida disfarçada de telemetria. Adicionar rotate_log_if_needed() + count_jsonl_lines() ao live_loop, invocar após cada escrita, e corrigir o bug de log_dir customizado ignorado (constantes de módulo capturadas na importação).",
+      "priority": "media",
+      "status": "done",
+      "depends_on": [],
+      "files": [
+        "visao/ops/live_loop.py",
+        "visao/tests/test_live_loop.py",
+        ".github/workflows/ci.yml"
+      ],
+      "evidence": "TDD estrito: 10 testes em TestLogRotation (RED: ImportError/NameError confirmados -> GREEN). Implementado em visao/ops/live_loop.py: count_jsonl_lines() (conta em streaming, nunca carrega o arquivo inteiro), rotate_log_if_needed(path, max_lines, keep_lines) (trunca preservando a CAUDA via deque(maxlen=keep_lines), grava em arquivo temporário e os.replace atômico; no-op se inexistente/abaixo do limite; OSError reportado no stderr e NÃO propaga). Constantes ROTATE_MAX_LINES=50000 / ROTATE_KEEP_LINES=20000 dimensionadas pelos tamanhos MEDIDOS (health ~335 B/linha, events ~176 B/linha) -> teto ~16,8MB/arquivo em vez dos 41MB observados. LiveLoop ganhou max_log_lines/keep_log_lines no __init__ e resolve self.health_log/self.event_log a partir de log_dir (antes usavam HEALTH_LOG/EVENT_LOG de mÓdulo, então um log_dir customizado era silenciosamente ignorado e o log caía no diretorio do repo). _rotate_logs_if_needed() chamado após cada escrita em _log_event e _save_health_report. DUAS ARMADILHAS REAIS ENCONTRADAS E CORRIGIDAS NO CAMINHO: (1) Path.with_suffix(p.suffix + '.rotating') SUBSTITUI a extensão (health.jsonl -> health.rotating), então o os.replace(tmp, p) subsequente nunca rodava e o arquivo ficava intocado; corrigido com p.with_name(p.name + '.rotating'). (2) O par padrão max=20000/keep=10000 não rotaciona um arquivo de 250 linhas porque keep>total; testes e default revistos para keep<max. Suite: visao/tests/ 257 passed / 0 failed (excl. 3 testes de simulação de 60s cada); subset fast do CI 186 passed / 0 failed; TestLogRotation 10 passed. CI fast subset agora inclui TestLogRotation. flake8 fatal 0 erros. Commit a seguir.",
+      "result": "Logs do LiveLoop agora rotacionam em 50k linhas (teto ~16,8MB); log_dir customizado respeitado."
     }
   ]
 }

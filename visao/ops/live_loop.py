@@ -61,6 +61,74 @@ CHECKPOINT_INTERVAL = 5000  # checkpoints a cada N passos
 HEALTH_CHECK_INTERVAL = 100  # verifica saúde a cada N passos
 LOG_INTERVAL = 500  # log a cada N passos
 
+# Rotação de logs (tarefa 78). Log de operação contínua que nunca rotaciona
+# é dívida disfarçada de telemetria: health.jsonl já chegou a 41MB / 125k
+# linhas com o disco do projeto a 90%. Ao exceder ROTATE_MAX_LINES, o
+# arquivo é truncado em ROTATE_KEEP_LINES (as linhas mais recentes ficam).
+# Dimensionado a partir dos tamanhos MEDIDOS (health ~335 B/linha,
+# events ~176 B/linha): o pior caso fica em ~16,8MB por arquivo, em vez
+# dos 41MB observados — um teto real, não um número decorativo.
+ROTATE_MAX_LINES = 50000
+ROTATE_KEEP_LINES = 20000
+
+
+# ==============================================================
+#  ROTAÇÃO DE LOGS (tarefa 78)
+# ==============================================================
+
+def count_jsonl_lines(path: str | Path) -> int:
+    """Conta linhas de um arquivo JSONL sem carregá-lo inteiro na RAM.
+
+    Telemetria de loop vivo cresce por dias; ler tudo com ``readlines()``
+    para decidir se rotaciona seria trocar um problema de disco por um
+    problema de memória. Conta em streaming.
+    """
+    p = Path(path)
+    if not p.exists():
+        return 0
+    n = 0
+    with open(p, "rb") as f:
+        for _ in f:
+            n += 1
+    return n
+
+
+def rotate_log_if_needed(
+    path: str | Path,
+    max_lines: int = ROTATE_MAX_LINES,
+    keep_lines: int = ROTATE_KEEP_LINES,
+) -> bool:
+    """Trunca ``path`` para ``keep_lines`` quando excede ``max_lines``.
+
+    Preserva as linhas MAIS RECENTES (a cauda), que são as relevantes para
+    diagnóstico — o histórico antigo já foi consolidado nos checkpoints.
+
+    Retorna True se rotacionou, False caso contrário. Falha fechado: arquivo
+    inexistente é no-op; erro de E/S é reportado e não propaga (rotação não
+    pode derrubar o loop vivo por cima do problema que veio resolver).
+    """
+    p = Path(path)
+    if not p.exists():
+        return False
+    try:
+        total = count_jsonl_lines(p)
+        if total <= max_lines:
+            return False
+        # Lê só a cauda necessária (keep_lines), nunca o arquivo inteiro.
+        with open(p, "rb") as f:
+            tail = deque(f, maxlen=keep_lines)
+        # ATENÇÃO: Path.with_suffix() SUBSTITUI a extensão (health.jsonl ->
+        # health.rotating), e o os.replace seguinte nunca rodaria. Usar
+        # with_name para preservar o sufixo.
+        tmp = p.with_name(p.name + ".rotating")
+        with open(tmp, "wb") as f:
+            f.writelines(tail)
+        os.replace(tmp, p)
+        return True
+    except OSError as e:
+        print(f"[LiveLoop] rotação de log falhou ({p.name}): {e}", file=sys.stderr)
+        return False
+
 
 # ==============================================================
 #  ESTRUTURAS DE DADOS
@@ -371,6 +439,8 @@ class LiveLoop:
         log_interval: int = LOG_INTERVAL,
         max_consecutive_errors: int = 10,
         adaptive_sleep: bool = True,
+        max_log_lines: int = ROTATE_MAX_LINES,
+        keep_log_lines: int = ROTATE_KEEP_LINES,
     ):
         self.brain = brain or VisaoBrain(n_in=2, n_hidden=64, n_out=1, seed=42)
         self.data_source = data_source or RoutineDataSource()
@@ -379,6 +449,14 @@ class LiveLoop:
         self.log_dir = Path(log_dir)
         self.checkpoint_dir.mkdir(parents=True, exist_ok=True)
         self.log_dir.mkdir(parents=True, exist_ok=True)
+
+        # Logs resolvidos a partir de log_dir (tarefa 78): antes usavam as
+        # constantes de módulo capturadas na importação, então um log_dir
+        # customizado era silenciosamente ignorado e o log caía no repo.
+        self.health_log = self.log_dir / HEALTH_LOG.name
+        self.event_log = self.log_dir / EVENT_LOG.name
+        self.max_log_lines = max_log_lines
+        self.keep_log_lines = keep_log_lines
 
         self.checkpoint_interval = checkpoint_interval
         self.health_check_interval = health_check_interval
@@ -758,14 +836,33 @@ class LiveLoop:
             "state": self._state.name,
             **data,
         }
-        log_file = EVENT_LOG
-        with open(log_file, "a") as f:
+        with open(self.event_log, "a") as f:
             f.write(json.dumps(entry, default=str) + "\n")
+        self._rotate_logs_if_needed()
 
     def _save_health_report(self, report: HealthReport) -> None:
         """Salva relatório de saúde."""
-        with open(HEALTH_LOG, "a") as f:
+        with open(self.health_log, "a") as f:
             f.write(json.dumps(asdict(report), default=str) + "\n")
+        self._rotate_logs_if_needed()
+
+    def _rotate_logs_if_needed(self) -> None:
+        """Rotaciona os logs do loop quando excedem o limite de linhas.
+
+        Chamado após cada escrita; o custo é um count em streaming (barato)
+        e a rotação só dispara acima do limite. Nunca propaga erro — o loop
+        vivo continua mesmo que o disco esteja cheio.
+        """
+        rotate_log_if_needed(
+            self.health_log,
+            max_lines=self.max_log_lines,
+            keep_lines=self.keep_log_lines,
+        )
+        rotate_log_if_needed(
+            self.event_log,
+            max_lines=self.max_log_lines,
+            keep_lines=self.keep_log_lines,
+        )
 
     # ==========================================================
     #  SHUTDOWN
