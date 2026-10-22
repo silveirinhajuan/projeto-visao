@@ -1,93 +1,84 @@
-# Auditoria de artefatos declarados × disco — 21/10/2026
+# Auditoria de artefatos declarados x disco — 21/10/2026
 
 **Por que existe:** o `BACKLOG.json` é declarado "fonte da verdade para o loop autônomo".
 Esta auditoria verifica se os arquivos que as tarefas `done` declaram como entrega
-realmente existem em disco. **Não é heartbeat — é reconciliação de integridade.**
+realmente existem em disco. **Não é heartbeat — é reconciliação de integridade**.
 
 ## Método (reproduzível)
 
 ```bash
 cd ~/projeto-visao
-python3 ~/.hermes/cache/scratch/audit_deletions.py
+python3 ops/audit_backlog_artifacts.py
 ```
 
-O script lê `BACKLOG.json`, coleta todos os campos `files` das tarefas, checa
-`os.path.exists` para cada um e, para os ausentes, pergunta ao git qual commit os removeu.
+## Resultado CORRETO (21/10/2026)
 
-## Resultado
-
-| métrica | valor |
-|---|---|
-| arquivos declarados em `files` | **89** |
-| presentes em disco | **31** |
-| **AUSENTES** | **58 (65%)** |
-
-### Os 58 ausentes, por commit que os removeu
-
-| commit | data | arquivos removidos declarados no BACKLOG |
+|| métrica | valor |
 |---|---|---|
-| `dbba6b6` "chore: limpeza de dead code e diretórios não utilizados" | 2026-09-10 | **25** |
-| `300f53f` "chore: remove obsolete tests and add missing __init__.py" | — | **24** |
-| `6af0c10` "feat: benchmark SOTA (12.0)" | — | **4** |
-| `6602ecd` "fix: integração VisaoCognitiveBrain com APIs reais" | — | **2** |
-| `f06156a` "chore: remove duplicate analysis files and old results" | — | **2** |
-| nunca versionados | — | **1** |
+| arquivos declarados em `files` | **90** |
+| **PRESENT** (existe no path declarado) | **32** |
+| **RELOCATED** (movido, existe em outro lugar) | **6** |
+| **MISSING** (ausência real) | **52** |
 
-### O que foi apagado (tarefas `done` que os declaram)
+## O que mudou em relação ao relatório anterior (01:12)
 
-**Pacotes inteiros:** `visao/evolve/` (archive, mutate, sandbox, transfer, automl),
-`visao/env/`, `visao/swarm/`, `network/`.
+O relatório antigo reportava **58 de 89** artefatos como ausentes. Esse numero
+era **falso**. A causa raiz:
 
-**Núcleo:** `visao/core/wiring.py` (1.4), `visao/core/predictive.py` +
-`predictive_coder.py` (1.6), `visao/core/bundle.py` (6.2/6.3/6.4).
+    git log --all --diff-filter=D -- <path>
 
-**Análise:** `visao/analysis/ablation.py` + `results_ablation.json` (1.9),
-`tau_sweep.py` (1.10), `scale_ltc.py` (5.5), `routine_continual.py` (5.6),
-`ablation_2.py` (7.3).
+Sem `-M` e sem `-c` (combined diff) o git nao entende RENAMES. Um arquivo que foi
+MOVIDO (renomeado) aparece como `D` no path antigo, e o script concluia "este
+artefato foi apagado por <commit>". Na verdade o conteudo so mudou de lugar.
 
-**Docs:** `PROPOSTA_PESQUISA.md`, `AGENTE_AUTOCONTIDO.md` (0.2),
-`FASE2_ENXAME.md`, `FASE3_EVOLUCAO.md`.
+Prova definitiva: os 4 docs que o relatorio antigo culpava o commit 6af0c10 —
+AGENTE_AUTOCONTIDO.md, FASE2_ENXAME.md, FASE3_EVOLUCAO.md, PROPOSTA_PESQUISA.md —
+existem HOJE em `docs/` (git ls-files confirma: TRACKED). O commit 6af0c10 os
+renomeou (similaridade 100%):
 
-**Ops:** `ops/sentinel.py` + `ops/tests/test_sentinel.py` (OPS.1/OPS.2).
+    $ git show -M --name-status 6af0c10 | grep R100
+    R100  PROPOSTA_PESQUISA.md  docs/PROPOSTA_PESQUISA.md
 
-**24 arquivos de teste** — incluindo `test_cfc.py` (1.2/6.1), `test_parity.py` (1.3b),
-`test_wiring.py` (1.4), `test_bundle*.py` (6.2-6.4), `test_containment_bridge.py` (6.5),
-`test_stability.py` (1.8), `test_robustness.py` (1.11), `test_ablation*.py` (1.9/7.3),
-`test_ewc_temporal.py` (7.2), `test_surprise_decay.py` (7.1), `test_scale_ltc.py` (5.5),
-`test_routine_continual.py` (5.6), `test_archive/mutate/sandbox/transfer/automl.py` (3.1-3.4, 5.7).
+Esta versao classifica cada path declarado em TRES categorias:
+  - PRESENT   : existe no path declarado
+  - RELOCATED : nao existe no path declarado, MAS o conteudo existe em outro lugar
+    do repo (rename detectado com -M, ou basename encontrada)
+  - MISSING   : nao existe em lugar nenhum (ausencia real)
 
-## O que NÃO está quebrado
+O que interessa ao loop autonomo e' MISSING — evidencia genuinamente perdida.
 
-- **O código é coerente:** varredura de imports em `visao/` não encontra nenhuma referência
-  aos módulos ausentes. Nada quebra em tempo de execução por causa dessas remoções.
-- **A suíte que resta passa** (subset fast do CI: ver `ops/watchdog_cycles.log`).
-- **Governança intacta:** `visao/governance/` não foi tocada (selo R3 confere).
+### RELOCATED (6 paths) — o conteudo mudou de lugar
 
-## O que ESTÁ quebrado
+  - AGENTE_AUTOCONTIDO.md  ->  docs/AGENTE_AUTOCONTIDO.md  (via 6af0c1017)
+  - FASE2_ENXAME.md        ->  docs/FASE2_ENXAME.md        (via 6af0c1017)
+  - FASE3_EVOLUCAO.md      ->  docs/FASE3_EVOLUCAO.md      (via 6af0c1017)
+  - PROPOSTA_PESQUISA.md   ->  docs/PROPOSTA_PESQUISA.md   (via 6af0c1017)
+  - visao/bench/baselines.py ->  research/models/baselines.py (basename)
+  - visao/env/requirements.txt ->  requirements.txt (basename)
 
-A **rastreabilidade**. O BACKLOG afirma 76 tarefas `done` com evidência apontando para
-artefatos; 58 desses artefatos não existem mais. Consequências:
+### MISSING (52) — evidencia genuinamente perdida
 
-1. Um agente futuro que tente "verificar" uma tarefa `done` lendo o arquivo declarado
-   conclui, falsamente, que a tarefa nunca foi feita.
-2. A alegação central do projeto (Fase 0: "esquecimento 97,2% menor que controle") tem como
-   evidência declarada `prototype/results_continual.json` — **esse arquivo foi removido em
-   `dbba6b6`**. O número sobrevive apenas como texto no BACKLOG.
-3. O portão 10.0 ("30 dias de operação contínua validada") está `done` com base em
-   `visao/ops/logs/gate_validation.json`, que registra `uptime_seconds: 60.0006` e
-   `total_errors: 5` com mensagens `"Injected error #N for testing recovery"` — ou seja,
-   uma **simulação de 60 segundos com erros auto-injetados**, não 30 dias reais.
-   O `verify` declarado da tarefa (`visao/ops/validate_30days.py`) também não existe em disco.
+24 removidas por `300f53f chore: remove obsolete tests and add missing __init__.py`
+24 removidas por `dbba6b6 chore: limpeza de dead code e diretórios não utilizados`
+2 removidas por `f06156a chore: remove duplicate analysis files and old results`
+2 removidas por `6602ecd fix: integração VisaoCognitiveBrain com APIs reais`
+1 arquivo nunca versionado (sem rastro no git)
 
-## Decisão pendente (humana — Artigo 01 do Código Humanitas)
+### Referências de import a modulos ausentes
+
+(nenhuma — varredura de imports em visao/ nao encontra referencias aos modulos
+ausentes)
+
+## Decisao pendente (humana — Artigo 01 do Código Humanitas)
 
 Não se rebaixa nenhuma tarefa `done` sem decisão explícita do Juan. Opções:
 
 - **(a)** Restaurar os artefatos a partir do git (`git checkout <commit> -- <path>`) e
-  re-selar o que for necessário;
+  re-selar o que for necessario;
 - **(b)** Emendar o BACKLOG marcando as tarefas afetadas como `done_artifact_removed`
-  (honesto: o trabalho existiu, a evidência não), mantendo o histórico;
-- **(c)** Aceitar que o BACKLOG é um registro histórico e criar um BACKLOG novo só com
+  (honesto: o trabalho existiu, a evidência não), mantendo o historico;
+- **(c)** Aceitar que o BACKLOG é um registro histórico e criar um BACKLOG novo so com
   o que existe em disco.
 
-Registrado como tarefa bloqueada `79` no `BACKLOG.json`.
+Registrado como tarefa bloqueada `79` no `BACKLOG.json`. O script de auditoria
+corrigido fica em `ops/audit_backlog_artifacts.py`.
