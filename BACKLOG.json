@@ -1156,16 +1156,18 @@
     },
     {
       "id": "79",
-      "title": "Dívida de rastreabilidade: 58 de 89 artefatos declarados por tarefas done NÃO existem em disco",
+      "title": "Dívida de rastreabilidade: 52 de 90 artefatos declarados por tarefas done NÃO existem em disco",
       "description": "Auditoria de integridade (ops/backlog_artifact_audit.md, script reproduzivel ~/.hermes/cache/scratch/audit_deletions.py): o BACKLOG e a 'fonte da verdade', mas 65% dos arquivos que as tarefas done declaram em `files` foram apagados por commits de 'limpeza'. Responsaveis: dbba6b6 (25 arquivos, 2026-09-10 — apagou pacotes inteiros visao/evolve/, visao/env/, visao/swarm/, network/, visao/core/wiring.py, visao/core/bundle.py, visao/core/predictive.py, prototype/results_continual.json), 300f53f (24 testes, incluindo test_cfc/test_parity/test_wiring/test_bundle/test_containment_bridge), 6af0c10 (4 docs: PROPOSTA_PESQUISA.md, AGENTE_AUTOCONTIDO.md, FASE2_ENXAME.md, FASE3_EVOLUCAO.md), 6602ecd (ops/sentinel.py), f06156a (visao/analysis/ablation.py + results_ablation.json), 1 nunca versionado (visao/bench/baselines.py). O CODIGO NAO QUEBRA: varredura de imports em visao/ nao referencia nenhum dos modulos ausentes; a suíte que resta passa. O QUEBRA E A RASTREABILIDADE: (1) um agente futuro que verifique uma tarefa done lendo o arquivo declarado conclui falsamente que ela nunca existiu; (2) a evidencia declarada da Fase 0 ('esquecimento 97,2% menor que controle' -> prototype/results_continual.json) foi removida — o numero sobrevive so como texto no BACKLOG; (3) o portao 10.0 ('30 dias de operacao continua validada') esta done com base em visao/ops/logs/gate_validation.json, que registra uptime_seconds=60.0006 e total_errors=5 com mensagens 'Injected error #N for testing recovery' — SIMULACAO de 60s com erros auto-injetados, nao 30 dias reais; o verify declarado (visao/ops/validate_30days.py) tambem nao existe em disco. Nenhuma tarefa done foi rebaixada: a decisao e humana (Artigo 01 do Codigo Humanitas).",
       "priority": "alta",
       "status": "blocked",
       "depends_on": [],
       "files": [
-        "ops/backlog_artifact_audit.md"
+        "ops/backlog_artifact_audit.md",
+        "ops/audit_backlog_artifacts.py",
+        "tests/test_backlog_artifact_audit.py"
       ],
       "blocked_reason": "Requer decisao humana do Juan — nao e executavel por agente. Tres caminhos: (a) restaurar os artefatos do git (git checkout <commit> -- <path>) e re-selar o que for necessario; (b) emendar o BACKLOG marcando as tarefas afetadas como done_artifact_removed (honesto: o trabalho existiu, a evidencia nao), preservando o historico; (c) aceitar o BACKLOG como registro historico e criar um backlog novo so com o que existe em disco. Evidencia completa e reproduzivel em ops/backlog_artifact_audit.md.",
-      "evidence": "Auditoria executada 21/10/2026: 89 arquivos declarados em `files`, 31 presentes, 58 AUSENTES (65%). Contagem por commit removidor e a lista completa arquivo-a-arquivo estao em ops/backlog_artifact_audit.md. Varredura de imports em visao/ -> 0 referencias aos modulos ausentes (o codigo e coerente; o que falta e a evidencia). Gates read-only conferidos: selo R3 intacto; subset fast do CI verde (ver ops/watchdog_cycles.log)."
+      "evidence": "Auditoria executada 21/10/2026, CORRIGIDA no commit f7bb86a (rename detection) e re-verificada read-only neste ciclo: 90 caminhos declarados em `files`, 32 PRESENT, 6 RELOCATED (conteudo movido, existe em outro lugar do repo) e 52 MISSING (ausencia real, 58%). O numero anterior (89/31/58) era FALSO — `git log --diff-filter=D -- <path>` sem `-M` trata rename como remocao. Agravantes medidos: 21 tarefas done (40 arquivos) tem TODOS os artefatos ausentes (evidencia 100% fantasma) e 24 tarefas done NAO declaram campo `files`. Contagem por commit removidor e a lista completa arquivo-a-arquivo estao em ops/backlog_artifact_audit.md. Varredura de imports em visao/ -> 0 referencias aos modulos ausentes (o codigo e coerente; o que falta e a evidencia). Gates read-only conferidos: selo R3 intacto; subset fast do CI verde (ver ops/watchdog_cycles.log)."
     }
   ]
 }
